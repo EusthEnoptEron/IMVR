@@ -139,3 +139,6 @@ sympy-plots-for-*.tex/
 node_modules
 /src/Assets/Plugins
 /src/Assets/ThirdParty
+*.unitypackage
+/src/Assets/Plugins.meta
+/src/Assets/ThirdParty.meta
