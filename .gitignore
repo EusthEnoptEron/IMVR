@@ -142,3 +142,5 @@ node_modules
 *.unitypackage
 /src/Assets/Plugins.meta
 /src/Assets/ThirdParty.meta
+*.csproj
+*.sln
