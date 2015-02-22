@@ -26,7 +26,7 @@ public class SampleBar : MonoBehaviour {
                                                transform.localScale.z);
 
             transform.localScale = Vector3.Lerp(transform.localScale, scale, speed * Time.deltaTime);
-            //transform.localPosition = new Vector3(transform.localPosition.x, transform.localScale.y / 2, transform.localPosition.z);
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localScale.y / 2, transform.localPosition.z);
         }
 	}
 }

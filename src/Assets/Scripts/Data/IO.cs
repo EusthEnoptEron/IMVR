@@ -20,7 +20,7 @@ public static class IO {
     /// <remarks>Needs overhaul.</remarks>
     public static bool IsImage(FileInfo file)
     {
-        Debug.Log("Judge");
+        //Debug.Log("Judge");
         switch (file.Extension)
         {
             case ".jpg":

@@ -4,6 +4,9 @@ using System.Linq;
 
 public class ImageManager : MonoBehaviour {
     ImageSource source;
+
+    public float revolutionTime = 10;
+
 	// Use this for initialization
 	void Start () {
         source = new ImageSource(@"C:\Users\Simon\Pictures");
@@ -30,6 +33,7 @@ public class ImageManager : MonoBehaviour {
             {
                 Vector2 pos = new Vector2(((offset + i) / height) * (360f / imagesPerRevolution) * Mathf.PI / 180f, (offset + i) % height);
 
+                buffer[i].transform.parent = transform;
                 buffer[i].transform.localPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y, Mathf.Sin(pos.x) * radius);
                 buffer[i].transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-buffer[i].transform.position, Vector3.up).normalized); 
 
@@ -40,6 +44,7 @@ public class ImageManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        transform.localRotation *= Quaternion.Euler(0, 360 * Time.deltaTime / revolutionTime, 0);
 	}
 
     void OnApplicationQuit()

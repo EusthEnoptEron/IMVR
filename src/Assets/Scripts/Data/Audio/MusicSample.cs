@@ -31,7 +31,7 @@ public class MusicSample : MonoBehaviour {
             startFrequency = endFrequency;
             endFrequency = Mathf.Max(startFrequency+1, (int)((Mathf.Pow((i + 1) * ratio + 0.5f, slope) + 50) / music.BinSize));
 
-            blocks[i] = GameObject.CreatePrimitive(PrimitiveType.Capsule).AddComponent<SampleBar>();
+            blocks[i] = GameObject.CreatePrimitive(PrimitiveType.Cube).AddComponent<SampleBar>();
             blocks[i].height = height;
             blocks[i].frequency = i;
             blocks[i].transform.parent = transform;
