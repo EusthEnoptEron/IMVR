@@ -17,7 +17,7 @@ public class ImageTile : Tile {
 
     protected void Start()
     {
-        
+        GetComponent<SpriteRenderer>().material.shader = Shader.Find("Sprites/Diffuse Fog");
     }
 
     protected override void OnDestroy()

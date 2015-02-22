@@ -12,14 +12,24 @@ public class DBTest : MonoBehaviour {
 	void Start () {
         //string conn = "URI=file:" + Application.dataPath + "/database.s3db"; //Path to database.
         //var connection = System.Data.SQLite.Linq.SQLiteProviderFactory.Instance.CreateConnection();
-        string _connection_string = "Data Source=" + Application.dataPath + "/database.s3db;DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName
+        string _connection_string = "Data Source=" + Application.dataPath + "/Database.s3db;DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName
  + ";";
-
+        Debug.Log(_connection_string);
         // in database method
         using (DataContext db = new DataContext(_connection_string))
         {
             var vals = (from values in db.GetTable<TestTable>()
                          select values);
+
+            foreach (var val in vals)
+            {
+                Debug.Log(val.Value);
+            }
+        }
+
+        using(var db = new VirtualHands.Data.Main(_connection_string)) {
+            var vals = (from values in db.TestTable
+                        select values);
 
             foreach (var val in vals)
             {

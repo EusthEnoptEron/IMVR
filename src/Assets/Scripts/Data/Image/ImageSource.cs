@@ -56,7 +56,7 @@ public class ImageSource : IDataSource {
 
         byte[] data = new byte[0];
         int width, height;
-        width = height = 256;
+        width = height = 128;
         Color32[,] pixels = new Color32[width, height];
         var texture = new Texture2D(width, height);
 
@@ -76,7 +76,7 @@ public class ImageSource : IDataSource {
                      {
                          var pxl = result.GetPixel(x, y);
 
-                         pixels[x, y] = new UnityEngine.Color(pxl.R / 255f, pxl.G / 255f, pxl.B / 255f);
+                         pixels[x, height-y-1] = new UnityEngine.Color(pxl.R / 255f, pxl.G / 255f, pxl.B / 255f);
                      }
                  result.Dispose();
             //using(var result = ImageUtilities.ResizeImage(img, 256, 256))

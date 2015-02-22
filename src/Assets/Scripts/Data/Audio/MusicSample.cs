@@ -13,7 +13,7 @@ public class MusicSample : MonoBehaviour {
 	void Start () {
         var music = MusicManager.Instance;
         //music.Play("D:\\Music\\GReeeeN - キセキ.mp3");
-        music.Play(@"D:\Music\アニメ\ダンタリアンの書架\DISC2\02. 第5組曲 2楽章 異形のピアノ。救えぬヴァイオリン。.mp3");
+        music.Play(@"D:\Music\アニメ\アカメが斬る！\OST\Disc 1\01. Le chant de Roma (虐げられた者達の為に).mp3");
         //music.Play("E:\\tone2.mp3");
 
         // Generate blocks.
