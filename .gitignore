@@ -137,10 +137,12 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 node_modules
-/src/Assets/Plugins
-/src/Assets/ThirdParty
+/src/Application/Assets/Plugins
+/src/Application/Assets/ThirdParty
 *.unitypackage
-/src/Assets/Plugins.meta
-/src/Assets/ThirdParty.meta
-*.csproj
-*.sln
+/src/Application/Assets/Plugins.meta
+/src/Application/Assets/ThirdParty.meta
+/dist
+/src/Application/*.sln
+/src/Application/*.csproj
+/src/Application/*.suo

@@ -43,7 +43,7 @@ public class MusicManager : Singleton<MusicManager> {
         amplitudes = new float[Frequencies];
         
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.playmodeStateChanged = HandlePlayModeChanged;
+        UnityEditor.EditorApplication.playmodeStateChanged += HandlePlayModeChanged;
 #endif
 	}
 

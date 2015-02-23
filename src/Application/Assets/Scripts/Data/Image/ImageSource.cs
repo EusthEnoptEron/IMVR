@@ -20,7 +20,7 @@ public class ImageSource : IDataSource {
     public TileBuffer ReadForward()
     {
         Task previousTask = null;
-        var buffer =  new TileBuffer(grabber.Take(10).Select(file =>
+        var buffer =  new TileBuffer(grabber.Take(100).Select(file =>
         {
             var tile = new GameObject().AddComponent<ImageTile>();
             //TaskManager.StartRoutine(LoadTexture(file, tile));
@@ -131,6 +131,8 @@ public class ImageSource : IDataSource {
 
         var sprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
         tile.sprite = sprite;
+
+        yield return new WaitForSeconds(0.05f);
     }
 
 

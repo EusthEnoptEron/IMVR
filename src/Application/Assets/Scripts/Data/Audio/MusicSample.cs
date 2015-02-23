@@ -8,12 +8,16 @@ public class MusicSample : MonoBehaviour {
     
     private int[] mainBands = { 50, 94, 176, 331, 620, 1200, 2200, 4100, 7700, 14000, 22000 };
     public int bands = 10;
+    public string fileToPlay;
 
 	// Use this for initialization
 	void Start () {
+        if (fileToPlay == null || fileToPlay.Length == 0) return;
+
         var music = MusicManager.Instance;
+
         //music.Play("D:\\Music\\GReeeeN - キセキ.mp3");
-        music.Play(@"D:\Music\アニメ\アカメが斬る！\OST\Disc 1\01. Le chant de Roma (虐げられた者達の為に).mp3");
+        music.Play(fileToPlay);
         //music.Play("E:\\tone2.mp3");
 
         // Generate blocks.
