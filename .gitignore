@@ -146,3 +146,5 @@ node_modules
 /src/Application/*.sln
 /src/Application/*.csproj
 /src/Application/*.suo
+/src/AuxiliaryTools/**/bin
+/src/*.suo
