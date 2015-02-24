@@ -1,20 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
 
 public class CircleLayout : MonoBehaviour {
     public List<Tile> tiles = new List<Tile>();
     public int tileCountVertical = 3;
+    private bool changing;
 
     void Update()
     {
+        if (changing) return;
+
+        UpdatePositions(Time.deltaTime);
+    }
+
+    void UpdatePositions(float progress)
+    {
         // update tile positions
-        int tileCount = tiles.Count;
+        int tileCount = Mathf.Min(100, tiles.Count);
         int imagesPerRevolution = tileCount / tileCountVertical;
         float radius = imagesPerRevolution / (Mathf.PI * 2);
 
-        for (int i = 0; i < tiles.Count; i++) 
+        int i = 0;
+        for (; i < tileCount; i++)
         {
+            tiles[i].gameObject.SetActive(true);
+
             Vector2 pos = new Vector2(((i) / tileCountVertical) * (360f / imagesPerRevolution) * Mathf.PI / 180f, (i) % tileCountVertical);
 
             if (pos.x >= 2 * Mathf.PI) return;
@@ -23,12 +36,18 @@ public class CircleLayout : MonoBehaviour {
             var endPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y, Mathf.Sin(pos.x) * radius);
             var endRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
 
-            tiles[i].transform.localPosition = Vector3.Lerp(tiles[i].transform.localPosition, endPosition, Time.deltaTime);
-            tiles[i].transform.localRotation = Quaternion.Slerp(tiles[i].transform.localRotation, endRotation, Time.deltaTime);
+            tiles[i].transform.localPosition = Vector3.Lerp(tiles[i].transform.localPosition, endPosition, progress);
+            tiles[i].transform.localRotation = Quaternion.Slerp(tiles[i].transform.localRotation, endRotation, progress);
+        }
+
+        for (; i < tiles.Count; i++)
+        {
+            tiles[i].gameObject.SetActive(false);
         }
     }
 
     void LateUpdate() {
+        if (changing) return;
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -36,12 +55,110 @@ public class CircleLayout : MonoBehaviour {
             {
                 tiles.Shuffle();
             }
-            else { 
+            else
+            { 
                 tiles.Reverse();
             }
+            StartCoroutine(SwapTiles());
+        }
+        if (Input.GetKeyUp(KeyCode.S))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Saturation.Value.CompareTo(y.File.ImageStatistics.First().Saturation.Value));
+            StartCoroutine(SwapTiles());
+
+        }
+        if (Input.GetKeyUp(KeyCode.H))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Hue.Value.CompareTo(y.File.ImageStatistics.First().Hue.Value));
+            StartCoroutine(SwapTiles());
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.L))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Lightness.Value.CompareTo(y.File.ImageStatistics.First().Lightness.Value));
+            StartCoroutine(SwapTiles());
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Variance.Value.CompareTo(y.File.ImageStatistics.First().Variance.Value));
+            StartCoroutine(SwapTiles());
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.M))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Mean.Value.CompareTo(y.File.ImageStatistics.First().Mean.Value));
+            StartCoroutine(SwapTiles());
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            tiles.Sort((x, y) => x.File.ImageStatistics.First().Entropy.Value.CompareTo(y.File.ImageStatistics.First().Entropy.Value));
+            StartCoroutine(SwapTiles());
+
         }
     }
 
+
+    private void Rotate(float from, float to, float duration, Transform transform)
+    {
+        float currentRotation = from;
+        var oldRotation = transform.localRotation;
+
+        DOTween.To(() => currentRotation, y =>
+        {
+            transform.localRotation = oldRotation * Quaternion.Euler(0, y, 0); currentRotation = y;
+        }, to, duration);
+    }
+
+    IEnumerator SwapTiles()
+    {
+        changing = true;
+        var halfRevolution = Quaternion.Euler(0, 180, 0);
+        //int currentRotation = 0;
+
+
+        float duration = 1;
+
+        foreach (var tile in tiles)
+        {
+            if (tile.gameObject.activeSelf)
+            {
+                var oldRotation = tile.transform.localRotation;
+
+                //tile.transform.DOLocalRotate((tile.transform.localRotation * halfRevolution).eulerAngles, duration);
+                
+                Rotate(0, 180, duration, tile.transform);
+                
+            }
+        }
+        
+
+        yield return new WaitForSeconds(duration);
+
+        UpdatePositions(1f);
+
+        foreach (var tile in tiles)
+        {
+            if (tile.gameObject.activeSelf)
+            {
+                tile.transform.localRotation *= halfRevolution;
+                
+
+                Rotate(0, 180, duration, tile.transform);
+            }
+        }
+        
+
+        yield return new WaitForSeconds(duration);
+
+        changing = false;
+
+    }
 
    
 }

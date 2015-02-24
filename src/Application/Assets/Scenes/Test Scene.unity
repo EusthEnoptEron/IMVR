@@ -506,7 +506,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 845437025}
   - 114: {fileID: 845437024}
-  - 114: {fileID: 845437026}
   - 114: {fileID: 845437027}
   m_Layer: 0
   m_Name: Image Manager
@@ -539,17 +538,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
---- !u!114 &845437026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 845437023}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d00441d3e571074980468220216c66f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &845437027
 MonoBehaviour:
   m_ObjectHideFlags: 0

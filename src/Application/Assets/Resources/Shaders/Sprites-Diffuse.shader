@@ -18,7 +18,13 @@ Shader "Sprites/Diffuse Fog"
 			"CanUseSpriteAtlas"="True"
 		}
 
-		Cull Off
+		//Pass {
+		//	Cull Back
+		//	Lighting On
+		//	Color [_Color]
+		//}
+
+		Cull Front
 		Lighting Off
 		ZWrite Off
 		//Fog { Mode Off }
@@ -30,7 +36,6 @@ Shader "Sprites/Diffuse Fog"
 
 		sampler2D _MainTex;
 		fixed4 _Color;
-
 		struct Input
 		{
 			float2 uv_MainTex;
@@ -47,7 +52,7 @@ Shader "Sprites/Diffuse Fog"
 			UNITY_INITIALIZE_OUTPUT(Input, o);
 			o.color = v.color * _Color;
 		}
-
+			 
 		void surf (Input IN, inout SurfaceOutput o)
 		{
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * IN.color;
@@ -55,7 +60,28 @@ Shader "Sprites/Diffuse Fog"
 			o.Alpha = c.a;
 		}
 		ENDCG
+
+		Cull Back
+		CGPROGRAM
+		#pragma surface surf Lambert
+		#pragma multi_compile DUMMY PIXELSNAP_ON
+		
+		fixed4 _Color;
+		struct Input
+		{
+			float2 uv_MainTex;
+			fixed4 color;
+		};
+		
+		void surf (Input IN, inout SurfaceOutput o)
+		{
+			o.Albedo = _Color.rgb;
+			o.Alpha = _Color.a;
+		}
+		
+		ENDCG
+
 	}
 
-Fallback "Transparent/VertexLit"
+	Fallback "Transparent/VertexLit"
 }

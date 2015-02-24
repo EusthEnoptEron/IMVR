@@ -53,24 +53,36 @@ namespace Indexer
                 try
                 {
                     var image = new MagickImage(path);
-                    var baseColor = new ColorHSL(0, 0, 1);
 
                     // Get values
                     var statistics = image.Statistics().Composite();
                     var profile = image.GetExifProfile();
-                    var red = image.Statistics().GetChannel(PixelChannel.Red);
-                    var blue = image.Statistics().GetChannel(PixelChannel.Blue);
-                    var green = image.Statistics().GetChannel(PixelChannel.Green);
 
-                    if (red != null && blue != null && green != null)
-                    {
-                        var color = new MagickColor((byte)red.Mean, (byte)green.Mean, (byte)blue.Mean);
-                        baseColor = ColorHSL.FromMagickColor(color);
-                    }
-                    else
-                    {
-                        baseColor = new ColorHSL(0, 0, statistics.Mean / 255);
-                    }
+                    image.Resize(1, 1);
+                    var firstPixel = image.GetReadOnlyPixels().First();
+                    var baseColor = firstPixel.ToColor() ??
+                                new MagickColor(firstPixel.GetChannel(0), firstPixel.GetChannel(0), firstPixel.GetChannel(0));
+
+                    var systemColor = System.Drawing.Color.FromArgb(baseColor.R, baseColor.G, baseColor.B);
+
+                    //RGBtoHSV(baseColor.R / 255f, baseColor.G / 255f, baseColor.B / 255f, out c_hue, out c_saturation, out c_value);
+
+                    //Console.WriteLine(baseColor.Saturation);
+                    //Console.WriteLine(image.GetReadOnlyPixels().First().Channels);
+
+                    //var red = image.Statistics().GetChannel(PixelChannel.Red);
+                    //var blue = image.Statistics().GetChannel(PixelChannel.Blue);
+                    //var green = image.Statistics().GetChannel(PixelChannel.Green);
+
+                    //if (red != null && blue != null && green != null)
+                    //{
+                    //    var color = new MagickColor((byte)red.Mean, (byte)green.Mean, (byte)blue.Mean);
+                    //    baseColor = ColorHSL.FromMagickColor(color);
+                    //}
+                    //else
+                    //{
+                    //    baseColor = new ColorHSL(0, 0, statistics.Mean / 255);
+                    //}
 
                     // DB LAYER
 
@@ -98,10 +110,10 @@ namespace Indexer
                     statistic.Skewness = statistics.Skewness;
                     statistic.Variance = statistics.Variance;
                     statistic.HasExif = profile != null;
-                    statistic.Hue = baseColor.Hue;
                     statistic.Version = 1;
-                    statistic.Saturation = baseColor.Saturation;
-                    statistic.Lightness = baseColor.Luminosity;
+                    statistic.Hue = systemColor.GetHue();
+                    statistic.Saturation = systemColor.GetSaturation();
+                    statistic.Lightness = systemColor.GetBrightness();
                     statistic.Width = image.Width;
                     statistic.Height = image.Height;
 
@@ -146,6 +158,37 @@ namespace Indexer
         public void Stop()
         {
             cts.Cancel();
+        }
+
+        // r,g,b values are from 0 to 1
+        // h = [0,360], s = [0,1], v = [0,1]
+        //		if s == 0, then h = -1 (undefined)
+        private void RGBtoHSV(double r, double g, double b, out double h, out double s, out double v)
+        {
+            double min, max, delta;
+            min = Math.Min(Math.Min(r, g), b);
+            max = Math.Max(Math.Max(r, g), b);
+            
+            v = max;				// v
+            delta = max - min;
+            if (max != 0)
+                s = delta / max;		// s
+            else
+            {
+                // r = g = b = 0		// s = 0, v is undefined
+                s = 0;
+                h = -1;
+                return;
+            }
+            if (r == max)
+                h = (g - b) / delta;		// between yellow & magenta
+            else if (g == max)
+                h = 2 + (b - r) / delta;	// between cyan & yellow
+            else
+                h = 4 + (r - g) / delta;	// between magenta & cyan
+            h *= 60;				// degrees
+            if (h < 0)
+                h += 360;
         }
     }
 }

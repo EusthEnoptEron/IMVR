@@ -11,6 +11,7 @@ using DbLinq;
 using Mono.Data.Sqlite;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Indexer
 {
@@ -20,7 +21,7 @@ namespace Indexer
 
         static void Main(string[] args)
         {
-            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
                 var collection = new BlockingCollection<string>(COLLECTION_BOUND);
@@ -46,6 +47,7 @@ namespace Indexer
                     consumers.Add(new FileAnalyzer(collection));
                     consumers.Add(new FileAnalyzer(collection));
 
+                    CleanDb();
 
                     // Start work
                     foreach (var producer in producers) producer.Start();
@@ -61,6 +63,38 @@ namespace Indexer
                 Thread.Sleep(100);
             }
                
+        }
+
+        private static async void CleanDb()
+        {
+            await Task.Run(() =>
+            {
+                using (var connection = Database.Connection)
+                {
+                    new SqliteCommand("VACUUM", connection).ExecuteNonQuery();
+
+                    while (true)
+                    {
+
+                        using (var ctx = new Main(connection))
+                        {
+                            foreach (var file in ctx.Files)
+                            {
+                                if (!System.IO.File.Exists(file.Path))
+                                {
+                                    ctx.Files.DeleteOnSubmit(file);
+                                }
+                            }
+
+                            ctx.SubmitChanges();
+                        }
+
+                        break;
+                        //Thread.Sleep(10000);
+                    }
+
+                }
+            });
         }
     }
 }

@@ -8,35 +8,48 @@ using System.Collections.Generic;
 using DoctaJonez.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
+using VirtualHands.Data;
 
 public class ImageSource : IDataSource {
 
     ImageGrabber grabber = new ImageGrabber();
     public ImageSource(string root)
     {
-        grabber.GrabImages(root);
+        //grabber.GrabImages(root);
     }
 
     public TileBuffer ReadForward()
     {
         Task previousTask = null;
-        var buffer =  new TileBuffer(grabber.Take(100).Select(file =>
+        TileBuffer buffer;
+        using (var ctx = Database.Context)
         {
-            var tile = new GameObject().AddComponent<ImageTile>();
-            //TaskManager.StartRoutine(LoadTexture(file, tile));
-            var task = new Task(LoadTexture(file, tile));
-            
-            if(previousTask != null) {
-                previousTask.ContinueWith(delegate {
-                    task.Start();
-                });
-            } else {
-                task.Start();
-            }
-            previousTask = task;
+            buffer = new TileBuffer(ctx.Files.ToList().Where(f => f.ImageStatistics.First().Saturation > 0.05).Take(100).Select(file =>
+            {
+                var tile = new GameObject().AddComponent<ImageTile>();
+                tile.File = file;
+                //TaskManager.StartRoutine(LoadTexture(file, tile));
+                var task = new Task(LoadTexture(file.Path, tile));
 
-            return (Tile)tile;
-        }));
+                if (previousTask != null)
+                {
+                    previousTask.ContinueWith(delegate
+                    {
+                        task.Start();
+                    });
+                }
+                else
+                {
+                    task.Start();
+                }
+                previousTask = task;
+
+                return (Tile)tile;
+            }));
+
+            ctx.Connection.Close();
+        }
+    
 
         return buffer;
     }
@@ -50,7 +63,7 @@ public class ImageSource : IDataSource {
     {
     }
 
-    private IEnumerator LoadTexture(FileInfo file, ImageTile tile)
+    private IEnumerator LoadTexture(string file, ImageTile tile)
     {
         yield return 0;
 
@@ -69,7 +82,7 @@ public class ImageSource : IDataSource {
             //    var statistics = imgFile.Statistics();
             //}
 
-            using(var img = System.Drawing.Image.FromFile(file.FullName)) {
+            using(var img = System.Drawing.Image.FromFile(file)) {
                 result = ImageUtilities.ResizeImage(img, width, height);
                  for (int x = 0; x < result.Width; x++)
                      for (int y = 0; y < result.Height; y++)

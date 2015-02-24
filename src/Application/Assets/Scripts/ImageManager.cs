@@ -26,6 +26,7 @@ public class ImageManager : MonoBehaviour {
 
         while (tiles.Count < imageCount)
         {
+
             yield return 0;
             tiles.AddRange(source.ReadForward());
             ////yield return new WaitForSeconds(1);

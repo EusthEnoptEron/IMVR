@@ -1,17 +1,16 @@
-﻿using Indexer;
-using Mono.Data.Sqlite;
-using DbLinq.Data.Linq;
+﻿using Mono.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace VirtualHands.Data
 {
     public partial class Main
     {
-        public Main(Indexer.Options options) : base("Data Source=" + options.DbPath +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
+        public Main() : base("Data Source=" + Path.Combine(Application.dataPath, "Database.s3db") +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
         {
         }
     }
@@ -22,7 +21,7 @@ namespace VirtualHands.Data
         {
             get
             {
-                return "URI=file:" + Options.Instance.DbPath;
+                return "URI=file:" + Path.Combine(Application.dataPath, "Database.s3db");
             }
         }
 
@@ -30,6 +29,7 @@ namespace VirtualHands.Data
         {
             get
             {
+                
                 var connection = new SqliteConnection(ConnectionString);
                 connection.Open();
 
@@ -43,6 +43,7 @@ namespace VirtualHands.Data
         {
             get
             {
+
                 return new Main(Connection);
             }
         }

@@ -6,7 +6,9 @@ using System.IO;
 
 public class VHBuild  {
     private static string[] filesToCopy = {
-        "Database.s3db"                                      
+        "Database.s3db",
+        "Plugins/sqlite3.dll",
+        "Plugins/sqlite3.def"                      
     };
 
 	/// <summary>
@@ -23,6 +25,7 @@ public class VHBuild  {
             {
                 string from = Path.Combine(Application.dataPath, fileToCopy);
                 string to = Path.Combine(dataFolder, fileToCopy);
+                //Debug.Log(System.String.Format("{0} -> {1}", from, to));
 
                 if (File.Exists(from))
                 {

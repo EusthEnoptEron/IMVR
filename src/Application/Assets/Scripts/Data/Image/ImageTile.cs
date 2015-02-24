@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using VirtualHands.Data;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class ImageTile : Tile {
 
     private Sprite _sprite;
+
+
     public Sprite sprite
     {
         get { return _sprite; }
