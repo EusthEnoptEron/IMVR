@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using VirtualHands.Data;
 
 public class ImageManager : MonoBehaviour {
     ImageSource source;
@@ -11,12 +12,12 @@ public class ImageManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         source = new ImageSource(@"C:\Users\meers1\Pictures");
-        StartCoroutine(FillScene());
+        FillScene();
         //grabber.GrabImages(@"C:\Users\Simon\Pictures");
         //grabber.GrabImages(@"C:");
 	}
 
-    IEnumerator FillScene()
+    void FillScene()
     {
         var tiles = new List<Tile>();
 
@@ -24,28 +25,41 @@ public class ImageManager : MonoBehaviour {
         int offset = 0;
         int imageCount = 100;
 
-        while (tiles.Count < imageCount)
+        using (var ctx = Database.Context)
         {
+            tiles = (ctx.Files.ToList().Take(1000).Select(file =>
+            {
+                var tile = new GameObject().AddComponent<ImageTile>();
+                tile.File = file;
 
-            yield return 0;
-            tiles.AddRange(source.ReadForward());
-            ////yield return new WaitForSeconds(1);
+                return (Tile)tile;
+            })).ToList();
 
-            //var buffer = source.ReadForward();
-            //int imagesPerRevolution = imageCount / height;
-            //float radius = imagesPerRevolution / (Mathf.PI * 2);
-
-            //for (int i = 0; i < buffer.Count(); i++)
-            //{
-            //    Vector2 pos = new Vector2(((offset + i) / height) * (360f / imagesPerRevolution) * Mathf.PI / 180f, (offset + i) % height);
-
-            //    buffer[i].transform.parent = transform;
-            //    buffer[i].transform.localPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y, Mathf.Sin(pos.x) * radius);
-            //    buffer[i].transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-buffer[i].transform.position, Vector3.up).normalized); 
-
-            //}
-            //offset += buffer.Count();
+            ctx.Connection.Close();
         }
+
+        //while (tiles.Count < imageCount)
+        //{
+
+        //    yield return 0;
+        //    tiles.AddRange(source.ReadForward());
+        //    ////yield return new WaitForSeconds(1);
+
+        //    //var buffer = source.ReadForward();
+        //    //int imagesPerRevolution = imageCount / height;
+        //    //float radius = imagesPerRevolution / (Mathf.PI * 2);
+
+        //    //for (int i = 0; i < buffer.Count(); i++)
+        //    //{
+        //    //    Vector2 pos = new Vector2(((offset + i) / height) * (360f / imagesPerRevolution) * Mathf.PI / 180f, (offset + i) % height);
+
+        //    //    buffer[i].transform.parent = transform;
+        //    //    buffer[i].transform.localPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y, Mathf.Sin(pos.x) * radius);
+        //    //    buffer[i].transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-buffer[i].transform.position, Vector3.up).normalized); 
+
+        //    //}
+        //    //offset += buffer.Count();
+        //}
 
         GetComponent<CircleLayout>().tiles = tiles;
     }

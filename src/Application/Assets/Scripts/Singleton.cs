@@ -2,12 +2,14 @@
 using System.Collections;
 
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
+    private static bool exiting = false;
+
     private static T _instance;
     public static T Instance
     {
         get
         {
-            if (_instance == null)
+            if (_instance == null && !exiting)
             {
                 _instance = (T)FindObjectOfType(typeof(T));
                 if (_instance == null)
@@ -36,6 +38,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour {
     /// </summary>
     protected virtual void OnApplicationQuit()
     {
+        exiting = true;
         // release reference on exit
         _instance = null;
     }
