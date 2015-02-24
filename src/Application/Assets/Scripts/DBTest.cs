@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Linq;
 using System.Linq;
 using System.Data.Linq.Mapping;
+using VirtualHands.Data;
 
 public class DBTest : MonoBehaviour {
 
@@ -18,22 +19,22 @@ public class DBTest : MonoBehaviour {
         // in database method
         using (DataContext db = new DataContext(_connection_string))
         {
-            var vals = (from values in db.GetTable<TestTable>()
+            var vals = (from values in db.GetTable<File>()
                          select values);
 
             foreach (var val in vals)
             {
-                Debug.Log(val.Value);
+                Debug.Log(val.Path);
             }
         }
 
         using(var db = new VirtualHands.Data.Main(_connection_string)) {
-            var vals = (from values in db.TestTable
+            var vals = (from values in db.Files
                         select values);
 
             foreach (var val in vals)
             {
-                Debug.Log(val.Value);
+                Debug.Log(val.Path);
             }
         }
         //new SqliteConnection

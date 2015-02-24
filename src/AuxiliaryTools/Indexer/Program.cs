@@ -3,84 +3,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using ImageMagick;
 using System.Data;
 using VirtualHands.Data;
 using System.IO;
-using System.Data.SQLite;
+using DbLinq;
+using Mono.Data.Sqlite;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Indexer
 {
     class Program
     {
+        private const int COLLECTION_BOUND = 100;
+
         static void Main(string[] args)
         {
-            string dbpath = Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db");
-            var connection = new System.Data.SQLite.SQLiteConnection("URI=file:" + dbpath);
-            connection.Open();
-            using (var db = new Main(connection))
+            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                //var reader = new SQLiteCommand("SELECT Id FROM Files", connection).ExecuteReader();
-                //while (reader.Read())
-                //{
-                //    Console.WriteLine(reader.GetInt32(0));
-                //}
+                var collection = new BlockingCollection<string>(COLLECTION_BOUND);
 
-                foreach (var path in new string[] { 
-                    @"C:\Users\meers1\Pictures\CPVR2-CP\exercises\images\barb.png",
-                    @"C:\Users\meers1\Pictures\CPVR2-CP\exercises\images\cpvr_faces_320\0000\04.JPG",
-                    @"C:\Users\meers1\Pictures\CPVR2-CP\exercises\images\Sat_PC123RGB.tif"})
+                using (var db = Database.Context)
                 {
-                    var image = new MagickImage(path);
-                    var baseColor = new ColorHSL(0, 0, 1);
-                    //var myFiles = db.Files.ToList();
-                    
+                    var producers = new List<FileWalker>();
+                    var consumers = new List<FileAnalyzer>();
 
-                    var file = db.Files.FirstOrDefault(f => f.Path == path);
-                    file.Path = path;
-
-                    var statistics = image.Statistics().Composite();
-                    var profile = image.GetExifProfile();
-                    Console.WriteLine("-----------------------------------------\n   {0}\n----------------------------------------", image.FileName);
-                    Console.WriteLine("Entropy: {0}\nKurtosis: {1}\nMaximum: {2}\nMean: {3}\nSkewness: {4}\nVariance: {5}",
-                        statistics.Entropy,
-                        statistics.Kurtosis,
-                        statistics.Maximum,
-                        statistics.Mean,
-                        statistics.Skewness,
-                        statistics.Variance
-                    );
-
-                    if (profile != null)
+                    // Create producers
+                    foreach (var library in db.MediaLibraries)
                     {
-                        Console.WriteLine("Profile: " + profile.Name);
-                        foreach (var value in profile.Values)
+                        producers.Add(new FileWalker(library.Path, collection)
                         {
-                            Console.WriteLine("[{0}] {1}", value.Tag, value.Value);
-                        }
+                            Filter = IO.IsImage
+                        });
                     }
 
-                    var red  = image.Statistics().GetChannel(PixelChannel.Red);
-                    var blue = image.Statistics().GetChannel(PixelChannel.Blue);
-                    var green= image.Statistics().GetChannel(PixelChannel.Green);
+                    // Create consumers
+                    consumers.Add(new FileAnalyzer(collection));
+                    consumers.Add(new FileAnalyzer(collection));
+                    consumers.Add(new FileAnalyzer(collection));
+                    consumers.Add(new FileAnalyzer(collection));
+                    consumers.Add(new FileAnalyzer(collection));
 
-                    if (red != null && blue != null && green != null)
-                    {
-                        var color = new MagickColor((byte)red.Mean, (byte)green.Mean, (byte)blue.Mean);
-                        baseColor = ColorHSL.FromMagickColor(color);
-                    }
-                    else
-                    {
-                        baseColor = new ColorHSL(0, 0, statistics.Mean / 255);
-                    }
 
+                    // Start work
+                    foreach (var producer in producers) producer.Start();
+                    foreach (var consumer in consumers) consumer.Start();
+
+                    db.Connection.Close();
                 }
-                db.SubmitChanges();
             }
 
-
-            Console.ReadLine();
+            // Wait for break signal
+            while (true)
+            {
+                Thread.Sleep(100);
+            }
+               
         }
     }
 }
