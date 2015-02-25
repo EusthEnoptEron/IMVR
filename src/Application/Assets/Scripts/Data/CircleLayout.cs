@@ -19,7 +19,7 @@ public class CircleLayout : MonoBehaviour {
     void UpdatePositions(float progress)
     {
         // update tile positions
-        int tileCount = Mathf.Min(100, tiles.Count);
+        int tileCount = Mathf.Min(1000, tiles.Count);
         int imagesPerRevolution = tileCount / tileCountVertical;
         float radius = imagesPerRevolution / (Mathf.PI * 2);
 
@@ -118,7 +118,7 @@ public class CircleLayout : MonoBehaviour {
         DOTween.To(() => currentRotation, y =>
         {
             transform.localRotation = oldRotation * Quaternion.Euler(0, y, 0); currentRotation = y;
-        }, to, duration);
+        }, to, duration).SetEase(Ease.Linear);
     }
 
     IEnumerator SwapTiles()

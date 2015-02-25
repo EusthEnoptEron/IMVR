@@ -27,7 +27,7 @@ public class ImageManager : MonoBehaviour {
 
         using (var ctx = Database.Context)
         {
-            tiles = (ctx.Files.ToList().Take(1000).Select(file =>
+            tiles = (ctx.Files.ToList().Select(file =>
             {
                 var tile = new GameObject().AddComponent<ImageTile>();
                 tile.File = file;
