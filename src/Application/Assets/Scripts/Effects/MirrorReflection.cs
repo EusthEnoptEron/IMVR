@@ -141,6 +141,7 @@ public class MirrorReflection : MonoBehaviour
         {
             Skybox sky = src.GetComponent(typeof(Skybox)) as Skybox;
             Skybox mysky = dest.GetComponent(typeof(Skybox)) as Skybox;
+
             if (!sky || !sky.material)
             {
                 mysky.enabled = false;
@@ -151,6 +152,9 @@ public class MirrorReflection : MonoBehaviour
                 mysky.material = sky.material;
             }
         }
+        dest.clearFlags = CameraClearFlags.Color;
+        dest.backgroundColor = Color.clear;
+
         // update other values to match current camera.
         // even if we are supplying custom camera&projection matrices,
         // some of values are used elsewhere (e.g. skybox uses far plane)

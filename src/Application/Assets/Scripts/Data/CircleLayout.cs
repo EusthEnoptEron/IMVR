@@ -43,12 +43,15 @@ public class CircleLayout : MonoBehaviour {
         for (; i < tiles.Count; i++)
         {
             tiles[i].gameObject.SetActive(false);
+            tiles[i].transform.parent = transform;
+
         }
     }
 
     void LateUpdate() {
         if (changing) return;
 
+        bool transition = false;
         if (Input.GetKeyUp(KeyCode.Space))
         {
             if (Input.GetKey(KeyCode.LeftControl))
@@ -59,47 +62,50 @@ public class CircleLayout : MonoBehaviour {
             { 
                 tiles.Reverse();
             }
-            StartCoroutine(SwapTiles());
+            transition = true;
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Saturation.Value.CompareTo(y.File.ImageStatistics.First().Saturation.Value));
-            StartCoroutine(SwapTiles());
-
+            transition = true;
         }
         if (Input.GetKeyUp(KeyCode.H))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Hue.Value.CompareTo(y.File.ImageStatistics.First().Hue.Value));
-            StartCoroutine(SwapTiles());
-
+            transition = true;
         }
 
         if (Input.GetKeyUp(KeyCode.L))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Lightness.Value.CompareTo(y.File.ImageStatistics.First().Lightness.Value));
-            StartCoroutine(SwapTiles());
+            transition = true;
 
         }
 
         if (Input.GetKeyUp(KeyCode.V))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Variance.Value.CompareTo(y.File.ImageStatistics.First().Variance.Value));
-            StartCoroutine(SwapTiles());
-
+            transition = true;
         }
 
         if (Input.GetKeyUp(KeyCode.M))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Mean.Value.CompareTo(y.File.ImageStatistics.First().Mean.Value));
-            StartCoroutine(SwapTiles());
+            transition = true;
 
         }
 
         if (Input.GetKeyUp(KeyCode.E))
         {
             tiles.Sort((x, y) => x.File.ImageStatistics.First().Entropy.Value.CompareTo(y.File.ImageStatistics.First().Entropy.Value));
-            StartCoroutine(SwapTiles());
-
+            transition = true;
+        }
+        if (transition)
+        {
+            if (!Input.GetKey(KeyCode.LeftShift))
+            {
+                StartCoroutine(SwapTiles());
+            }
         }
     }
 

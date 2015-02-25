@@ -13,6 +13,7 @@ namespace VirtualHands.Data.Image
     {
         private const int WIDTH = 128;
         private const int HEIGHT = 128;
+        private const float DELAY = 0.01f;
 
         private Queue<Job> jobs = new Queue<Job>();
 
@@ -56,7 +57,7 @@ namespace VirtualHands.Data.Image
 
                     job.Texture.Apply(true);
                 }
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(DELAY);
             }
         }
 
