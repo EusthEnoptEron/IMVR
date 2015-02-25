@@ -73,7 +73,6 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
-    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1 &47686384
 GameObject:
@@ -114,8 +113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &52014607
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,8 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &80661937
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,13 +283,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5fcbf058439488b9b1c389e2b23547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerType: 4
+  fingerType: 1
   bones:
   - {fileID: 0}
-  - {fileID: 1668374785}
-  - {fileID: 1761061344}
-  - {fileID: 1788170641}
-  joints: []
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  joints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &186574104
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,7 +339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &289388574
 AudioListener:
   m_ObjectHideFlags: 0
@@ -419,7 +421,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &311352049
 Transform:
   m_ObjectHideFlags: 0
@@ -507,8 +509,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 400
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &375341158
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,8 +550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &379234841
 GameObject:
   m_ObjectHideFlags: 0
@@ -656,13 +658,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5fcbf058439488b9b1c389e2b23547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerType: 2
+  fingerType: 1
   bones:
   - {fileID: 0}
-  - {fileID: 80661938}
-  - {fileID: 137174187}
-  - {fileID: 700748362}
-  joints: []
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  joints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &454241088
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,8 +707,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &476534790
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,8 +748,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &546880504
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,8 +789,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &588430998
 GameObject:
   m_ObjectHideFlags: 0
@@ -950,8 +955,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &700748361
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1019,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 758646787}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 762ca0c5f3dbf91439370585c1fbf515, type: 3}
   m_Name: 
@@ -1360,8 +1365,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1147988889
 GameObject:
   m_ObjectHideFlags: 0
@@ -1438,8 +1443,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1271505744
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,8 +1576,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1363788202
 GameObject:
   m_ObjectHideFlags: 0
@@ -1644,13 +1649,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5fcbf058439488b9b1c389e2b23547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerType: 0
+  fingerType: 1
   bones:
   - {fileID: 0}
-  - {fileID: 1501129820}
-  - {fileID: 1008452383}
-  - {fileID: 109428548}
-  joints: []
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  joints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1001 &1400605246
 Prefab:
   m_ObjectHideFlags: 0
@@ -1718,6 +1726,10 @@ Prefab:
       propertyPath: leftGraphicsModel
       value: 
       objectReference: {fileID: 2097808815}
+    - target: {fileID: 100008, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}
   m_RootGameObject: {fileID: 311352048}
@@ -1797,10 +1809,13 @@ MonoBehaviour:
   fingerType: 1
   bones:
   - {fileID: 0}
-  - {fileID: 1015762579}
-  - {fileID: 1638392181}
-  - {fileID: 588430999}
-  joints: []
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  joints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &1485487677
 GameObject:
   m_ObjectHideFlags: 0
@@ -1961,8 +1976,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1582833554
 GameObject:
   m_ObjectHideFlags: 0
@@ -2002,8 +2017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1638392180
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,8 +2241,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 250
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1885607692
 GameObject:
   m_ObjectHideFlags: 0
@@ -2323,8 +2338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1965531153
 GameObject:
   m_ObjectHideFlags: 0
@@ -2364,8 +2379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &1982838640
 GameObject:
   m_ObjectHideFlags: 0
@@ -2478,13 +2493,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5fcbf058439488b9b1c389e2b23547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerType: 3
+  fingerType: 1
   bones:
   - {fileID: 0}
-  - {fileID: 186574105}
-  - {fileID: 1363788203}
-  - {fileID: 1885607693}
-  joints: []
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  joints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &2071091893
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,8 +2634,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c913e993c5d4bd483c5d138e1f4af2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  voxelModel: {fileID: 1982838641}
-  maxVoxels: 20
+  voxelModel: {fileID: 0}
+  maxVoxels: 1000
 --- !u!1 &2097808813
 GameObject:
   m_ObjectHideFlags: 0
@@ -2667,11 +2685,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handModelPalmWidth: .0850000009
   fingers:
-  - {fileID: 1399840500}
-  - {fileID: 1451820266}
-  - {fileID: 405289517}
-  - {fileID: 2019150649}
-  - {fileID: 148843556}
-  palm: {fileID: 1924948624}
-  forearm: {fileID: 1433145984}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  palm: {fileID: 0}
+  forearm: {fileID: 0}
   wristJoint: {fileID: 0}

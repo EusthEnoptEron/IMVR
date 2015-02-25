@@ -9,14 +9,101 @@ using UnityEngine;
 
 namespace VirtualHands.Data.Image
 {
+    public class TextureAtlas
+    {
+        public Texture2D Texture { get; private set; }
+        public const int TileSize = 128;
+        public bool IsFull { get; private set; }
+        private Dictionary<string, Rect> entries = new Dictionary<string,Rect>();
+        private IEnumerator<Rect> tiles;
+
+        public TextureAtlas(int width, int height)
+        {
+            Texture = new Texture2D(width, height);
+            tiles = Tiles.GetEnumerator();
+            IsFull = !tiles.MoveNext();
+        }
+
+        public bool Contains(string file)
+        {
+            return entries.ContainsKey(file);
+        }
+
+        private IEnumerable<Rect> Tiles
+        {
+            get
+            {
+                for (int x = 0; x < Texture.width / TileSize; x++)
+                {
+                    for (int y = 0; y < Texture.height / TileSize; y++)
+                    {
+                        yield return new Rect(x * TileSize, y * TileSize, TileSize, TileSize);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a sprite definition for a given file, adding it to the atlas if not existing.
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public Sprite GetSprite(string file)
+        {
+            if (!entries.ContainsKey(file))
+            {
+                // Gotta add this file
+                var rect = entries[file] = tiles.Current;
+                IsFull = !tiles.MoveNext();
+
+                var job = new DeferredLoader.Job(file, Texture, rect.position, rect.size);
+                DeferredLoader.Instance.AddJob(job);
+            }
+
+            return Sprite.Create(Texture, entries[file], new Vector2(0.5f, 0.5f), TileSize);
+            //Task<Color32[,]>.Run(delegate
+            //{
+            //    Color32[,] pixels = new Color32[WIDTH, HEIGHT];
+
+            //    using (var img = System.Drawing.Image.FromFile(file))
+            //    using (var result = ImageUtilities.ResizeImage(img, WIDTH, HEIGHT))
+            //    {
+            //        for (int x = 0; x < result.Width; x++)
+            //            for (int y = 0; y < result.Height; y++)
+            //            {
+            //                var pxl = result.GetPixel(x, y);
+
+            //                pixels[x, HEIGHT - y - 1] = new Color32(pxl.R, pxl.G, pxl.B, pxl.A);
+            //            }
+            //    }
+
+            //    return pixels;
+
+            //});
+        }
+
+
+        public void Update()
+        {
+            Texture.Apply(false);
+        }
+    }
+
     public class DeferredLoader : Singleton<DeferredLoader>
     {
         private const int WIDTH = 128;
         private const int HEIGHT = 128;
+        private const int ATLAS_SIZE = 2048;
+
         private const float DELAY = 0.01f;
 
         private Queue<Job> jobs = new Queue<Job>();
-
+        private List<TextureAtlas> atlases = new List<TextureAtlas>(
+            new TextureAtlas[] {
+                new TextureAtlas(ATLAS_SIZE, ATLAS_SIZE)
+            }
+        );
         void Start()
         {
             StartCoroutine(DoWork());
@@ -34,6 +121,7 @@ namespace VirtualHands.Data.Image
                 if (job != null)
                 {
                     // Found a job to take care of
+                    if (!System.IO.File.Exists(job.File)) continue;
 
                     var task = Load(job.File);
 
@@ -46,7 +134,7 @@ namespace VirtualHands.Data.Image
                         {
                             //var pxl = result.GetPixel(x, y);
 
-                            job.Texture.SetPixel(x, y, task.Result[x, y]);
+                            job.Texture.SetPixel((int)job.Offset.x + x, (int)job.Offset.y + y, task.Result[x, y]);
 
                             if (done++ > 50000)
                             {
@@ -84,6 +172,22 @@ namespace VirtualHands.Data.Image
             });
         }
 
+        public void AddJob(Job job)
+        {
+            jobs.Enqueue(job);
+        }
+
+        public Sprite LoadSprite(string file)
+        {
+            var myAtlas = atlases.FirstOrDefault(a => a.Contains(file)) ?? atlases.Last();
+            var sprite = myAtlas.GetSprite(file);
+
+            if (atlases.Last().IsFull)
+                atlases.Add(new TextureAtlas(ATLAS_SIZE, ATLAS_SIZE));
+
+            return sprite;
+        }
+
 
         public Texture2D LoadTexture(string file)
         {
@@ -110,17 +214,29 @@ namespace VirtualHands.Data.Image
         }
 
 
-        private class Job
+        public class Job
         {
             public string File { get; private set; }
             public Texture2D Texture { get; private set; }
+            public Vector2 Offset { get; private set; }
+            public Vector2 Size { get; set; }
+
             public bool Cancelled = false;
 
-            public Job(string file, Texture2D texture)
+            public Job(string file, Texture2D texture) : this(file, texture, new Vector2(0,0), new Vector2(WIDTH, HEIGHT))
+            {
+            }
+
+
+
+            public Job(string file, Texture2D texture, Vector2 offset, Vector2 size)
             {
                 File = file;
                 Texture = texture;
+                Offset = offset;
+                Size = size;
             }
+
         }
     }
 

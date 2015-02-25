@@ -8,8 +8,9 @@ using VirtualHands.Data.Image;
 public class ImageTile : Tile {
 
     private Sprite _sprite;
-
-
+    private static Material SpriteMaterial = Resources.Load("Materials/Sprites-Diffuse") as Material;
+    //private static Material SpriteMaterial = new Material(Shader.Find("Sprites/Diffuse Fog"));
+    
     public Sprite sprite
     {
         get { return _sprite; }
@@ -21,7 +22,7 @@ public class ImageTile : Tile {
 
     protected void Start()
     {
-        GetComponent<SpriteRenderer>().material.shader = Shader.Find("Sprites/Diffuse Fog");
+        GetComponent<SpriteRenderer>().sharedMaterial = SpriteMaterial;
 
         OnEnable();
     }
@@ -30,10 +31,11 @@ public class ImageTile : Tile {
     {
         if (File != null)
         {
-            var texture = DeferredLoader.Instance.LoadTexture(File.Path);
-            sprite = Sprite.Create(texture,
-                                   new Rect(0, 0, texture.width, texture.width),
-                                   new Vector2(0.5f, 0.5f), texture.width);
+            //var texture = DeferredLoader.Instance.LoadTexture(File.Path);
+            //sprite = Sprite.Create(texture,
+            //                       new Rect(0, 0, texture.width, texture.width),
+            //                       new Vector2(0.5f, 0.5f), texture.width);
+            sprite = DeferredLoader.Instance.LoadSprite(File.Path);
 
         }
 
@@ -41,13 +43,13 @@ public class ImageTile : Tile {
 
     protected void OnDisable()
     {
-        var loader = DeferredLoader.Instance;
-        if (loader != null)
-        {
-            DeferredLoader.Instance.UnloadTexture(File.Path);
-        }
-        //Destroy(sprite.texture);
-        sprite = null;
+        //var loader = DeferredLoader.Instance;
+        //if (loader != null)
+        //{
+        //    DeferredLoader.Instance.UnloadTexture(File.Path);
+        //}
+        ////Destroy(sprite.texture);
+        //sprite = null;
 
     }
 
