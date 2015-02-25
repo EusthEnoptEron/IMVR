@@ -38,6 +38,7 @@ public class CircleLayout : MonoBehaviour {
 
             tiles[i].transform.localPosition = Vector3.Lerp(tiles[i].transform.localPosition, endPosition, progress);
             tiles[i].transform.localRotation = Quaternion.Slerp(tiles[i].transform.localRotation, endRotation, progress);
+            tiles[i].transform.localScale = Vector3.one;
         }
 
         for (; i < tiles.Count; i++)

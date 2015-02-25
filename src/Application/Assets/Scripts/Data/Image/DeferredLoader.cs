@@ -13,7 +13,7 @@ namespace VirtualHands.Data.Image
     {
         private const int WIDTH = 128;
         private const int HEIGHT = 128;
-        private const float DELAY = 0.01f;
+        private const float DELAY = 0.005f;
 
         private Queue<Job> jobs = new Queue<Job>();
 

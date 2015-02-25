@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using VirtualHands.Data;
 
-public abstract class Tile : MonoBehaviour {
+public abstract class Tile : UIBehaviour {
     public int width = 1;
     public int height = 1;
 
