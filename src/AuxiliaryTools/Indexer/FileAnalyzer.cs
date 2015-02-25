@@ -3,6 +3,7 @@ using Mono.Data.Sqlite;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace Indexer
     {
         private BlockingCollection<string> collection;
         private CancellationTokenSource cts;
+        private const int COMMIT_INTERVAL = 100;
 
 
         public FileAnalyzer(BlockingCollection<string> collection)
@@ -23,26 +25,51 @@ namespace Indexer
             cts = new CancellationTokenSource();
         }
 
-        public async void Start()
+        public Task Start()
         {
-            await Task.Factory.StartNew(DoWork, cts.Token);
+            return Task.Factory.StartNew(DoWork, cts.Token);
         }
 
         private void DoWork(object obj)
         {
             var token = (CancellationToken)obj;
+            int counter = 0;
 
             using (var connection = Database.Connection)
             {
+                SqliteTransaction transaction = connection.BeginTransaction();
+
                 while (!collection.IsCompleted && !token.IsCancellationRequested)
                 {
-                    var item = collection.Take();
+                    Console.WriteLine(collection.IsCompleted + " " + collection.IsAddingCompleted + " "  + collection.Count);
+                    string item;
+                    if (collection.TryTake(out item, 100))
+                    {
 
-                    if (Options.Instance.Verbose)
-                        Console.WriteLine("Consume: {0}", item);
+                        if (Options.Instance.Verbose)
+                            Console.WriteLine("Consume: {0}", item);
 
-                    Analyze(item, connection);
+                        Analyze(item, connection);
+
+                        if (counter++ >= COMMIT_INTERVAL)
+                        {
+
+                            if (Options.Instance.Verbose)
+                                Console.WriteLine("Commit");
+
+                            transaction.Commit();
+                            transaction.Dispose();
+
+                            transaction = connection.BeginTransaction();
+                            counter = 0;
+                        }
+                    }
                 }
+                Console.WriteLine("DONE");
+
+
+                transaction.Commit();
+                transaction.Dispose();
             }
             
         }
@@ -52,6 +79,8 @@ namespace Indexer
             using(var db = new Main(connection)) {
                 try
                 {
+                    Stopwatch watch = new Stopwatch();
+
                     var image = new MagickImage(path);
 
                     // Get values
@@ -87,7 +116,10 @@ namespace Indexer
                     // DB LAYER
 
                     // Make sure we have a file entry
+                    watch.Start();
+
                     var file = db.Files.FirstOrDefault(f => f.Path == path);
+
                     if (file == null)
                     {
                         file = new VirtualHands.Data.File();
@@ -120,7 +152,6 @@ namespace Indexer
                     statistic.LastModified = new System.IO.FileInfo(path).LastWriteTime;
                     db.SubmitChanges();
 
-
                     if (profile != null)
                     {
                         var command = new SqliteCommand("DELETE FROM ExifValues WHERE FileId = @id", connection);
@@ -147,6 +178,8 @@ namespace Indexer
                             }
                         }
                     }
+                     
+
                 }
                 catch (Exception e)
                 {

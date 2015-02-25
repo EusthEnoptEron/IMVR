@@ -22,7 +22,7 @@ namespace Indexer {
         public static bool IsImage(FileInfo file)
         {
             //Debug.Log("Judge");
-            switch (file.Extension)
+            switch (file.Extension.ToLower())
             {
                 case ".jpg":
                 case ".png":

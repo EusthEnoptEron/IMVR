@@ -25,9 +25,9 @@ namespace Indexer
             cts = new CancellationTokenSource();
         }
 
-        public async void Start()
+        public Task Start()
         {
-            await Task.Factory.StartNew(DoWork, cts.Token);
+            return Task.Factory.StartNew(DoWork, cts.Token);
         }
 
         private void DoWork(object obj)
