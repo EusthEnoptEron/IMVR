@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using VirtualHands.Data;
+using Foundation;
 
 public class ImageManager : MonoBehaviour {
     ImageSource source;
@@ -27,13 +28,15 @@ public class ImageManager : MonoBehaviour {
 
         using (var ctx = Database.Context)
         {
-            tiles = (ctx.Files.ToList().Select(file =>
+            var baseTile = new GameObject();
+            tiles = (ctx.Files.Take(100).ToList().Select(file =>
             {
-                var tile = new GameObject().AddComponent<ImageTile>();
+                var tile = ((GameObject)GameObject.Instantiate(baseTile)).AddComponent<ImageTile>();
                 tile.File = file;
 
                 return (Tile)tile;
             })).ToList();
+
 
             ctx.Connection.Close();
         }

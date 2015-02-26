@@ -12,7 +12,7 @@ public class CircleLayout : MonoBehaviour {
     void Update()
     {
         if (changing) return;
-        Debug.Log("iüdate");
+        //Debug.Log("iüdate");
         UpdatePositions(Time.deltaTime);
     }
 

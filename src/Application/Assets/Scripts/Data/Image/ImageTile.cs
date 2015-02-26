@@ -22,6 +22,7 @@ public class ImageTile : Tile {
 
     protected void Start()
     {
+
         GetComponent<SpriteRenderer>().sharedMaterial = SpriteMaterial;
 
         OnEnable();
@@ -35,8 +36,10 @@ public class ImageTile : Tile {
             //sprite = Sprite.Create(texture,
             //                       new Rect(0, 0, texture.width, texture.width),
             //                       new Vector2(0.5f, 0.5f), texture.width);
-            sprite = DeferredLoader.Instance.LoadSprite(File.Path);
 
+            
+            string path = File.Path;
+            sprite = DeferredLoader.Instance.LoadSprite(path);
         }
 
     }

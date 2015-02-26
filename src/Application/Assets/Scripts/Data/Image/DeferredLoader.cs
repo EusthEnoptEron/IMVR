@@ -17,11 +17,16 @@ namespace VirtualHands.Data.Image
         private Dictionary<string, Rect> entries = new Dictionary<string,Rect>();
         private IEnumerator<Rect> tiles;
 
+        private int jobs = 0;
+
         public TextureAtlas(int width, int height)
         {
             Texture = new Texture2D(width, height);
             tiles = Tiles.GetEnumerator();
             IsFull = !tiles.MoveNext();
+
+            //Texture.filterMode = FilterMode.Trilinear;
+            //Texture.anisoLevel = 0;
         }
 
         public bool Contains(string file)
@@ -58,35 +63,27 @@ namespace VirtualHands.Data.Image
                 IsFull = !tiles.MoveNext();
 
                 var job = new DeferredLoader.Job(file, Texture, rect.position, rect.size);
+                jobs++;
+                job.Done += JobDone;
                 DeferredLoader.Instance.AddJob(job);
             }
 
-            return Sprite.Create(Texture, entries[file], new Vector2(0.5f, 0.5f), TileSize);
-            //Task<Color32[,]>.Run(delegate
-            //{
-            //    Color32[,] pixels = new Color32[WIDTH, HEIGHT];
-
-            //    using (var img = System.Drawing.Image.FromFile(file))
-            //    using (var result = ImageUtilities.ResizeImage(img, WIDTH, HEIGHT))
-            //    {
-            //        for (int x = 0; x < result.Width; x++)
-            //            for (int y = 0; y < result.Height; y++)
-            //            {
-            //                var pxl = result.GetPixel(x, y);
-
-            //                pixels[x, HEIGHT - y - 1] = new Color32(pxl.R, pxl.G, pxl.B, pxl.A);
-            //            }
-            //    }
-
-            //    return pixels;
-
-            //});
+            return Sprite.Create(Texture, entries[file], new Vector2(0.5f, 0.5f), TileSize, 0, SpriteMeshType.FullRect);
         }
 
+        private void JobDone()
+        {
+            jobs--;
+
+            if (jobs == 0)
+            {
+                Update();
+            }
+        }
 
         public void Update()
         {
-            Texture.Apply(false);
+            Texture.Apply();
         }
     }
 
@@ -142,7 +139,8 @@ namespace VirtualHands.Data.Image
                             }
                         }
 
-                    job.Texture.Apply(true);
+                    job.Done();
+                    //job.Texture.Apply(true);
                 }
                 yield return new WaitForSeconds(DELAY);
             }
@@ -182,7 +180,12 @@ namespace VirtualHands.Data.Image
             var sprite = myAtlas.GetSprite(file);
 
             if (atlases.Last().IsFull)
+            {
+                //atlases.Last().Update();
                 atlases.Add(new TextureAtlas(ATLAS_SIZE, ATLAS_SIZE));
+
+            }
+
 
             return sprite;
         }
@@ -221,6 +224,8 @@ namespace VirtualHands.Data.Image
             public Vector2 Size { get; set; }
 
             public bool Cancelled = false;
+
+            public Action Done = delegate { };
 
             public Job(string file, Texture2D texture) : this(file, texture, new Vector2(0,0), new Vector2(WIDTH, HEIGHT))
             {

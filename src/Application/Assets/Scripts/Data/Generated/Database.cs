@@ -1,4 +1,4 @@
-#define MONO_STRICT
+//#define MONO_STRICT
 // 
 //  ____  _     __  __      _        _ 
 // |  _ \| |__ |  \/  | ___| |_ __ _| |
