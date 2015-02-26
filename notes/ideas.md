@@ -6,3 +6,4 @@
 - Use metadata of music & images
     + Show place of photographs on a globe (at the feet?)
     + ID3 tags with [the echo nest](http://echonest.com) to get relevant data
+- Play with shape of pictures (circles?)
