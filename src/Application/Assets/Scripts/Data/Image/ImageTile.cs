@@ -4,7 +4,8 @@ using UnityEngine.UI;
 using VirtualHands.Data;
 using VirtualHands.Data.Image;
 
-[RequireComponent(typeof(SpriteRenderer))]
+//[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Image))]
 public class ImageTile : Tile {
 
     private Sprite _sprite;
@@ -16,17 +17,18 @@ public class ImageTile : Tile {
         get { return _sprite; }
         set { 
             _sprite = value;
-            GetComponent<SpriteRenderer>().sprite = _sprite;
+            GetComponent<Image>().sprite = _sprite;
         }
     }
 
     protected void Start()
     {
 
-        GetComponent<SpriteRenderer>().sharedMaterial = SpriteMaterial;
-
+        //GetComponent<SpriteRenderer>().sharedMaterial = SpriteMaterial;
+        GetComponent<Image>().rectTransform.sizeDelta = new Vector2(1, 1);
         OnEnable();
     }
+
 
     protected void OnEnable()
     {

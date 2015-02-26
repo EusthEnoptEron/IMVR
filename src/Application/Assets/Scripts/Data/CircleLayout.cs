@@ -32,7 +32,7 @@ public class CircleLayout : MonoBehaviour {
 
             if (pos.x >= 2 * Mathf.PI) return;
 
-            tiles[i].transform.parent = transform;
+            tiles[i].transform.SetParent(transform);
             var endPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y, Mathf.Sin(pos.x) * radius);
             var endRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
 
@@ -44,8 +44,7 @@ public class CircleLayout : MonoBehaviour {
         for (; i < tiles.Count; i++)
         {
             tiles[i].gameObject.SetActive(false);
-            tiles[i].transform.parent = transform;
-
+            tiles[i].transform.SetParent(transform);
         }
     }
 
