@@ -41,7 +41,7 @@ namespace Indexer
 
                 while (!collection.IsCompleted && !token.IsCancellationRequested)
                 {
-                    Console.WriteLine(collection.IsCompleted + " " + collection.IsAddingCompleted + " "  + collection.Count);
+                    //Console.WriteLine(collection.IsCompleted + " " + collection.IsAddingCompleted + " "  + collection.Count);
                     string item;
                     if (collection.TryTake(out item, 100))
                     {
@@ -59,6 +59,7 @@ namespace Indexer
 
                             transaction.Commit();
                             transaction.Dispose();
+
 
                             transaction = connection.BeginTransaction();
                             counter = 0;

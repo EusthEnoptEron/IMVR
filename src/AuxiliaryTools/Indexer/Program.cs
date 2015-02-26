@@ -12,6 +12,7 @@ using Mono.Data.Sqlite;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using DbLinq.Sqlite;
 
 namespace Indexer
 {
@@ -27,7 +28,6 @@ namespace Indexer
                 var collection = new BlockingCollection<string>(COLLECTION_BOUND);
                 var producers = new List<Task>();
                 var consumers = new List<Task>();
-
                 using (var db = Database.Context)
                 {
                     new SqliteCommand("VACUUM", (SqliteConnection)db.Connection).ExecuteNonQuery();
@@ -48,7 +48,7 @@ namespace Indexer
                     //consumers.Add(new FileAnalyzer(collection).Start());
                     //consumers.Add(new FileAnalyzer(collection).Start());
 
-                    CleanDb();
+                   // CleanDb();
 
                     // Start work
                     //foreach (var producer in producers) producer.Start();
@@ -91,8 +91,9 @@ namespace Indexer
                                     ctx.Files.DeleteOnSubmit(file);
                                 }
                             }
-
+                            
                             ctx.SubmitChanges();
+                            
                         }
 
                         break;

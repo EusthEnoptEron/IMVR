@@ -29,14 +29,17 @@ public class ImageManager : MonoBehaviour {
         using (var ctx = Database.Context)
         {
             var baseTile = new GameObject();
-            tiles = (ctx.Files.Take(100).ToList().Select(file =>
+            tiles = (from files in ctx.Files
+                     join statistics in ctx.ImageStatistics on files.ID equals statistics.FileID
+                     where statistics.Saturation > 0.1
+                     select files).ToList()
+            .Select(file =>
             {
-                var tile = ((GameObject)GameObject.Instantiate(baseTile)).AddComponent<ImageTile>();
+                var tile = ((GameObject)GameObject.Instantiate(baseTile, Vector3.one, Quaternion.identity)).AddComponent<ImageTile>();
                 tile.File = file;
 
                 return (Tile)tile;
-            })).ToList();
-
+            }).ToList();
 
             ctx.Connection.Close();
         }

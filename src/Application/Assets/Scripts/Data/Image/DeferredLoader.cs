@@ -142,7 +142,8 @@ namespace VirtualHands.Data.Image
                     job.Done();
                     //job.Texture.Apply(true);
                 }
-                yield return new WaitForSeconds(DELAY);
+                //yield return new WaitForSeconds(DELAY);
+                yield return 0;
             }
         }
 

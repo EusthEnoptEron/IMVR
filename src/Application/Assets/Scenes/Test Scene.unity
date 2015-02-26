@@ -162,7 +162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &289388574
 AudioListener:
   m_ObjectHideFlags: 0
@@ -272,7 +272,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &311352049
 Transform:
   m_ObjectHideFlags: 0
@@ -1002,7 +1002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5be95c1bfc9ffac488d6dc4f3cbf4592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  revolutionTime: 60
+  revolutionTime: 6000
 --- !u!223 &845437025
 Canvas:
   m_ObjectHideFlags: 0
@@ -1815,7 +1815,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400008, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}
       propertyPath: m_IsActive
@@ -1839,7 +1839,7 @@ Prefab:
       objectReference: {fileID: 629387673}
     - target: {fileID: 100008, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dd3831a83e889bb46908cc2d4d0338ac, type: 2}

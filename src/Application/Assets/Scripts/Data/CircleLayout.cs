@@ -20,16 +20,16 @@ public class CircleLayout : MonoBehaviour {
     {
         // update tile positions
         int tileCount = Mathf.Min(1000, tiles.Count);
+        
         int imagesPerRevolution = tileCount / tileCountVertical;
+        if (imagesPerRevolution == 0) imagesPerRevolution = 1;
         float radius = imagesPerRevolution / (Mathf.PI * 2);
-
         int i = 0;
         for (; i < tileCount; i++)
         {
             tiles[i].gameObject.SetActive(true);
 
             Vector2 pos = new Vector2(((i) / tileCountVertical) * (360f / imagesPerRevolution) * Mathf.PI / 180f, (i) % tileCountVertical);
-
             if (pos.x >= 2 * Mathf.PI) return;
 
             tiles[i].transform.SetParent(transform);
