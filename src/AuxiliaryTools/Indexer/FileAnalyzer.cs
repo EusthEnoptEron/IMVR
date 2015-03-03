@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -17,6 +18,9 @@ namespace Indexer
         private BlockingCollection<string> collection;
         private CancellationTokenSource cts;
         private const int COMMIT_INTERVAL = 100;
+        private TextureAtlas atlas;
+        private FileInfo atlasPath;
+
 
 
         public FileAnalyzer(BlockingCollection<string> collection)
@@ -34,6 +38,8 @@ namespace Indexer
         {
             var token = (CancellationToken)obj;
             int counter = 0;
+
+            CheckAtlas();
 
             using (var connection = Database.Connection)
             {
@@ -64,6 +70,9 @@ namespace Indexer
                             transaction = connection.BeginTransaction();
                             counter = 0;
                         }
+
+                        CheckAtlas();
+                        
                     }
                 }
                 Console.WriteLine("DONE");
@@ -75,6 +84,25 @@ namespace Indexer
             
         }
 
+        private void CheckAtlas()
+        {
+            if (atlas == null || atlas.IsFull)
+            {
+                if(atlas == null) {
+                    atlas = new TextureAtlas(1 << 11, 1 << 11);
+                } else {
+                    atlas.Generate(atlasPath.FullName);
+                    atlas.Reset();
+                }
+
+                Console.WriteLine(atlasPath);
+
+                // Create new atlas
+                atlas.Reset();
+                atlasPath = new FileInfo(Cache.GetPath());
+            }
+        }
+
         private void Analyze(string path, SqliteConnection connection)
         {
             using(var db = new Main(connection)) {
@@ -83,6 +111,9 @@ namespace Indexer
                     Stopwatch watch = new Stopwatch();
 
                     var image = new MagickImage(path);
+
+                    if (image.Width > TextureAtlas.TileSize && image.Height > TextureAtlas.TileSize)
+                        atlas.Add(path);
 
                     // Get values
                     var statistics = image.Statistics().Composite();
@@ -192,37 +223,6 @@ namespace Indexer
         public void Stop()
         {
             cts.Cancel();
-        }
-
-        // r,g,b values are from 0 to 1
-        // h = [0,360], s = [0,1], v = [0,1]
-        //		if s == 0, then h = -1 (undefined)
-        private void RGBtoHSV(double r, double g, double b, out double h, out double s, out double v)
-        {
-            double min, max, delta;
-            min = Math.Min(Math.Min(r, g), b);
-            max = Math.Max(Math.Max(r, g), b);
-            
-            v = max;				// v
-            delta = max - min;
-            if (max != 0)
-                s = delta / max;		// s
-            else
-            {
-                // r = g = b = 0		// s = 0, v is undefined
-                s = 0;
-                h = -1;
-                return;
-            }
-            if (r == max)
-                h = (g - b) / delta;		// between yellow & magenta
-            else if (g == max)
-                h = 2 + (b - r) / delta;	// between cyan & yellow
-            else
-                h = 4 + (r - g) / delta;	// between magenta & cyan
-            h *= 60;				// degrees
-            if (h < 0)
-                h += 360;
         }
     }
 }

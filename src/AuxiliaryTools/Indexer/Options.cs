@@ -15,6 +15,9 @@ namespace Indexer
         [Option("d", Required=true, HelpText="Path to the SQLite DB")]
         public string DbPath { get; set; }
 
+        [Option("c", Required=false, DefaultValue=null, HelpText="Path to the cache directory")]
+        public string CachePath { get; set; }
+
         public static Options Instance
         {
             get

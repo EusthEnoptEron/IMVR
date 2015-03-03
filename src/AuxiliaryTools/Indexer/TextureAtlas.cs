@@ -25,10 +25,17 @@ namespace Indexer
         {
             Width = width;
             Height = height;
-            tiles = Tiles.GetEnumerator();
-            IsFull = !tiles.MoveNext();
+
+            Reset();
             //Texture.filterMode = FilterMode.Trilinear;
             //Texture.anisoLevel = 0;
+        }
+
+        public void Reset()
+        {
+            entries.Clear();
+            tiles = Tiles.GetEnumerator();
+            IsFull = !tiles.MoveNext();
         }
 
         public bool Contains(string file)
@@ -55,12 +62,16 @@ namespace Indexer
             }
         }
 
-        public void Add(string file)
+        public Point Add(string file)
         {
             if (IsFull) throw new Exception("Atlas is full!");
+
+            var pos = tiles.Current.Location;
             IsFull = !tiles.MoveNext();
 
             entries.Add(file);
+
+            return pos;
         }
 
         /// <summary>
