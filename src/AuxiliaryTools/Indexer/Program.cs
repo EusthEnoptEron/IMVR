@@ -13,6 +13,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using DbLinq.Sqlite;
+using EchoNest.Artist;
+using EchoNest.Song;
 
 namespace Indexer
 {
@@ -20,8 +22,24 @@ namespace Indexer
     {
         private const int COLLECTION_BOUND = 100;
 
+
+        private static ArtistBucket AllBuckets
+        {
+
+            get
+            {
+                return ArtistBucket.Biographies | ArtistBucket.Familiarity | ArtistBucket.Terms | ArtistBucket.Hotttnesss | ArtistBucket.YearsActive | ArtistBucket.ArtistLocation;
+            }
+        }
+
         static void Main(string[] args)
         {
+
+            //var session = new EchoNest.EchoNestSession("IIYVSIK0ZCRCMU3VS");
+            //var profileResponse = session.Query<Profile>().Execute("ストロベリーソングオーケストラ", AllBuckets);
+            //session.Query<
+            
+
             args = new string[] { "-v", "-d", Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
@@ -70,7 +88,7 @@ namespace Indexer
                 //}
                
             }
-
+            
           
         }
 
