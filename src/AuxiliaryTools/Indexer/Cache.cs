@@ -21,19 +21,35 @@ namespace Indexer
 
         public static string GetPath(string extension = ".jpg")
         {
-            using (var md5 = MD5.Create())
+         
+            var buffer = new byte[128];
+            random.NextBytes(buffer);
+            var path = MakePath(CalculateMD5Hash(buffer) + extension);
+
+            while (File.Exists(path))
             {
-                var buffer = new byte[128];
                 random.NextBytes(buffer);
-                var path = MakePath(md5.ComputeHash(buffer) + extension);
+                path = MakePath(CalculateMD5Hash(buffer) + extension);
+            }
 
-                while (File.Exists(path))
+            return path;
+            
+        }
+
+        private static string CalculateMD5Hash(byte[] bytes)
+        {
+            // step 1, calculate MD5 hash from input
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(bytes);
+
+                // step 2, convert byte array to hex string
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hash.Length; i++)
                 {
-                    random.NextBytes(buffer);
-                    path = MakePath(md5.ComputeHash(buffer) + extension);
+                    sb.Append(hash[i].ToString("X2"));
                 }
-
-                return path;
+                return sb.ToString();
             }
         }
 
@@ -41,7 +57,6 @@ namespace Indexer
         {
             string first = fileName.Substring(0, 2);
             string second = fileName.Substring(0, 4);
-
             var path = Path.Combine(new string[] { Root, first, second });
 
             // Make sure structure exists
