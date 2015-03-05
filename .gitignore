@@ -148,3 +148,4 @@ node_modules
 /src/Application/*.suo
 /src/AuxiliaryTools/**/bin
 /src/*.suo
+/src/Application/Assets/Standard Assets
