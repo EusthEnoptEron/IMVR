@@ -1,0 +1,936 @@
+fileFormatVersion: 2
+guid: 155e5e6361aadab418c8c70221d066c8
+timeCreated: 1425558789
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Camera01
+    100002: Camera01.Target
+    100004: Camera02
+    100006: Camera02.Target
+    100008: Globe Sea
+    100010: //RootNode
+    100012: Longitude0
+    100014: Longitudes
+    100016: Meridian07
+    100018: 'Meridians '
+    100020: Meridians0
+    100022: Omni01
+    100024: Omni02
+    100026: Z-Afghanis
+    100028: Z-Albania
+    100030: Z-Algeria
+    100032: Z-Angola
+    100034: Z-Antartic
+    100036: Z-Argentin
+    100038: Z-Armenia
+    100040: Z-Australi
+    100042: Z-Austria
+    100044: Z-Azerbaij
+    100046: Z-Banglade
+    100048: Z-Belarus
+    100050: Z-Belgium
+    100052: Z-Belize
+    100054: Z-Bhutan
+    100056: Z-Black Se
+    100058: Z-Bolivia
+    100060: Z-Bosnia a
+    100062: Z-Botswana
+    100064: Z-Brazil
+    100066: Z-Bulgaria
+    100068: 'Z-Burkina '
+    100070: Z-Burma
+    100072: Z-Cambogia
+    100074: Z-Cameroon
+    100076: Z-Canada
+    100078: 'Z-Caspian '
+    100080: 'Z-Central '
+    100082: Z-Chad
+    100084: Z-Chili
+    100086: Z-China
+    100088: Z-Columbia
+    100090: Z-Costa Ri
+    100092: Z-Cote d'i
+    100094: Z-Croatia
+    100096: Z-Cuba
+    100098: Z-Cyprus
+    100100: Z-Czech Re
+    100102: Z-Democrat
+    100104: Z-Denmark
+    100106: Z-Dominica
+    100108: Z-Ecuador
+    100110: Z-Egypt
+    100112: Z-El Salva
+    100114: Z-Equatori
+    100116: Z-Estonia
+    100118: Z-Ethiopia
+    100120: Z-F.Y.R.O.
+    100122: Z-Fiji
+    100124: Z-Finland
+    100126: Z-France
+    100128: Z-French G
+    100130: Z-Gabon
+    100132: Z-Georgia
+    100134: Z-Germany
+    100136: Z-Ghana
+    100138: Z-Greece
+    100140: Z-Guatemal
+    100142: Z-Guinea
+    100144: Z-Guyana
+    100146: Z-Haiti
+    100148: Z-Honduras
+    100150: Z-Hungary
+    100152: Z-Iceland
+    100154: Z-India
+    100156: Z-Indonesi
+    100158: Z-Iran
+    100160: Z-Iraq
+    100162: Z-Ireland
+    100164: Z-Israel
+    100166: Z-Italy
+    100168: Z-Jamaica
+    100170: Z-Japan
+    100172: Z-Jordan
+    100174: Z-Kazakhst
+    100176: Z-Kenya
+    100178: Z-Kuwait
+    100180: Z-Kyroysta
+    100182: Z-Lake Eri
+    100184: Z-Lake Hur
+    100186: Z-Lake Mic
+    100188: Z-Lake Sup
+    100190: Z-Lake Tan
+    100192: Z-Lake Vic
+    100194: Z-Laos
+    100196: Z-Latvia
+    100198: Z-Lebanon
+    100200: Z-Liberia
+    100202: Z-Lithuani
+    100204: Z-Luxembou
+    100206: Z-Lybia
+    100208: Z-Madagasc
+    100210: Z-Malaysia
+    100212: Z-Mali
+    100214: Z-Marocco
+    100216: Z-Mauritan
+    100218: Z-Mexico
+    100220: Z-Moldava
+    100222: Z-Mongolia
+    100224: Z-Mozambiq
+    100226: Z-Namibia
+    100228: Z-Nepal
+    100230: Z-Netherla
+    100232: Z-New Cale
+    100234: Z-New Zeal
+    100236: Z-Nicaragu
+    100238: Z-Niger
+    100240: Z-Niger0
+    100242: Z-North Ko
+    100244: Z-Norway u
+    100246: Z-Oman
+    100248: Z-Pakistan
+    100250: Z-Palestin
+    100252: Z-Panama
+    100254: Z-Paraguay
+    100256: Z-Peru
+    100258: Z-Philippi
+    100260: Z-Poland
+    100262: Z-Puerto R
+    100264: Z-Qatar
+    100266: Z-Republic
+    100268: Z-Romania
+    100270: Z-Russia
+    100272: Z-Sardegna
+    100274: Z-Saudi Ar
+    100276: Z-Senegal
+    100278: Z-Serbia a
+    100280: Z-Sierra L
+    100282: Z-Slovakia
+    100284: Z-Slovenia
+    100286: Z-Somalia
+    100288: Z-South Af
+    100290: Z-South Ko
+    100292: Z-Spain
+    100294: Z-Sri Lank
+    100296: Z-Sudan
+    100298: Z-Suriname
+    100300: Z-Swazilan
+    100302: Z-Sweden
+    100304: Z-Switzerl
+    100306: Z-Syria
+    100308: Z-Taiwan (
+    100310: Z-Tajikist
+    100312: Z-Tanzania
+    100314: Z-Thailand
+    100316: Z-The Baha
+    100318: Z-Togo
+    100320: Z-Tunisia
+    100322: Z-Turkey
+    100324: Z-Turkmeni
+    100326: Z-Uganda
+    100328: Z-Ukraine
+    100330: Z-United 0
+    100332: Z-United A
+    100334: Z-United K
+    100336: Z-United S
+    100338: Z-Uruguay
+    100340: Z-Uzbekist
+    100342: Z-Vanuatu
+    100344: Z-Venezuel
+    100346: Z-Vietnam
+    100348: 'Z-Western '
+    100350: Z-Yemen
+    100352: Z-Zambia
+    100354: Z-Zimbabwe
+    400000: Camera01
+    400002: Camera01.Target
+    400004: Camera02
+    400006: Camera02.Target
+    400008: Globe Sea
+    400010: //RootNode
+    400012: Longitude0
+    400014: Longitudes
+    400016: Meridian07
+    400018: 'Meridians '
+    400020: Meridians0
+    400022: Omni01
+    400024: Omni02
+    400026: Z-Afghanis
+    400028: Z-Albania
+    400030: Z-Algeria
+    400032: Z-Angola
+    400034: Z-Antartic
+    400036: Z-Argentin
+    400038: Z-Armenia
+    400040: Z-Australi
+    400042: Z-Austria
+    400044: Z-Azerbaij
+    400046: Z-Banglade
+    400048: Z-Belarus
+    400050: Z-Belgium
+    400052: Z-Belize
+    400054: Z-Bhutan
+    400056: Z-Black Se
+    400058: Z-Bolivia
+    400060: Z-Bosnia a
+    400062: Z-Botswana
+    400064: Z-Brazil
+    400066: Z-Bulgaria
+    400068: 'Z-Burkina '
+    400070: Z-Burma
+    400072: Z-Cambogia
+    400074: Z-Cameroon
+    400076: Z-Canada
+    400078: 'Z-Caspian '
+    400080: 'Z-Central '
+    400082: Z-Chad
+    400084: Z-Chili
+    400086: Z-China
+    400088: Z-Columbia
+    400090: Z-Costa Ri
+    400092: Z-Cote d'i
+    400094: Z-Croatia
+    400096: Z-Cuba
+    400098: Z-Cyprus
+    400100: Z-Czech Re
+    400102: Z-Democrat
+    400104: Z-Denmark
+    400106: Z-Dominica
+    400108: Z-Ecuador
+    400110: Z-Egypt
+    400112: Z-El Salva
+    400114: Z-Equatori
+    400116: Z-Estonia
+    400118: Z-Ethiopia
+    400120: Z-F.Y.R.O.
+    400122: Z-Fiji
+    400124: Z-Finland
+    400126: Z-France
+    400128: Z-French G
+    400130: Z-Gabon
+    400132: Z-Georgia
+    400134: Z-Germany
+    400136: Z-Ghana
+    400138: Z-Greece
+    400140: Z-Guatemal
+    400142: Z-Guinea
+    400144: Z-Guyana
+    400146: Z-Haiti
+    400148: Z-Honduras
+    400150: Z-Hungary
+    400152: Z-Iceland
+    400154: Z-India
+    400156: Z-Indonesi
+    400158: Z-Iran
+    400160: Z-Iraq
+    400162: Z-Ireland
+    400164: Z-Israel
+    400166: Z-Italy
+    400168: Z-Jamaica
+    400170: Z-Japan
+    400172: Z-Jordan
+    400174: Z-Kazakhst
+    400176: Z-Kenya
+    400178: Z-Kuwait
+    400180: Z-Kyroysta
+    400182: Z-Lake Eri
+    400184: Z-Lake Hur
+    400186: Z-Lake Mic
+    400188: Z-Lake Sup
+    400190: Z-Lake Tan
+    400192: Z-Lake Vic
+    400194: Z-Laos
+    400196: Z-Latvia
+    400198: Z-Lebanon
+    400200: Z-Liberia
+    400202: Z-Lithuani
+    400204: Z-Luxembou
+    400206: Z-Lybia
+    400208: Z-Madagasc
+    400210: Z-Malaysia
+    400212: Z-Mali
+    400214: Z-Marocco
+    400216: Z-Mauritan
+    400218: Z-Mexico
+    400220: Z-Moldava
+    400222: Z-Mongolia
+    400224: Z-Mozambiq
+    400226: Z-Namibia
+    400228: Z-Nepal
+    400230: Z-Netherla
+    400232: Z-New Cale
+    400234: Z-New Zeal
+    400236: Z-Nicaragu
+    400238: Z-Niger
+    400240: Z-Niger0
+    400242: Z-North Ko
+    400244: Z-Norway u
+    400246: Z-Oman
+    400248: Z-Pakistan
+    400250: Z-Palestin
+    400252: Z-Panama
+    400254: Z-Paraguay
+    400256: Z-Peru
+    400258: Z-Philippi
+    400260: Z-Poland
+    400262: Z-Puerto R
+    400264: Z-Qatar
+    400266: Z-Republic
+    400268: Z-Romania
+    400270: Z-Russia
+    400272: Z-Sardegna
+    400274: Z-Saudi Ar
+    400276: Z-Senegal
+    400278: Z-Serbia a
+    400280: Z-Sierra L
+    400282: Z-Slovakia
+    400284: Z-Slovenia
+    400286: Z-Somalia
+    400288: Z-South Af
+    400290: Z-South Ko
+    400292: Z-Spain
+    400294: Z-Sri Lank
+    400296: Z-Sudan
+    400298: Z-Suriname
+    400300: Z-Swazilan
+    400302: Z-Sweden
+    400304: Z-Switzerl
+    400306: Z-Syria
+    400308: Z-Taiwan (
+    400310: Z-Tajikist
+    400312: Z-Tanzania
+    400314: Z-Thailand
+    400316: Z-The Baha
+    400318: Z-Togo
+    400320: Z-Tunisia
+    400322: Z-Turkey
+    400324: Z-Turkmeni
+    400326: Z-Uganda
+    400328: Z-Ukraine
+    400330: Z-United 0
+    400332: Z-United A
+    400334: Z-United K
+    400336: Z-United S
+    400338: Z-Uruguay
+    400340: Z-Uzbekist
+    400342: Z-Vanuatu
+    400344: Z-Venezuel
+    400346: Z-Vietnam
+    400348: 'Z-Western '
+    400350: Z-Yemen
+    400352: Z-Zambia
+    400354: Z-Zimbabwe
+    2300000: Globe Sea
+    2300002: Longitude0
+    2300004: Longitudes
+    2300006: Meridian07
+    2300008: 'Meridians '
+    2300010: Meridians0
+    2300012: Z-Afghanis
+    2300014: Z-Albania
+    2300016: Z-Algeria
+    2300018: Z-Angola
+    2300020: Z-Antartic
+    2300022: Z-Argentin
+    2300024: Z-Armenia
+    2300026: Z-Australi
+    2300028: Z-Austria
+    2300030: Z-Azerbaij
+    2300032: Z-Banglade
+    2300034: Z-Belarus
+    2300036: Z-Belgium
+    2300038: Z-Belize
+    2300040: Z-Bhutan
+    2300042: Z-Black Se
+    2300044: Z-Bolivia
+    2300046: Z-Bosnia a
+    2300048: Z-Botswana
+    2300050: Z-Brazil
+    2300052: Z-Bulgaria
+    2300054: 'Z-Burkina '
+    2300056: Z-Burma
+    2300058: Z-Cambogia
+    2300060: Z-Cameroon
+    2300062: Z-Canada
+    2300064: 'Z-Caspian '
+    2300066: 'Z-Central '
+    2300068: Z-Chad
+    2300070: Z-Chili
+    2300072: Z-China
+    2300074: Z-Columbia
+    2300076: Z-Costa Ri
+    2300078: Z-Cote d'i
+    2300080: Z-Croatia
+    2300082: Z-Cuba
+    2300084: Z-Cyprus
+    2300086: Z-Czech Re
+    2300088: Z-Democrat
+    2300090: Z-Denmark
+    2300092: Z-Dominica
+    2300094: Z-Ecuador
+    2300096: Z-Egypt
+    2300098: Z-El Salva
+    2300100: Z-Equatori
+    2300102: Z-Estonia
+    2300104: Z-Ethiopia
+    2300106: Z-F.Y.R.O.
+    2300108: Z-Fiji
+    2300110: Z-Finland
+    2300112: Z-France
+    2300114: Z-French G
+    2300116: Z-Gabon
+    2300118: Z-Georgia
+    2300120: Z-Germany
+    2300122: Z-Ghana
+    2300124: Z-Greece
+    2300126: Z-Guatemal
+    2300128: Z-Guinea
+    2300130: Z-Guyana
+    2300132: Z-Haiti
+    2300134: Z-Honduras
+    2300136: Z-Hungary
+    2300138: Z-Iceland
+    2300140: Z-India
+    2300142: Z-Indonesi
+    2300144: Z-Iran
+    2300146: Z-Iraq
+    2300148: Z-Ireland
+    2300150: Z-Israel
+    2300152: Z-Italy
+    2300154: Z-Jamaica
+    2300156: Z-Japan
+    2300158: Z-Jordan
+    2300160: Z-Kazakhst
+    2300162: Z-Kenya
+    2300164: Z-Kuwait
+    2300166: Z-Kyroysta
+    2300168: Z-Lake Eri
+    2300170: Z-Lake Hur
+    2300172: Z-Lake Mic
+    2300174: Z-Lake Sup
+    2300176: Z-Lake Tan
+    2300178: Z-Lake Vic
+    2300180: Z-Laos
+    2300182: Z-Latvia
+    2300184: Z-Lebanon
+    2300186: Z-Liberia
+    2300188: Z-Lithuani
+    2300190: Z-Luxembou
+    2300192: Z-Lybia
+    2300194: Z-Madagasc
+    2300196: Z-Malaysia
+    2300198: Z-Mali
+    2300200: Z-Marocco
+    2300202: Z-Mauritan
+    2300204: Z-Mexico
+    2300206: Z-Moldava
+    2300208: Z-Mongolia
+    2300210: Z-Mozambiq
+    2300212: Z-Namibia
+    2300214: Z-Nepal
+    2300216: Z-Netherla
+    2300218: Z-New Cale
+    2300220: Z-New Zeal
+    2300222: Z-Nicaragu
+    2300224: Z-Niger
+    2300226: Z-Niger0
+    2300228: Z-North Ko
+    2300230: Z-Norway u
+    2300232: Z-Oman
+    2300234: Z-Pakistan
+    2300236: Z-Palestin
+    2300238: Z-Panama
+    2300240: Z-Paraguay
+    2300242: Z-Peru
+    2300244: Z-Philippi
+    2300246: Z-Poland
+    2300248: Z-Puerto R
+    2300250: Z-Qatar
+    2300252: Z-Republic
+    2300254: Z-Romania
+    2300256: Z-Russia
+    2300258: Z-Sardegna
+    2300260: Z-Saudi Ar
+    2300262: Z-Senegal
+    2300264: Z-Serbia a
+    2300266: Z-Sierra L
+    2300268: Z-Slovakia
+    2300270: Z-Slovenia
+    2300272: Z-Somalia
+    2300274: Z-South Af
+    2300276: Z-South Ko
+    2300278: Z-Spain
+    2300280: Z-Sri Lank
+    2300282: Z-Sudan
+    2300284: Z-Suriname
+    2300286: Z-Swazilan
+    2300288: Z-Sweden
+    2300290: Z-Switzerl
+    2300292: Z-Syria
+    2300294: Z-Taiwan (
+    2300296: Z-Tajikist
+    2300298: Z-Tanzania
+    2300300: Z-Thailand
+    2300302: Z-The Baha
+    2300304: Z-Togo
+    2300306: Z-Tunisia
+    2300308: Z-Turkey
+    2300310: Z-Turkmeni
+    2300312: Z-Uganda
+    2300314: Z-Ukraine
+    2300316: Z-United 0
+    2300318: Z-United A
+    2300320: Z-United K
+    2300322: Z-United S
+    2300324: Z-Uruguay
+    2300326: Z-Uzbekist
+    2300328: Z-Vanuatu
+    2300330: Z-Venezuel
+    2300332: Z-Vietnam
+    2300334: 'Z-Western '
+    2300336: Z-Yemen
+    2300338: Z-Zambia
+    2300340: Z-Zimbabwe
+    3300000: Globe Sea
+    3300002: Longitude0
+    3300004: Longitudes
+    3300006: Meridian07
+    3300008: 'Meridians '
+    3300010: Meridians0
+    3300012: Z-Afghanis
+    3300014: Z-Albania
+    3300016: Z-Algeria
+    3300018: Z-Angola
+    3300020: Z-Antartic
+    3300022: Z-Argentin
+    3300024: Z-Armenia
+    3300026: Z-Australi
+    3300028: Z-Austria
+    3300030: Z-Azerbaij
+    3300032: Z-Banglade
+    3300034: Z-Belarus
+    3300036: Z-Belgium
+    3300038: Z-Belize
+    3300040: Z-Bhutan
+    3300042: Z-Black Se
+    3300044: Z-Bolivia
+    3300046: Z-Bosnia a
+    3300048: Z-Botswana
+    3300050: Z-Brazil
+    3300052: Z-Bulgaria
+    3300054: 'Z-Burkina '
+    3300056: Z-Burma
+    3300058: Z-Cambogia
+    3300060: Z-Cameroon
+    3300062: Z-Canada
+    3300064: 'Z-Caspian '
+    3300066: 'Z-Central '
+    3300068: Z-Chad
+    3300070: Z-Chili
+    3300072: Z-China
+    3300074: Z-Columbia
+    3300076: Z-Costa Ri
+    3300078: Z-Cote d'i
+    3300080: Z-Croatia
+    3300082: Z-Cuba
+    3300084: Z-Cyprus
+    3300086: Z-Czech Re
+    3300088: Z-Democrat
+    3300090: Z-Denmark
+    3300092: Z-Dominica
+    3300094: Z-Ecuador
+    3300096: Z-Egypt
+    3300098: Z-El Salva
+    3300100: Z-Equatori
+    3300102: Z-Estonia
+    3300104: Z-Ethiopia
+    3300106: Z-F.Y.R.O.
+    3300108: Z-Fiji
+    3300110: Z-Finland
+    3300112: Z-France
+    3300114: Z-French G
+    3300116: Z-Gabon
+    3300118: Z-Georgia
+    3300120: Z-Germany
+    3300122: Z-Ghana
+    3300124: Z-Greece
+    3300126: Z-Guatemal
+    3300128: Z-Guinea
+    3300130: Z-Guyana
+    3300132: Z-Haiti
+    3300134: Z-Honduras
+    3300136: Z-Hungary
+    3300138: Z-Iceland
+    3300140: Z-India
+    3300142: Z-Indonesi
+    3300144: Z-Iran
+    3300146: Z-Iraq
+    3300148: Z-Ireland
+    3300150: Z-Israel
+    3300152: Z-Italy
+    3300154: Z-Jamaica
+    3300156: Z-Japan
+    3300158: Z-Jordan
+    3300160: Z-Kazakhst
+    3300162: Z-Kenya
+    3300164: Z-Kuwait
+    3300166: Z-Kyroysta
+    3300168: Z-Lake Eri
+    3300170: Z-Lake Hur
+    3300172: Z-Lake Mic
+    3300174: Z-Lake Sup
+    3300176: Z-Lake Tan
+    3300178: Z-Lake Vic
+    3300180: Z-Laos
+    3300182: Z-Latvia
+    3300184: Z-Lebanon
+    3300186: Z-Liberia
+    3300188: Z-Lithuani
+    3300190: Z-Luxembou
+    3300192: Z-Lybia
+    3300194: Z-Madagasc
+    3300196: Z-Malaysia
+    3300198: Z-Mali
+    3300200: Z-Marocco
+    3300202: Z-Mauritan
+    3300204: Z-Mexico
+    3300206: Z-Moldava
+    3300208: Z-Mongolia
+    3300210: Z-Mozambiq
+    3300212: Z-Namibia
+    3300214: Z-Nepal
+    3300216: Z-Netherla
+    3300218: Z-New Cale
+    3300220: Z-New Zeal
+    3300222: Z-Nicaragu
+    3300224: Z-Niger
+    3300226: Z-Niger0
+    3300228: Z-North Ko
+    3300230: Z-Norway u
+    3300232: Z-Oman
+    3300234: Z-Pakistan
+    3300236: Z-Palestin
+    3300238: Z-Panama
+    3300240: Z-Paraguay
+    3300242: Z-Peru
+    3300244: Z-Philippi
+    3300246: Z-Poland
+    3300248: Z-Puerto R
+    3300250: Z-Qatar
+    3300252: Z-Republic
+    3300254: Z-Romania
+    3300256: Z-Russia
+    3300258: Z-Sardegna
+    3300260: Z-Saudi Ar
+    3300262: Z-Senegal
+    3300264: Z-Serbia a
+    3300266: Z-Sierra L
+    3300268: Z-Slovakia
+    3300270: Z-Slovenia
+    3300272: Z-Somalia
+    3300274: Z-South Af
+    3300276: Z-South Ko
+    3300278: Z-Spain
+    3300280: Z-Sri Lank
+    3300282: Z-Sudan
+    3300284: Z-Suriname
+    3300286: Z-Swazilan
+    3300288: Z-Sweden
+    3300290: Z-Switzerl
+    3300292: Z-Syria
+    3300294: Z-Taiwan (
+    3300296: Z-Tajikist
+    3300298: Z-Tanzania
+    3300300: Z-Thailand
+    3300302: Z-The Baha
+    3300304: Z-Togo
+    3300306: Z-Tunisia
+    3300308: Z-Turkey
+    3300310: Z-Turkmeni
+    3300312: Z-Uganda
+    3300314: Z-Ukraine
+    3300316: Z-United 0
+    3300318: Z-United A
+    3300320: Z-United K
+    3300322: Z-United S
+    3300324: Z-Uruguay
+    3300326: Z-Uzbekist
+    3300328: Z-Vanuatu
+    3300330: Z-Venezuel
+    3300332: Z-Vietnam
+    3300334: 'Z-Western '
+    3300336: Z-Yemen
+    3300338: Z-Zambia
+    3300340: Z-Zimbabwe
+    4300000: Globe Sea
+    4300002: Meridian07
+    4300004: 'Meridians '
+    4300006: Meridians0
+    4300008: Longitudes
+    4300010: Longitude0
+    4300012: Z-South Af
+    4300014: Z-Angola
+    4300016: Z-Botswana
+    4300018: Z-Mozambiq
+    4300020: Z-Namibia
+    4300022: Z-Zambia
+    4300024: Z-Zimbabwe
+    4300026: Z-Madagasc
+    4300028: Z-Swazilan
+    4300030: Z-Republic
+    4300032: Z-Algeria
+    4300034: Z-Cameroon
+    4300036: Z-Democrat
+    4300038: Z-Egypt
+    4300040: Z-Equatori
+    4300042: Z-Ethiopia
+    4300044: Z-Gabon
+    4300046: Z-Kenya
+    4300048: Z-Lybia
+    4300050: Z-Niger
+    4300052: Z-Somalia
+    4300054: Z-Sudan
+    4300056: Z-Tanzania
+    4300058: Z-Uganda
+    4300060: 'Z-Burkina '
+    4300062: 'Z-Central '
+    4300064: Z-Chad
+    4300066: Z-Cote d'i
+    4300068: Z-Ghana
+    4300070: Z-Guinea
+    4300072: Z-Lake Tan
+    4300074: Z-Lake Vic
+    4300076: Z-Liberia
+    4300078: Z-Mali
+    4300080: Z-Marocco
+    4300082: Z-Mauritan
+    4300084: Z-Niger0
+    4300086: Z-Senegal
+    4300088: Z-Sierra L
+    4300090: Z-Togo
+    4300092: Z-Tunisia
+    4300094: 'Z-Western '
+    4300096: Z-Thailand
+    4300098: Z-Malaysia
+    4300100: Z-Indonesi
+    4300102: Z-Philippi
+    4300104: Z-Australi
+    4300106: Z-New Zeal
+    4300108: Z-New Cale
+    4300110: Z-Vanuatu
+    4300112: Z-Fiji
+    4300114: Z-Albania
+    4300116: Z-Austria
+    4300118: Z-Belgium
+    4300120: Z-Black Se
+    4300122: Z-Bosnia a
+    4300124: Z-Bulgaria
+    4300126: Z-Croatia
+    4300128: Z-Czech Re
+    4300130: Z-F.Y.R.O.
+    4300132: Z-France
+    4300134: Z-Greece
+    4300136: Z-Hungary
+    4300138: Z-Italy
+    4300140: Z-Luxembou
+    4300142: Z-Moldava
+    4300144: Z-Netherla
+    4300146: Z-Poland
+    4300148: Z-Romania
+    4300150: Z-Sardegna
+    4300152: Z-Serbia a
+    4300154: Z-Slovakia
+    4300156: Z-Slovenia
+    4300158: Z-Spain
+    4300160: Z-Ukraine
+    4300162: Z-Banglade
+    4300164: Z-Belarus
+    4300166: Z-Bhutan
+    4300168: Z-Burma
+    4300170: Z-Cambogia
+    4300172: 'Z-Caspian '
+    4300174: Z-China
+    4300176: Z-Finland
+    4300178: Z-India
+    4300180: Z-Kazakhst
+    4300182: Z-Laos
+    4300184: Z-Latvia
+    4300186: Z-Lithuani
+    4300188: Z-Mongolia
+    4300190: Z-Nepal
+    4300192: Z-Sweden
+    4300194: Z-Switzerl
+    4300196: Z-Taiwan (
+    4300198: Z-Vietnam
+    4300200: Z-Sri Lank
+    4300202: Z-Estonia
+    4300204: Z-Russia
+    4300206: Z-Denmark
+    4300208: Z-Germany
+    4300210: Z-North Ko
+    4300212: Z-South Ko
+    4300214: Z-Norway u
+    4300216: Z-United K
+    4300218: Z-Ireland
+    4300220: Z-Iceland
+    4300222: Z-Japan
+    4300224: Z-Antartic
+    4300226: Z-Afghanis
+    4300228: Z-Iran
+    4300230: Z-Iraq
+    4300232: Z-Israel
+    4300234: Z-Jordan
+    4300236: Z-Kuwait
+    4300238: Z-Lebanon
+    4300240: Z-Oman
+    4300242: Z-Palestin
+    4300244: Z-Qatar
+    4300246: Z-Saudi Ar
+    4300248: Z-Syria
+    4300250: Z-Tajikist
+    4300252: Z-United A
+    4300254: Z-Yemen
+    4300256: Z-Azerbaij
+    4300258: Z-Cyprus
+    4300260: Z-Georgia
+    4300262: Z-Turkey
+    4300264: Z-Armenia
+    4300266: Z-Turkmeni
+    4300268: Z-Uzbekist
+    4300270: Z-Kyroysta
+    4300272: Z-Pakistan
+    4300274: Z-Belize
+    4300276: Z-Canada
+    4300278: Z-Costa Ri
+    4300280: Z-Cuba
+    4300282: Z-Dominica
+    4300284: Z-El Salva
+    4300286: Z-Guatemal
+    4300288: Z-Haiti
+    4300290: Z-Honduras
+    4300292: Z-Jamaica
+    4300294: Z-Lake Eri
+    4300296: Z-Lake Hur
+    4300298: Z-Lake Mic
+    4300300: Z-Lake Sup
+    4300302: Z-Mexico
+    4300304: Z-Nicaragu
+    4300306: Z-Panama
+    4300308: Z-Puerto R
+    4300310: Z-The Baha
+    4300312: Z-United S
+    4300314: Z-United 0
+    4300316: Z-Argentin
+    4300318: Z-Brazil
+    4300320: Z-Chili
+    4300322: Z-Uruguay
+    4300324: Z-Paraguay
+    4300326: Z-Bolivia
+    4300328: Z-Columbia
+    4300330: Z-Ecuador
+    4300332: Z-French G
+    4300334: Z-Guyana
+    4300336: Z-Peru
+    4300338: Z-Suriname
+    4300340: Z-Venezuel
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
