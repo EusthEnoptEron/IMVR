@@ -26,7 +26,7 @@ public class MirrorReflection : MonoBehaviour
     // camera will just work!
     public void OnWillRenderObject()
     {
-        if (!enabled || !renderer || !renderer.sharedMaterial || !renderer.enabled)
+        if (!enabled || !GetComponent<Renderer>() || !GetComponent<Renderer>().sharedMaterial || !GetComponent<Renderer>().enabled)
             return;
 
         Camera cam = Camera.current;
@@ -89,7 +89,7 @@ public class MirrorReflection : MonoBehaviour
 
         reflectionCamera.transform.position = oldpos;
         GL.SetRevertBackfacing(false);
-        Material[] materials = renderer.sharedMaterials;
+        Material[] materials = GetComponent<Renderer>().sharedMaterials;
         foreach (Material mat in materials)
         {
             if (mat.HasProperty("_ReflectionTex"))
@@ -188,11 +188,11 @@ public class MirrorReflection : MonoBehaviour
         if (!reflectionCamera) // catch both not-in-dictionary and in-dictionary-but-deleted-GO
         {
             GameObject go = new GameObject("Mirror Refl Camera id" + GetInstanceID() + " for " + currentCamera.GetInstanceID(), typeof(Camera), typeof(Skybox));
-            reflectionCamera = go.camera;
+            reflectionCamera = go.GetComponent<Camera>();
             reflectionCamera.enabled = false;
             reflectionCamera.transform.position = transform.position;
             reflectionCamera.transform.rotation = transform.rotation;
-            reflectionCamera.gameObject.AddComponent("FlareLayer");
+            reflectionCamera.gameObject.AddComponent<FlareLayer>();
             go.hideFlags = HideFlags.HideAndDontSave;
             m_ReflectionCameras[currentCamera] = reflectionCamera;
         }
