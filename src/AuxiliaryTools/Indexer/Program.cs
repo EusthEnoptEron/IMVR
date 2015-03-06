@@ -40,12 +40,17 @@ namespace Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                var collection = new BlockingCollection<string>(COLLECTION_BOUND);
+                var imageCollection = new BlockingCollection<string>(COLLECTION_BOUND);
+                //var musicCollection = new BlockingCollection<string>(COLLECTION_BOUND);
+                var dbCollection = new BlockingCollection<DbAction>(1000);
+
                 var producers = new List<Task>();
                 var consumers = new List<Task>();
+                var dbWorker = new DbSyncer(dbCollection);
+
                 using (var db = Database.Context)
                 {
                     new SqliteCommand("VACUUM", (SqliteConnection)db.Connection).ExecuteNonQuery();
@@ -53,18 +58,17 @@ namespace Indexer
                     // Create producers
                     foreach (var library in db.MediaLibraries)
                     {
-                        producers.Add(new FileWalker(library.Path, collection)
+                        producers.Add(new FileWalker(library.Path, imageCollection)
                         {
                             Filter = IO.IsImage
                         }.Start());
                     }
 
                     // Create consumers
-                    consumers.Add(new FileAnalyzer(collection).Start());
-                    //consumers.Add(new FileAnalyzer(collection).Start());
-                    //consumers.Add(new FileAnalyzer(collection).Start());
-                    //consumers.Add(new FileAnalyzer(collection).Start());
-                    //consumers.Add(new FileAnalyzer(collection).Start());
+                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
+                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
+                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
+                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
 
                    // CleanDb();
 
@@ -75,10 +79,16 @@ namespace Indexer
                     db.Connection.Close();
                 }
 
+                dbWorker.Start();
 
                 Task.WaitAll(producers.ToArray());
-                collection.CompleteAdding();
+                imageCollection.CompleteAdding();
                 Task.WaitAll(consumers.ToArray());
+                dbCollection.CompleteAdding();
+
+                dbWorker.Commit();
+                dbWorker.Task.Wait();
+
 
                 //// Wait for break signal
                 //while (true)
