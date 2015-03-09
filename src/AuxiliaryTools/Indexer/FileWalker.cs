@@ -10,30 +10,20 @@ using VirtualHands.Data;
 
 namespace Indexer
 {
-    public class FileWalker
+    public class FileWalker : AbstractWorker
     {
         private string root;
         private BlockingCollection<string> collection;
         public Predicate<FileInfo> Filter = f => { return true; };
 
-        private CancellationTokenSource cts;
-
         public FileWalker(string root, BlockingCollection<string> collection)
         {
             this.root = root;
             this.collection = collection;
-            cts = new CancellationTokenSource();
         }
 
-        public Task Start()
+        protected override void Process(CancellationToken token)
         {
-            return Task.Factory.StartNew(DoWork, cts.Token);
-        }
-
-        private void DoWork(object obj)
-        {
-            var token = (CancellationToken)obj;
-
             using (var db = Database.Context)
             {
                 foreach (var file in IO.GetFiles(root))
@@ -52,11 +42,6 @@ namespace Indexer
                     }
                 }
             }
-        }
-
-        public void Stop()
-        {
-            cts.Cancel();
         }
     }
 }

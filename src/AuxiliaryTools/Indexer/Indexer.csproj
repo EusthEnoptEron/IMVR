@@ -69,9 +69,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractAnalyzer.cs" />
+    <Compile Include="AbstractWorker.cs" />
+    <Compile Include="BlockingCollection.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="FileAnalyzer.cs" />
+    <Compile Include="DbSyncer.cs" />
+    <Compile Include="ImageAnalyzer.cs" />
     <Compile Include="FileWalker.cs" />
     <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
