@@ -28,6 +28,12 @@ namespace Indexer
                     ProcessItem(item);
                 }
             }
+
+            CleanUp();
+        }
+
+        protected virtual void CleanUp()
+        {
         }
 
         protected abstract void ProcessItem(T item);

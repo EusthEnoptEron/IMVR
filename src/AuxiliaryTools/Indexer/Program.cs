@@ -21,6 +21,8 @@ namespace Indexer
     class Program
     {
         private const int COLLECTION_BOUND = 100;
+        private const int IMAGE_ANALYZERS = 5;
+        private const int MUSIC_ANALYZERS = 5;
 
 
         private static ArtistBucket AllBuckets
@@ -40,7 +42,7 @@ namespace Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
                 var imageCollection = new BlockingCollection<string>(COLLECTION_BOUND);
@@ -65,10 +67,8 @@ namespace Indexer
                     }
 
                     // Create consumers
-                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
-                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
-                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
-                    consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
+                    for (int i = 0; i < IMAGE_ANALYZERS; i++)
+                        consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
 
                    // CleanDb();
 
@@ -85,8 +85,6 @@ namespace Indexer
                 imageCollection.CompleteAdding();
                 Task.WaitAll(consumers.ToArray());
                 dbCollection.CompleteAdding();
-
-                dbWorker.Commit();
                 dbWorker.Task.Wait();
 
 
