@@ -1,4 +1,4 @@
-# VirtualHands (to be renamed)
+# IMVR
 
 This project aims to create a tool that allows managing media files -- mainly pictures -- in a way that leverages the strengths of both the Leap Motion and the Oculus Rift.
 
