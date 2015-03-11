@@ -1,0 +1,81 @@
+\chapter{Anforderungen}
+
+In diesem Kapitel sollen die Anforderungen, die in der Vision grob geschildert wurden, konkretisiert und aufgelistet werden.
+
+\section{Funktionale Anforderungen}
+
+In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität von 1 bis 5, wobei eine tiefere Zahl für eine höhere Priorität steht.
+
+%\begin{table}[H]
+	\begin{longtable}{p{0.06\textwidth} p{0.7\textwidth} p{0.13\textwidth}} \toprule %{p{0.13\textwidth} p{0.75\textwidth}} \toprule
+		\textbf{Nr.} & \textbf{Beschreibung} & \textbf{Priorität} \\ \midrule
+		\endhead
+		\multicolumn{3}{l}{\textbf{1. Elementares}} \\ \midrule
+		1.1 & Die Applikation nutzt die Oculus Rift im direkten Modus für die Ausgabe. & 1 \\
+		1.2 & Die Applikation ist vollständig mit den Händen bedienbar. & 1 \\
+		1.3 & Die Applikation erlaubt den Zugriff auf alle gefundenen, validen Dateien. & 1 \\
+		1.4 & Bilder können angeschaut werden, Musik kann angehört werden. & 1 \\
+		1.5 & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. & 2 \\
+		1.6 & Die Applikation kann jederzeit beendet werden. & 1 \\
+		1.7 & Hände werden abstrakt dargestellt. & 2 \\
+		1.8 & Die Applikation hat eine stetige Framerate von mindestens 60fps. & 1 \\
+		\multicolumn{3}{l}{\textbf{2. Übersicht (Bilder)}} \\ \nopagebreak \midrule
+		2.1 & Elemente können in einem 3D-Karussell dargestellt werden. & 1 \\
+		2.2 & Elemente können selektiert werden. & 2 \\
+		2.3 & Elemente können getaggt werden. & 3 \\
+		2.4 & Es kann auf ein bestimmtes Element fokussiert werden (siehe Detailansicht). & 1 \\
+		2.5 & Es ist eine Mehrfachselektierung möglich. & 3 \\
+		2.6 & Elemente können in anderen Anordnungen dargestellt werden (Tunnel, Fluss, Fläche, Würfel, etc.) & 3 \\
+		\multicolumn{3}{l}{\textbf{3. Detailansicht (Bilder)}} \\ \nopagebreak \midrule
+		3.1 & Bild kann vergrössert und verkleinert werden. & 1 \\
+		3.2 & Bild kann gelöscht werden & 2 \\
+		3.3 & Ein (3D)-Histogramm des Bildes wird angezeigt. & 3 \\
+		3.4 & Die Metadaten von Fotos werden dargestellt & 4 \\
+		3.5 & Der Hintergrund passt sich den Metadaten entsprechend an & 5 \\
+		3.6 & Es können zusätzliche Versionen des Bildes (inkl. Histogram) angezeigt werden und mit Punktoperationen verändert werden. & 4 \\
+		3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. \\
+		\multicolumn{3}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
+		4.1 & Unterstützt MP3 und WAVE. & 1 \\
+		4.2 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & 4 \\
+		4.3 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt & 1 \\
+		4.4 & Dateien können nach Album, Genre und Jahr gruppiert werden & 3 \\
+		4.5 & Dateien können ungruppiert dargestellt werden. & 5 \\
+		4.6 & Alben können anhand ihres Covers wie Bilder dargestellt werden. & 3 \\
+		\multicolumn{3}{l}{\textbf{5. Detailansicht (Musik)}} \\ \midrule
+		5.1 & Album mit einer Liste von Liedern wird dargestellt. & 1 \\
+		5.2 & Eine Datei kann zur Wiedergabe ausgewählt werden. & 1 \\
+		5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm) & 2 \\
+		5.4 & Informationen zum Artisten werden dargestellt (Ort, Beschreibung, Gründungsjahr) & 3 \\
+		\multicolumn{3}{l}{\textbf{6. Indexierung}} \\ \nopagebreak \midrule
+		6.1 & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. & 1 \\
+		6.2 & Die gefundenen Dateien werden mit diversen Kennwerten indexiert. & 1 \\
+		6.3 & Die Indexierung kann innerhalb der Applikation durchgeführt werden. & 4 \\
+		\multicolumn{3}{l}{\textbf{7. Sonstige Funktionen}} \\ \midrule
+		7.1 & Es können Filter über die Musik gelegt werden (Low-Pass, High-Pass, Compressor, etc.) & 4 \\
+		7.2 & Es ist eine Netzwerkfunktion vorhanden, die es erlaubt, die Fotosammlung zu zwei anzuschauen. & 5 \\
+		7.3 & Bildergruppen können als "Diashow" angeschaut werden. & 4 \\
+		7.4 & Gesamtstatistiken können angezeigt werden (Bildalter / Anzahl, Auflösung / Anzahl, Auflösung / Anzahl, Kartenchart mit Anzahl Fotos) & 3 \\
+		\caption{Pakete}
+		\label{tab:pakete}
+	\end{longtable}
+
+%\end{table}
+
+\section{Sonstige Spezifikationen}
+
+\begin{itemize}
+	\item Die Applikation wird aufgeteilt in eine Unity-Applikation und einen Indexer.
+	\item Die Unity-Applikation wird erstellt mit Unity 5 Personal.
+	\item Der Indexer wird erstellt mit C\# für das .NET Framework 4.
+	\item Für die Speicherung der Daten wir deine SQLite-Datenbank verwendet.
+	\item Als Entwicklungsumgebung wird Visual Studio 2012 benutzt.
+\end{itemize}
+
+
+\section{Use-Cases}
+
+(Use-Cases mit Gesten)
+
+\section{Designskizzen}
+
+(Skizzen und Abläufe)

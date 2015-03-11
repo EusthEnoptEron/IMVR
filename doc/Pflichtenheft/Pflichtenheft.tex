@@ -8,8 +8,8 @@
 %---------------------------------------------------------------------------
 \documentclass[
 	a4paper,					% paper format
-	10pt,							% fontsize
-	twoside,					% double-sided
+	12pt,							% fontsize
+%	twoside,					% double-sided
 	openright,				% begin new chapter on right side
 	notitlepage,			% use no standard title page
 	parskip=half,			% set paragraph skip to half of a line
@@ -29,7 +29,10 @@
 \usepackage[ansinew]{inputenc}  							% Windows - load extended character set (ISO 8859-1)
 \usepackage[T1]{fontenc}											% hyphenation of words with ä,ö and ü
 \usepackage{textcomp}													% additional symbols
+\usepackage{longtable}
 \usepackage{ae}																% better resolution of Type1-Fonts 
+\usepackage{floatrow}
+\usepackage{wrapfig}
 \usepackage{fancyhdr}													% simple manipulation of header and footer 
 \usepackage{etoolbox}													% color manipulation of header and footer
 \usepackage{graphicx}                      		% integration of images
@@ -126,7 +129,6 @@
 \settocdepth{section}														% Set depth of toc
 \pagenumbering{roman}														
 %---------------------------------------------------------------------------
-
 \input{vorspann/titel}					% Titel der Arbeit aus Datei titel.tex lesen
 \input{vorspann/version}				% Versionsnummer und -datum aus Datei version.tex lesen
 
@@ -148,15 +150,18 @@
 \renewcommand{\footrulewidth}{0pt} 				% no bottom stripline
 
 \pagestyle{plain}
+
 %---------------------------------------------------------------------------
 
 
 % Title Page and Abstract
 %---------------------------------------------------------------------------
+\newgeometry{twoside}
 %\include{vorspann/titelseite_ohne_bild}		% activate for Titelseite ohne Bild
 \include{vorspann/titelseite_mit_bild}			% activate for Titelseite mit Bild
 \include{vorspann/versionen}
 \cleardoubleemptypage
+\restoregeometry
 \setcounter{page}{1}
 %\cleardoublepage
 %\phantomsection 
@@ -176,9 +181,12 @@
 \pagenumbering{arabic}
 
 \include{kapitel/einleitung}
-\include{kapitel/projektstruktur}
-\include{kapitel/zielbestimmung}
-\include{kapitel/schlussfolgerungen}
+\include{kapitel/vision}
+\include{kapitel/anforderungen}
+\include{kapitel/prototyp}
+\include{kapitel/organisation}
+\include{kapitel/tests}
+
 %---------------------------------------------------------------------------
 
 % Selbständigkeitserklärung
@@ -230,11 +238,11 @@
 
 % Attachment:
 %---------------------------------------------------------------------------
-\appendix
-\settocdepth{section}
-\include{anhang/beispielanhang}
-\include{anhang/beispielanhangB}
-\include{anhang/inhaltCDROM}
+%\appendix
+%\settocdepth{section}
+%\include{anhang/beispielanhang}
+%\include{anhang/beispielanhangB}
+%\include{anhang/inhaltCDROM}
 %---------------------------------------------------------------------------
 
 %---------------------------------------------------------------------------

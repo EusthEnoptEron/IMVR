@@ -1,0 +1,33 @@
+\chapter{Prototyp}
+
+In der Inception-Phase wurde ein Prototyp geschrieben, um zu testen, ob Unity in der Lage ist, Bilder und Musik so zu manipulieren, wie es die Anforderungen verlangen.
+
+\section{Implementierung}
+
+Der Prototyp besteht aus zwei Teilen: dem Unity-Programm und dem Indexer, der im 
+Hintergrund Infos über Dateien sammelt. Zwischen den beiden Prozessen gibt es eine 
+dateibasierte SQLite Datenbank, auf die mit normalem SQL oder ORM-Modellen zugegriffen 
+werden kann.
+
+Um Bilddateien zu analysieren, wird ImageMagick, welches bereits eine Vielzahl von 
+Kennwerten zurückgibt, verwendet, da dieses über ein praktisches C\#-Interface 
+verfügt.
+
+Musikdateien werden noch nicht analysiert. Dies kann jedoch mithilfe des jMIR-Projekts, der VAMP-Plugins und der Echo Nest API erreicht werden. Die Visualisierung der Musik wurde mit der NAudio Library realisiert - es ist allerdings möglich, die nötigen Werte direkt über die Unity-API zu ermitteln.
+
+Alles in allem zeigt das Unity-Programm, dass es ohne Ruckeln möglich ist, 100 Bilder zu laden und zu 
+sortieren. Die anfänglichen +100 Draw-Calls konnten auf 2 reduziert werden.
+
+\section{Probleme}
+
+In Sachen Bilder gibt es ein Problem, das es zu überwinden gilt: Unity erlaubt es nicht, 
+Texturen asynchron zu laden. Texturen der Grösse 256x256 brauchen nach einer Optimierung 
+etwa 1ms zum Laden, was für eine Framerate von 60fps noch verkraftbar ist. Grössere 
+Texturen (512, 1024) erreichen jedoch schnell eine Ladezeit von 18-50ms, was sich 
+langsam aber sicher bemerkbar macht.
+
+Eine Möglichkeit dieses Problem zu lösen, findet sich in den nativen Plugins: Es ist in Unity 
+möglich, DirectX (oder OpenGL) Code in C++ zu schreiben. Mit dieser Methode könnte man evtl. 
+die Texturen besser allozieren.
+
+Einfacher wäre es allerdings, alle nötigen Bilder einfach vorzuladen.

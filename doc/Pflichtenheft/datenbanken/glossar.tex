@@ -1,4 +1,14 @@
+\usepackage{xparse}
+\DeclareDocumentCommand{\newdualentry}{ O{} O{} m m m m } {
+	\newglossaryentry{gls-#3}{name={#5},text={#5\glsadd{#3}},
+		description={#6},#1
+	}
+	\newacronym[see={[Glossary:]{gls-#3}},#2]{#3}{#4}{#5\glsadd{gls-#3}}
+}
 
-\newglossaryentry{BibTeX}{name={BibTeX},description={Programm zur Erstellung von Literaturangaben und -verzeichnissen in \TeX- oder \LaTeX-Dokumenten}}
-\newglossaryentry{StwVrz}{name={Stichwortverzeichnis},description={Verzeichnis mit Stichworten aus dem Text}}
+
+\newglossaryentry{label}{name={name},description={description}}
 \newacronym{hmd}{HMD}{Head-Mounted Display}
+\newacronym{vr}{VR}{Virtual Reality}
+%\newglossaryentry{ipd}{name={IPD},description={Beschreibt den Augenabstand.}}
+\newdualentry{ipd}{IPD}{Inter-Pupillary Distance}{Beschreibt den Augenabstand und stellt ein wichtiges Mass für die stereoskopische Darstellung von Bildern dar}
