@@ -149,3 +149,4 @@ node_modules
 /src/AuxiliaryTools/**/bin
 /src/*.suo
 /src/Application/Assets/Standard Assets
+/doc/Pflichtenheft/Pflichtenheft.pdf
