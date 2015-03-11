@@ -1,10 +1,10 @@
-\chapter{Vision ``GalleryVR''}
+\chapter{Vision ``IMVR''}
 
 Die Vision soll dazu dienen, einen Überblick über die Applikation zu geben, die im Rahmen der Bachelorarbeit erstellt wird.
 
 \section{Problemstellung}
 
-Es soll eine Applikation, ``GalleryVR'', entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bilder und die Musik des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
+Es soll eine Applikation namens ``\gls{imvr}'' entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bilder- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
 
 Zusätzlich dazu soll die Leap Motion dazu verwendet werden, um vollständige Handfreiheit zu gewähren: Der Anwender soll komplett ohne Maus und Tastatur imstande sein, sich durch seine Bilder zu navigieren.
 
@@ -55,9 +55,9 @@ Die Daten, welche diese API liefert, sind in sogenannte ``Frames'' gruppiert. Ei
 	\label{fig:leap1}
 \end{figure}
 
-Durch diese Frames kann man auf die Daten der Hände zugreifen. Jede Hand erhält eine ID, womit man gleiche Hände Frame-übergreifend identifizieren kann, sowie die dazugehörenden Koordinaten und Drehungen. Auf Abbildung 2 wird ersichtlich, dass sich die Koordinaten in einem rechtshändigen Koordinatensystem befinden, wobei die Y-Achse nach oben zeigt und die Masse in Millimeter angegeben sind. Die Koordinaten der Finger sind innerhalb von Finger-Instanzen gruppiert, welche wiederum ihre Gelenke als Instanzen einer Joint-Klasse zur Verfügung stellen.
+Durch diese Frames kann man auf die Daten der Hände zugreifen. Jede Hand erhält eine ID, womit man gleiche Hände Frame-übergreifend identifizieren kann, sowie die dazugehörenden Koordinaten und Drehungen. Auf Abbildung \ref{fig:leap1} wird ersichtlich, dass sich die Koordinaten in einem rechtshändigen Koordinatensystem befinden, wobei die Y-Achse nach oben zeigt und die Masse in Millimeter angegeben sind. Die Koordinaten der Finger sind innerhalb von Finger-Instanzen gruppiert, welche wiederum ihre Gelenke als Instanzen einer Joint-Klasse zur Verfügung stellen.
 
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{bilder/leap2}
 	\caption{Das Sichtfeld der Leap Motion.}
@@ -65,7 +65,7 @@ Durch diese Frames kann man auf die Daten der Hände zugreifen. Jede Hand erhält 
 	\label{fig:leap2}
 \end{figure}
 
-Die Leap Motion hat ungefähr eine Reichweite von einem Meter, wobei das Interaktionsfeld einer Form, wie in Abbildung 3 ersichtlich ist, entspricht. Das Sichtfeld liegt bei 150° in vertikaler und 120° in horizontaler Richtung.
+Die Leap Motion hat ungefähr eine Reichweite von einem Meter, wobei das Interaktionsfeld einer Form, wie in Abbildung \ref{fig:leap2} ersichtlich ist, entspricht. Das Sichtfeld liegt bei 150° in vertikaler und 120° in horizontaler Richtung.
 
 
 \subsection{Unity 5}
@@ -75,3 +75,30 @@ Unity ist eine Entwicklungsumgebung und eine Spiel-Engine, die momentan aufgrund
 Am 3. März 2015 machte Unity einen Versionssprung und ist nun als Unity 5 erhältlich. Neben anderen Neuerungen sind jetzt alle Funktionen, für die früher eine kostenpflichtige Lizenz erworben werden musste, auch in der freien Version erhältlich, was auch für dieses Projekt einen grösseren Spielraum bedeutet.
 
 In diesem Projekt wurde Unity wegen der angenehmen Lernkurve und der guten Integrierung mit der Oculus Rift und der Leap Motion für den Einsatz gewählt. Wie bereits erwähnt ist es leicht, schnell zu Ergebnissen zu kommen und die Entwicklungsumgebung verwendet die zwei Programmiersprachen für die Entwicklung, die der Verfasser dieses Dokuments am besten beherrscht.
+
+\section{Anwendung}
+
+Innerhalb von \gls{imvr} wird die Leap Motion mit einer Halterung an der Oculus Rift befestigt, welche auf der offiziellen Website von Leap Motion für rund \$15 erhältlich ist. Wie in Abbildung \ref{fig:uebersicht} ersichtlich ist, sind beide Geräte unter Anderem per USB am PC befestigt und senden darüber ihre Daten an die entsprechenden Services. Diese leiten wiederum die ausgewerteten Daten durch öffentliche APIs an Unity bzw. IMVR weiter.
+
+\afterpage {
+\begin{figure}[t!]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/systemuebersicht}
+	\caption{Eine Übersicht der Technologien und wie sie verbunden sind.}
+	\label{fig:uebersicht}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.1\linewidth} p{0.3\linewidth} p{0.5\linewidth}}
+		\textbf{Nr.} & \textbf{Komponente} & \textbf{Beschreibung} \\ \midrule
+		1. & Oculus Rift DK2 & \gls{hmd} für den grafischen Output. \\
+		2. & Leap Motion & Gerät, welches Hände erkennt und ihre Koordinaten an den Computer sendet. \\
+		3. & Oculus Rift Kamera & Kamera, welche seit dem DK2 für das örtliche Tracking zuständig ist. \\
+		4. & Computer & Host-System für IMVR. \\
+		5. & Benutzer & Benutzer, der die Oculus Rift trägt und mit seinen Händen das Programm steuert. \\
+	\end{tabular}
+\end{table}
+}
+
+\clearpage
