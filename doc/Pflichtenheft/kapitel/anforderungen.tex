@@ -4,7 +4,7 @@ In diesem Kapitel sollen die Anforderungen, die in der Vision grob geschildert w
 
 \section{Funktionale Anforderungen}
 
-In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität von 1 bis 5, wobei eine tiefere Zahl für eine höhere Priorität steht.
+In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität von 1 bis 5, wobei eine tiefere Zahl für eine höhere Priorität steht. Grundsätzlich kann gesagt werden, dass alle Anforderungen, die mit einer 1 deklariert werden, implementiert werden müssen und alle Anforderungen, die mit einer 5 deklariert werden, nur Ideen sind, welche mit hoher Wahrscheinlichkeit nicht implementiert werden können.
 
 %\begin{table}[H]
 	\begin{longtable}{p{0.06\textwidth} p{0.7\textwidth} p{0.13\textwidth}} \toprule %{p{0.13\textwidth} p{0.75\textwidth}} \toprule
@@ -18,7 +18,7 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 		1.5 & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. & 2 \\
 		1.6 & Die Applikation kann jederzeit beendet werden. & 1 \\
 		1.7 & Hände werden abstrakt dargestellt. & 2 \\
-		1.8 & Die Applikation hat eine stetige Framerate von mindestens 60fps. & 1 \\
+		1.8 & Die Applikation erreicht eine stetige Framerate von mindestens 60fps auf dem Referenzsystem\footnote{Intel(R) Xeon CPU E5-1650 v3 @ 2.50Ghz mit 32GB RAM und einer NVIDIA GeForce GTX 980 Grafikkarte.}. & 1 \\
 		\multicolumn{3}{l}{\textbf{2. Übersicht (Bilder)}} \\ \nopagebreak \midrule
 		2.1 & Elemente können in einem 3D-Karussell dargestellt werden. & 1 \\
 		2.2 & Elemente können selektiert werden. & 2 \\
@@ -29,6 +29,7 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 		2.7 & Bilder können nach Farbton, Sättigung und Helligkeit sortiert werden. & 1 \\
 		2.8 & Bilder können alphabetisch und chronologisch sortiert werden. & 2 \\
 		2.9 & Bilder können nach Dateiordner gruppiert werden. & 3 \\
+		2.10& Bilder können nach Kennwerten (Varianz, Entropie) sortiert werden & 3 \\
 		\multicolumn{3}{l}{\textbf{3. Detailansicht (Bilder)}} \\ \nopagebreak \midrule
 		3.1 & Bild kann vergrössert und verkleinert werden. & 1 \\
 		3.2 & Bild kann gelöscht werden & 2 \\
@@ -36,10 +37,10 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 		3.4 & Die Metadaten von Fotos werden dargestellt & 4 \\
 		3.5 & Der Hintergrund passt sich den Metadaten entsprechend an & 5 \\
 		3.6 & Es können zusätzliche Versionen des Bildes (inkl. Histogram) angezeigt werden und mit Punktoperationen verändert werden. & 4 \\
-		3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. \\
+		3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. & 5 \\
 		\multicolumn{3}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
 		4.1 & Unterstützt MP3 und WAVE. & 1 \\
-		4.2 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & 4 \\
+		4.2 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & 5 \\
 		4.3 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt & 1 \\
 		4.4 & Dateien können nach Album, Genre und Jahr gruppiert werden & 3 \\
 		4.5 & Dateien können ungruppiert dargestellt werden. & 5 \\
@@ -47,7 +48,7 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 		\multicolumn{3}{l}{\textbf{5. Detailansicht (Musik)}} \\ \midrule
 		5.1 & Album mit einer Liste von Liedern wird dargestellt. & 1 \\
 		5.2 & Eine Datei kann zur Wiedergabe ausgewählt werden. & 1 \\
-		5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm) & 2 \\
+		5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm). & 2 \\
 		5.4 & Informationen zum Artisten werden dargestellt (Ort, Beschreibung, Gründungsjahr) & 3 \\
 		\multicolumn{3}{l}{\textbf{6. Indexierung}} \\ \nopagebreak \midrule
 		6.1 & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. & 1 \\
@@ -72,13 +73,65 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 	\item Der Indexer wird erstellt mit C\# für das .NET Framework 4.
 	\item Für die Speicherung der Daten wird eine SQLite-Datenbank verwendet.
 	\item Als Entwicklungsumgebung wird Visual Studio 2012 benutzt.
+	\item Die Applikation ist auf Englisch.
 \end{itemize}
-
 
 \section{Use-Cases}
 
-(Use-Cases mit Gesten)
+In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretisierung diverses Abläufe dienen soll.
+
+\subsection{UC1: Starten der Applikation}
+\label{sec:uc1}
+
+\begin{enumerate}
+	\item Der Benutzer startet die Applikation.
+	\item Er setzt sein Oculus Rift DK2 mit Leap Motion auf.
+	\item \gls{imvr} fordert den Benutzer auf, sich in eine angenehme Sitzposition zu bewegen und die Leertaste zu drücken.
+	\item Der Benutzer drückt die Leertaste.
+	\item \gls{imvr} gibt dem Benutzer eine Ansicht auf seine Bilder auf, sortiert nach Farbtönen.
+\end{enumerate}
+
+\subsection{UC2: Abbruch der Verbindung zur Leap Motion}
+\label{sec:uc2}
+
+\begin{enumerate}
+	\item Die Leap Motion wird nicht (mehr) erkannt.
+	\item \gls{imvr} zeigt dem Benutzer eine Warnung als Overlay an.
+\end{enumerate}
+
+\subsection{UC3: Beendung der Applikation}
+\label{sec:uc3}
+
+\begin{enumerate}
+	\item Der Benutzer öffnet das Hauptmenü.
+	\item Er wählt den Eintrag für das Schliessen der Applikation.
+	\item \gls{imvr} zeigt einen Confirm-Dialog an.
+	\item Die Applikation schliesst, falls der Dialog bestätigt wurde. 
+\end{enumerate}
+
+\subsection{UC4: Wechseln zur Musikansicht}
+\label{sec:uc4}
+
+\begin{enumerate}
+	\item Der Benutzer durchgeht UC1.
+	\item Er öffnet das Hauptmenü.
+	\item Er wählt das Element für Musik.
+	\item \gls{imvr} wechselt zur Musikansicht.
+\end{enumerate}
+
+Alternative Idee: Klatschen
+
 
 \section{Designskizzen}
 
 (Skizzen und Abläufe)
+
+\section{Gesten}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{p{0.15\linewidth} p{0.4\linewidth} p{0.2\linewidth} p{0.2\linewidth}}
+		\textbf{Kontext} & \textbf{Aktion} & \textbf{Geste} & \textbf{Sprachkommando} \\ \midrule
+		Überall & Öffnen des Hauptmenüs & & Menu \\
+	\end{tabular}
+\end{table}
