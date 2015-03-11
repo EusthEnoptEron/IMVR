@@ -137,8 +137,17 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 node_modules
-/src/Assets/Plugins
-/src/Assets/ThirdParty
+/src/Application/Assets/Plugins
+/src/Application/Assets/ThirdParty
 *.unitypackage
-/src/Assets/Plugins.meta
-/src/Assets/ThirdParty.meta
+/src/Application/Assets/Plugins.meta
+/src/Application/Assets/ThirdParty.meta
+/dist
+/src/Application/*.sln
+/src/Application/*.csproj
+/src/Application/*.suo
+/src/AuxiliaryTools/**/bin
+/src/*.suo
+/src/Application/Assets/Standard Assets
+/doc/Pflichtenheft/Pflichtenheft.pdf
+/src/AuxiliaryTools/*.suo
