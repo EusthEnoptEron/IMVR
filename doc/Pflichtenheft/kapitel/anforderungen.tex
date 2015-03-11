@@ -1,4 +1,4 @@
-\chapter{Anforderungen}
+\chapter{Spezifikationen}
 
 In diesem Kapitel sollen die Anforderungen, die in der Vision grob geschildert wurden, konkretisiert und aufgelistet werden.
 
@@ -72,7 +72,7 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 	\item Die Unity-Applikation wird erstellt mit Unity 5 Personal.
 	\item Der Indexer wird erstellt mit C\# für das .NET Framework 4.
 	\item Für die Speicherung der Daten wird eine SQLite-Datenbank verwendet.
-	\item Als Entwicklungsumgebung wird Visual Studio 2012 benutzt.
+	\item Als Entwicklungsumgebung wird Visual Studio 2013 benutzt.
 	\item Die Applikation ist auf Englisch.
 \end{itemize}
 
@@ -130,8 +130,14 @@ Alternative Idee: Klatschen
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{p{0.15\linewidth} p{0.4\linewidth} p{0.2\linewidth} p{0.2\linewidth}}
+	\begin{tabular}{m{0.15\linewidth} m{0.4\linewidth} m{0.2\linewidth} m{0.2\linewidth}}
 		\textbf{Kontext} & \textbf{Aktion} & \textbf{Geste} & \textbf{Sprachkommando} \\ \midrule
-		Überall & Öffnen des Hauptmenüs & & Menu \\
+		Überall & Öffnen des Hauptmenüs & \includegraphics[height=0.08\textheight]{bilder/geste_menu} & Menu \\
+		Übersicht & Scrollen & \includegraphics[height=0.08\textheight]{bilder/geste_scroll} & - \\
+		Detail & Skalieren des aktiven Bildes & \includegraphics[height=0.08\textheight]{bilder/geste_scale} & - \\
+		Detail & Rotieren des aktiven Bildes & \includegraphics[height=0.08\textheight]{bilder/geste_rotate} & - \\
+		Überall & Anzeigen von kontextsensitiven Statistiken & \includegraphics[height=0.08\textheight]{bilder/geste_statistics} & - \\
+		Dialog & Annehmen / Ablehnen & \includegraphics[height=0.08\textheight]{bilder/geste_daumen} & - \\
+		Detail & Ansicht verlassen & \includegraphics[height=0.08\textheight]{bilder/geste_weg} & - \\
 	\end{tabular}
 \end{table}
