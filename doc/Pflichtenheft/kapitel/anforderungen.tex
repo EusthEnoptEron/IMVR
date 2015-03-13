@@ -40,7 +40,7 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 	3.6 & Der Hintergrund passt sich den Metadaten entsprechend an & 5 \\
 	3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. & 5 \\
 	\multicolumn{3}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
-	4.1 & Unterstützt MP3 und WAVE. & 1 \\
+	4.1 & Unterstützt mit ID3-Tags versehene MP3. & 1 \\
 	4.2 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt & 1 \\
 	4.3 & Dateien können nach Album, Genre und Jahr gruppiert werden & 3 \\
 	4.4 & Alben können anhand ihres Covers wie Bilder dargestellt werden. & 3 \\
@@ -100,6 +100,7 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc2}
 
 \begin{enumerate}
+	\item Der Benutzer durchläuft UC1.
 	\item Die Leap Motion wird nicht (mehr) erkannt.
 	\item \gls{imvr} zeigt dem Benutzer eine Warnung als Overlay an.
 \end{enumerate}
@@ -108,7 +109,8 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc3}
 
 \begin{enumerate}
-	\item Der Benutzer öffnet das Hauptmenü.
+	\item Der Benutzer durchläuft UC1.
+	\item Er öffnet das Hauptmenü.
 	\item Er wählt den Eintrag für das Schliessen der Applikation.
 	\item \gls{imvr} zeigt einen Confirm-Dialog an.
 	\item Die Applikation schliesst, falls der Dialog bestätigt wurde. 
@@ -118,7 +120,7 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc4}
 
 \begin{enumerate}
-	\item Der Benutzer durchgeht UC1.
+	\item Der Benutzer durchläuft UC1.
 	\item Er öffnet das Hauptmenü.
 	\item Er wählt das Element für Musik.
 	\item \gls{imvr} wechselt zur Musikansicht.
@@ -136,8 +138,29 @@ Alternative Idee: Klatschen
 	\item Der Indexer scannt beim nächsten Durchlauf den neuen Ordner.
 \end{enumerate}
 
+\subsection{UC6: Abspielen von Hintergrundmusik}
+
+\begin{enumerate}
+	\item Der Benutzer durchläuft UC4.
+	\item Er wählt einen Artisten aus.
+	\item IMVR wechselt zu einer Detailansicht und zeigt alle verfügbaren Alben des Artisten an.
+	\item Der Benutzer wählt ein Lied mit den Fingern aus.
+	\item IMVR spielt das Lied im Hintergrund ab und zeigt einen Fortschrittsbalken.
+\end{enumerate}
+
+\subsection{Use-Case Diagramm}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/IMVR_UC}
+	\caption{Eine kurze Übersicht der definierten Use-Cases.}
+\end{figure}
+
+\clearpage
 
 \section{Designskizzen}
+
+Es folgen ein paar frühe Skizzen, die den Aufbau der Applikation illustrieren.
 
 \begin{figure}[H]
 	\centering
@@ -164,8 +187,11 @@ Alternative Idee: Klatschen
 	\caption{Detailansicht eines Artisten mit Liste von Alben und Metadaten.}	
 \end{figure}
 
+\clearpage
 
 \section{Gesten}
+
+Es folgt eine Tabelle mit ein paar möglichen Gesten, die in der Applikation zum Einsatz kommen werden.
 
 \begin{table}[H]
 	\centering

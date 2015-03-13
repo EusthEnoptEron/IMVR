@@ -5,13 +5,37 @@ Dieses Kapitel definiert eine Reihe von Tests, mit denen das Projekt geprüft wer
 \section{Indexer}
 
 \begin{description}
-	\item [T1 (A6.1)] Der Benutzer fügt seine ``Eigenen Bilder'' und seinen Windows-Ordner zur Library hinzu.
+	\item [T1 (Anforderung 6.1)] Der Benutzer fügt seine ``Eigenen Bilder'' und seinen Windows-Ordner zur Library hinzu.
 	\item [ $\blacktriangleright$] Der Indexer durchläuft den Ordner fehlerfrei und die Anzahl indexierter Files, die er ausgibt, stimmt. 
-	\item [T2 (A6.2)] Der Benutzer öffnet die Applikation.
+	\item [T2 (Anforderung 6.2)] Der Benutzer öffnet die Applikation.
 	\item [ $\blacktriangleright$] Alle hinzugefügten Bilder werden angezeigt und sind korrekt sortiert.
-	\item [T3 (A6.3)] Der Benutzer schliesst die Applikation und löscht den Windows-Ordner von der Library und startet den Indexer.
+	\item [T3 (Anforderung 6.3)] Der Benutzer schliesst die Applikation und löscht den Windows-Ordner von der Library und startet den Indexer.
 	\item [ $\blacktriangleright$] Die Applikation zeigt beim nächsten Start nur noch die Dateien im Ordner ``Eigene Bilder''.
 \end{description}
 
 \section{Bilder}
 
+\begin{description}
+	\item [$\bullet$] Der Benutzer fügt seine ``Eigenen Bilder'' zur Library hinzu.
+	\item [T1 (Anforderung 2.1)] Der Benutzer öffnet die Applikation IMVR.
+		\item [ $\blacktriangleright$] Ein 3D-Karussell (oder anders 3D-Konstrukt) mit seinen Bildern wird angezeigt.
+	\item [T2 (Anforderung 2.2)] Der Benutzer öffnet das Menü und sortiert nach Helligkeit.
+		\item [ $\blacktriangleright$] Die Elemente werden neu sortiert und erscheinen geordnet nach Helligkeit.
+	\item [T3 (Anforderung 2.4)] Der Benutzer berührt mit den Händen eines der Bilder.
+		\item [ $\blacktriangleright$] Die Übersicht verblasst und das selektierte Bild wird vergrössert.
+	\item [T4 (Anforderung 3.1)] Der Benutzer bewegt seine Hände auseinander entsprechend der Gestentabelle.
+		\item [ $\blacktriangleright$] Das Bild vergrössert sich entsprechend.
+	\item [T5)] Der Benutzer wischt mit der Hand entsprechend der Gestentabelle.
+		\item [ $\blacktriangleright$] Die Detailansicht wird verlassen und die Übersicht kommt wieder in den Vordergrund.
+\end{description}
+
+\section{Musik}
+
+\begin{description}
+	\item [T1 (Anforderung 4.1)] Der Benutzer fügt seine ``Eigene Musik'' zur Library hinzu und startet den Indexer.
+	\item [ $\blacktriangleright$] Alle MP3 Dateien mit korrekten ID3-Tags werden laut Log erkannt.
+	\item [T2 (Anforderung 4.2)] Der Benutzer öffnet die Applikation und wechselt in den Musikmodus.
+	\item [ $\blacktriangleright$] Die soeben hinzugefügte Musik erscheint alphabetisch geordnet.
+	\item [T4 (Anforderung 1.5)] Der Benutzer öffnet das Hauptmenü und beendet die Applikation.
+		\item [ $\blacktriangleright$] Die Applikation fragt einmal nach und beendet dann.
+\end{description}
