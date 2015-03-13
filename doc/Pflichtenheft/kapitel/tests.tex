@@ -1,12 +1,17 @@
 \chapter{Testszenarien}
 
-Dieses Kapitel definiert eine Anzahl von Tests, mit denen das Projekt geprüft werden kann und soll.
+Dieses Kapitel definiert eine Reihe von Tests, mit denen das Projekt geprüft werden kann und soll.
 
 \section{Indexer}
 
 \begin{description}
-%	\item [T7.1] Der Benutzer fügt seine ``Eigenen Bilder'' und den Windows-Ordner zur Library hinzu.
-%	\item [T7.2] Er lässt den Indexer durchlaufen, startet die Datei und sieht seine Dateien.
-%	\item [	Soll] Er 
-	
+	\item [T1 (A6.1)] Der Benutzer fügt seine ``Eigenen Bilder'' und seinen Windows-Ordner zur Library hinzu.
+	\item [ $\blacktriangleright$] Der Indexer durchläuft den Ordner fehlerfrei und die Anzahl indexierter Files, die er ausgibt, stimmt. 
+	\item [T2 (A6.2)] Der Benutzer öffnet die Applikation.
+	\item [ $\blacktriangleright$] Alle hinzugefügten Bilder werden angezeigt und sind korrekt sortiert.
+	\item [T3 (A6.3)] Der Benutzer schliesst die Applikation und löscht den Windows-Ordner von der Library und startet den Indexer.
+	\item [ $\blacktriangleright$] Die Applikation zeigt beim nächsten Start nur noch die Dateien im Ordner ``Eigene Bilder''.
 \end{description}
+
+\section{Bilder}
+
