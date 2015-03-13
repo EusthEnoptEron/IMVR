@@ -7,61 +7,65 @@ In diesem Kapitel sollen die Anforderungen, die in der Vision grob geschildert w
 In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität von 1 bis 5, wobei eine tiefere Zahl für eine höhere Priorität steht. Grundsätzlich kann gesagt werden, dass alle Anforderungen, die mit einer 1 deklariert werden, implementiert werden müssen und alle Anforderungen, die mit einer 5 deklariert werden, nur Ideen sind, welche mit hoher Wahrscheinlichkeit nicht implementiert werden können.
 
 %\begin{table}[H]
-	\begin{longtable}{p{0.06\textwidth} p{0.7\textwidth} p{0.13\textwidth}} \toprule %{p{0.13\textwidth} p{0.75\textwidth}} \toprule
-		\textbf{Nr.} & \textbf{Beschreibung} & \textbf{Priorität} \\ \midrule
-		\endhead
-		\multicolumn{3}{l}{\textbf{1. Elementares}} \\ \midrule
-		1.1 & Die Applikation nutzt die Oculus Rift im direkten Modus für die Ausgabe. & 1 \\
-		1.2 & Die Applikation ist vollständig mit den Händen bedienbar. & 1 \\
-		1.3 & Die Applikation erlaubt den Zugriff auf alle gefundenen, validen Dateien. & 1 \\
-		1.4 & Bilder können angeschaut werden, Musik kann angehört werden. & 1 \\
-		1.5 & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. & 2 \\
-		1.6 & Die Applikation kann jederzeit beendet werden. & 1 \\
-		1.7 & Hände werden abstrakt dargestellt. & 2 \\
-		1.8 & Die Applikation erreicht eine stetige Framerate von mindestens 60fps auf dem Referenzsystem\footnote{Intel(R) Xeon CPU E5-1650 v3 @ 2.50Ghz mit 32GB RAM und einer NVIDIA GeForce GTX 980 Grafikkarte.}. & 1 \\
-		\multicolumn{3}{l}{\textbf{2. Übersicht (Bilder)}} \\ \nopagebreak \midrule
-		2.1 & Elemente können in einem 3D-Karussell dargestellt werden. & 1 \\
-		2.2 & Elemente können selektiert werden. & 2 \\
-		2.3 & Elemente können getaggt werden. & 3 \\
-		2.4 & Es kann auf ein bestimmtes Element fokussiert werden (siehe Detailansicht). & 1 \\
-		2.5 & Es ist eine Mehrfachselektierung möglich. & 3 \\
-		2.6 & Elemente können in anderen Anordnungen dargestellt werden (Tunnel, Fluss, Fläche, Würfel, etc.) & 3 \\
-		2.7 & Bilder können nach Farbton, Sättigung und Helligkeit sortiert werden. & 1 \\
-		2.8 & Bilder können alphabetisch und chronologisch sortiert werden. & 2 \\
-		2.9 & Bilder können nach Dateiordner gruppiert werden. & 3 \\
-		2.10& Bilder können nach Kennwerten (Varianz, Entropie) sortiert werden & 3 \\
-		\multicolumn{3}{l}{\textbf{3. Detailansicht (Bilder)}} \\ \nopagebreak \midrule
-		3.1 & Bild kann vergrössert und verkleinert werden. & 1 \\
-		3.2 & Bild kann gelöscht werden & 2 \\
-		3.3 & Ein (3D)-Histogramm des Bildes wird angezeigt. & 3 \\
-		3.4 & Die Metadaten von Fotos werden dargestellt & 4 \\
-		3.5 & Der Hintergrund passt sich den Metadaten entsprechend an & 5 \\
-		3.6 & Es können zusätzliche Versionen des Bildes (inkl. Histogram) angezeigt werden und mit Punktoperationen verändert werden. & 4 \\
-		3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. & 5 \\
-		\multicolumn{3}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
-		4.1 & Unterstützt MP3 und WAVE. & 1 \\
-		4.2 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & 5 \\
-		4.3 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt & 1 \\
-		4.4 & Dateien können nach Album, Genre und Jahr gruppiert werden & 3 \\
-		4.5 & Dateien können ungruppiert dargestellt werden. & 5 \\
-		4.6 & Alben können anhand ihres Covers wie Bilder dargestellt werden. & 3 \\
-		\multicolumn{3}{l}{\textbf{5. Detailansicht (Musik)}} \\ \midrule
-		5.1 & Album mit einer Liste von Liedern wird dargestellt. & 1 \\
-		5.2 & Eine Datei kann zur Wiedergabe ausgewählt werden. & 1 \\
-		5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm). & 2 \\
-		5.4 & Informationen zum Artisten werden dargestellt (Ort, Beschreibung, Gründungsjahr) & 3 \\
-		\multicolumn{3}{l}{\textbf{6. Indexierung}} \\ \nopagebreak \midrule
-		6.1 & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. & 1 \\
-		6.2 & Die gefundenen Dateien werden mit diversen Kennwerten indexiert. & 1 \\
-		6.3 & Die Indexierung kann innerhalb der Applikation durchgeführt werden. & 4 \\
-		\multicolumn{3}{l}{\textbf{7. Sonstige Funktionen}} \\ \midrule
-		7.1 & Es können Filter über die Musik gelegt werden (Low-Pass, High-Pass, Compressor, etc.) & 4 \\
-		7.2 & Es ist eine Netzwerkfunktion vorhanden, die es erlaubt, die Fotosammlung zu zweit anzuschauen. & 5 \\
-		7.3 & Bildergruppen können als "Diashow" angeschaut werden. & 4 \\
-		7.4 & Gesamtstatistiken können angezeigt werden (Bildalter / Anzahl, Auflösung / Anzahl, Auflösung / Anzahl, Kartenchart mit Anzahl Fotos) & 3 \\
-		\caption{Pakete}
-		\label{tab:pakete}
-	\end{longtable}
+\begin{longtable}{p{0.06\textwidth} p{0.7\textwidth} p{0.13\textwidth}} \toprule %{p{0.13\textwidth} p{0.75\textwidth}} \toprule
+	\textbf{Nr.} & \textbf{Beschreibung} & \textbf{Priorität} \\ \midrule
+	\endhead
+	\multicolumn{3}{l}{\textbf{1. Elementares}} \\ \midrule
+	1.1 & Die Applikation nutzt die Oculus Rift im direkten Modus für die Ausgabe. & 1 \\
+	1.2 & Die Applikation ist vollständig mit den Händen bedienbar. & 1 \\
+	1.3 & Die Applikation erlaubt den Zugriff auf alle gefundenen, validen Dateien. & 1 \\
+	1.4 & Bilder können angeschaut werden, Musik kann angehört werden. & 1 \\
+	1.5 & Die Applikation kann jederzeit beendet werden. & 1 \\
+	1.6 & Die Applikation erreicht eine stetige Framerate von mindestens 60fps auf dem Referenzsystem\footnote{Intel(R) Xeon CPU E5-1650 v3 @ 2.50Ghz mit 32GB RAM und einer NVIDIA GeForce GTX 980 Grafikkarte.}. & 1 \\
+	1.7 & Die Applikation kann min. 100'000 Dateien verarbeiten. & 1 \\
+	1.8 & Hände werden abstrakt dargestellt. & 2 \\
+	1.9 & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. & 2 \\
+	\multicolumn{3}{l}{\textbf{2. Übersicht (Bilder)}} \\ \nopagebreak \midrule
+	2.1 & Elemente können in einem 3D-Karussell dargestellt werden. & 1 \\
+	2.2 & Bilder können nach Farbton, Sättigung und Helligkeit sortiert werden. & 1 \\
+	2.3 & Elemente können selektiert werden. & 2 \\
+	2.4 & Es kann auf ein bestimmtes Element fokussiert werden (siehe Detailansicht). & 1 \\
+	2.5 & Bilder können alphabetisch und chronologisch sortiert werden. & 2 \\
+	2.6 & Elemente können getaggt werden. & 3 \\
+	2.7 & Es ist eine Mehrfachselektierung möglich. & 3 \\
+	2.8 & Elemente können in anderen Anordnungen dargestellt werden (Tunnel, Fluss, Fläche, Würfel, etc.) & 3 \\
+	2.9 & Bilder können nach Dateiordner gruppiert werden. & 3 \\
+	2.10& Bilder können nach Kennwerten (Varianz, Entropie) sortiert werden & 3 \\
+	\multicolumn{3}{l}{\textbf{3. Detailansicht (Bilder)}} \\ \nopagebreak \midrule
+	3.1 & Bild kann vergrössert und verkleinert werden. & 1 \\
+	3.2 & Bild kann gelöscht werden & 2 \\
+	3.3 & Ein (3D)-Histogramm des Bildes wird angezeigt. & 3 \\
+	3.4 & Die Metadaten von Fotos werden dargestellt & 4 \\
+	3.5 & Es können zusätzliche Versionen des Bildes (inkl. Histogram) angezeigt werden und mit Punktoperationen verändert werden. & 4 \\
+	3.6 & Der Hintergrund passt sich den Metadaten entsprechend an & 5 \\
+	3.7 & Die zusätzlichen Bilder können auch mit lokalen und globalen Operationen gefiltert werden. & 5 \\
+	\multicolumn{3}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
+	4.1 & Unterstützt mit ID3-Tags versehene MP3. & 1 \\
+	4.2 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt & 1 \\
+	4.3 & Dateien können nach Album, Genre und Jahr gruppiert werden & 3 \\
+	4.4 & Alben können anhand ihres Covers wie Bilder dargestellt werden. & 3 \\
+	4.5 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & 5 \\
+	4.6 & Dateien können ungruppiert dargestellt werden. & 5 \\
+	\multicolumn{3}{l}{\textbf{5. Detailansicht (Musik)}} \\ \midrule
+	5.1 & Album mit einer Liste von Liedern wird dargestellt. & 1 \\
+	5.2 & Eine Datei kann zur Wiedergabe ausgewählt werden. & 1 \\
+	5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm). & 2 \\
+	5.4 & Informationen zum Artisten werden dargestellt (Ort, Beschreibung, Gründungsjahr) & 3 \\
+	\multicolumn{3}{l}{\textbf{6. Indexierung}} \\ \nopagebreak \midrule
+	6.1 & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. & 1 \\
+	6.2 & Die gefundenen Dateien werden mit diversen Kennwerten indexiert. & 1 \\
+	6.3 & Dateien, die nicht mehr in einem der Medienordner liegen, werden aus dem Index gelöscht. & 1\\
+	6.4 & Die indexierten Order können innerhalb der Applikation angegeben werden & 3 \\
+	6.5 & Die Indexierung kann innerhalb der Applikation durchgeführt werden. & 4 \\
+	\multicolumn{3}{l}{\textbf{7. Sonstige Funktionen}} \\ \midrule
+	7.1 & Es können Filter über die Musik gelegt werden (Low-Pass, High-Pass, Compressor, etc.) & 4 \\
+	7.2 & Bildergruppen können als ``Diashow'' angeschaut werden. & 4 \\
+	7.3 & Es ist eine Netzwerkfunktion vorhanden, die es erlaubt, die Fotosammlung zu zweit anzuschauen. & 5 \\
+	7.4 & Gesamtstatistiken können angezeigt werden (Bildalter / Anzahl, Auflösung / Anzahl, Auflösung / Anzahl, Kartenchart mit Anzahl Fotos) & 3 \\
+	7.5 & Online-Services können als Datenquelle angegeben werden (Flickr, Spotify, etc.) & 5\\
+	\caption{Die Übersicht aller Anforderung von wichtig (1) bis unwichtig (5)}
+	\label{tab:pflichten}
+\end{longtable}
 
 %\end{table}
 
@@ -71,9 +75,10 @@ In der folgenden Tabelle sind alle Anforderungen aufgelistet mit einer Priorität
 	\item Die Applikation wird aufgeteilt in eine Unity-Applikation und einen Indexer.
 	\item Die Unity-Applikation wird erstellt mit Unity 5 Personal.
 	\item Der Indexer wird erstellt mit C\# für das .NET Framework 4.
-	\item Für die Speicherung der Daten wird eine SQLite-Datenbank verwendet.
+	\item Die Speicherung der Daten erfolgt entweder über eine Serialisierung oder eine SQLite-Datenbank.
 	\item Als Entwicklungsumgebung wird Visual Studio 2013 benutzt.
 	\item Die Applikation ist auf Englisch.
+	\item Es wird eine kurze Anleitung erstellt für die Bedienung der Applikation.
 \end{itemize}
 
 \section{Use-Cases}
@@ -95,6 +100,7 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc2}
 
 \begin{enumerate}
+	\item Der Benutzer durchläuft UC1.
 	\item Die Leap Motion wird nicht (mehr) erkannt.
 	\item \gls{imvr} zeigt dem Benutzer eine Warnung als Overlay an.
 \end{enumerate}
@@ -103,7 +109,8 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc3}
 
 \begin{enumerate}
-	\item Der Benutzer öffnet das Hauptmenü.
+	\item Der Benutzer durchläuft UC1.
+	\item Er öffnet das Hauptmenü.
 	\item Er wählt den Eintrag für das Schliessen der Applikation.
 	\item \gls{imvr} zeigt einen Confirm-Dialog an.
 	\item Die Applikation schliesst, falls der Dialog bestätigt wurde. 
@@ -113,7 +120,7 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 \label{sec:uc4}
 
 \begin{enumerate}
-	\item Der Benutzer durchgeht UC1.
+	\item Der Benutzer durchläuft UC1.
 	\item Er öffnet das Hauptmenü.
 	\item Er wählt das Element für Musik.
 	\item \gls{imvr} wechselt zur Musikansicht.
@@ -121,23 +128,81 @@ In dieser Sektion wird eine Auswahl von Use-Cases vorgestellt, die zur Konkretis
 
 Alternative Idee: Klatschen
 
+\subsection{UC5: Hinzufügen eines Medienordners}
+\label{sec:uc5}
+
+\begin{enumerate}
+	\item Der Benutzer öffnet die Datei ``library.conf''.
+	\item Er fügt eine Zeile mit dem Pfad zu seinem Ordner ein.
+	\item Er speichert die Datei.
+	\item Der Indexer scannt beim nächsten Durchlauf den neuen Ordner.
+\end{enumerate}
+
+\subsection{UC6: Abspielen von Hintergrundmusik}
+
+\begin{enumerate}
+	\item Der Benutzer durchläuft UC4.
+	\item Er wählt einen Artisten aus.
+	\item IMVR wechselt zu einer Detailansicht und zeigt alle verfügbaren Alben des Artisten an.
+	\item Der Benutzer wählt ein Lied mit den Fingern aus.
+	\item IMVR spielt das Lied im Hintergrund ab und zeigt einen Fortschrittsbalken.
+\end{enumerate}
+
+\subsection{Use-Case Diagramm}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/IMVR_UC}
+	\caption{Eine kurze Übersicht der definierten Use-Cases.}
+\end{figure}
+
+\clearpage
 
 \section{Designskizzen}
 
-(Skizzen und Abläufe)
+Es folgen ein paar frühe Skizzen, die den Aufbau der Applikation illustrieren.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{bilder/bilder_ubersicht}
+	\caption{Bilderübersicht: Eine Leiste gibt Übersicht auf den momentan sichtbaren Bereich.}	
+\end{figure}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/bilder_detail}
+	\caption{Bilderansicht: Das Bild kann frei bewegt werden und wird begleitet von Metadaten.}	
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/bilder_musik}
+	\caption{Gruppierte Bilderübersicht und Musikübersicht mit scrollbaren Elementen zur Auswahl des Artisten.}	
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/musik_detail}
+	\caption{Detailansicht eines Artisten mit Liste von Alben und Metadaten.}	
+\end{figure}
+
+\clearpage
 
 \section{Gesten}
+
+Es folgt eine Tabelle mit ein paar möglichen Gesten, die in der Applikation zum Einsatz kommen werden.
 
 \begin{table}[H]
 	\centering
 	\begin{tabular}{m{0.15\linewidth} m{0.4\linewidth} m{0.2\linewidth} m{0.2\linewidth}}
 		\textbf{Kontext} & \textbf{Aktion} & \textbf{Geste} & \textbf{Sprachkommando} \\ \midrule
 		Überall & Öffnen des Hauptmenüs & \includegraphics[height=0.08\textheight]{bilder/geste_menu} & Menu \\
+		Überall & Anzeigen von kontextsensitiven Statistiken & \includegraphics[height=0.08\textheight]{bilder/geste_statistics} & - \\
 		Übersicht & Scrollen & \includegraphics[height=0.08\textheight]{bilder/geste_scroll} & - \\
 		Detail & Skalieren des aktiven Bildes & \includegraphics[height=0.08\textheight]{bilder/geste_scale} & - \\
 		Detail & Rotieren des aktiven Bildes & \includegraphics[height=0.08\textheight]{bilder/geste_rotate} & - \\
-		Überall & Anzeigen von kontextsensitiven Statistiken & \includegraphics[height=0.08\textheight]{bilder/geste_statistics} & - \\
-		Dialog & Annehmen / Ablehnen & \includegraphics[height=0.08\textheight]{bilder/geste_daumen} & - \\
 		Detail & Ansicht verlassen & \includegraphics[height=0.08\textheight]{bilder/geste_weg} & - \\
+		Dialog & Annehmen / Ablehnen & \includegraphics[height=0.08\textheight]{bilder/geste_daumen} & - \\
 	\end{tabular}
 \end{table}

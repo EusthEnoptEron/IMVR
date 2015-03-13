@@ -4,7 +4,7 @@ Die Vision soll dazu dienen, einen Überblick über die Applikation zu geben, die 
 
 \section{Problemstellung}
 
-Es soll eine Applikation namens ``\gls{imvr}'' entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bilder- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
+Es soll eine Applikation namens ``\gls{imvr}'' entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bilder- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines stereoskopischen \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
 
 Zusätzlich dazu soll die Leap Motion dazu verwendet werden, um vollständige Handfreiheit zu gewähren: Der Anwender soll komplett ohne Maus und Tastatur imstande sein, sich durch seine Bilder zu navigieren.
 
@@ -12,11 +12,12 @@ Kurz zusammengefasst muss die Applikation:
 
 \begin{itemize}
 	\item Die Bild- und Musikbibliothek des Benutzers in stereoskopischem 3D darstellen.
-	\item Diese freihändig durchsuchbar machen mit Sortier- und Gruppierfunktion.
+	\item Diese freihändig durchsuchbar machen mit Sortier- und evtl. Gruppierfunktion.
 	\item Die Bilder betrachtbar und die Musik abspielbar machen.
 	\item Metainformationen darstellen (z.B. in Form von Diagrammen).
 \end{itemize}
 
+Zusätzlich zur Applikation selbst soll noch ein zusätzliches Tool entwickelt werden, welches im Voraus die Dateien auf dem Host-System indexiert und für die visuelle Applikation bereitstellt.
 
 \section{Technologien}
 
@@ -36,14 +37,13 @@ Hardwaremässig besteht die Rift aus einem Headset für das Bild und einer Kamera 
 \label{fig:rift1}
 \end{figure}
 
-
 Seit DK2 ist das Headset mit 40 Infrarot-LEDs bestückt, welche mit einer bestimmten Frequenz aufleuchten und von der Kamera für das Head-Tracking benutzt werden.
  
 Auf der Software-Seite wird ein Treiber auf dem Computer installiert, der nach einer Registration als Entwickler auf der offiziellen Seite erhältlich ist . Die Software erlaubt die Erstellung von Benutzerprofilen, um die \gls{ipd} korrekt einzustellen. Es ist ausserdem möglich, zwischen zwei Betriebsmodi auszuwählen: dem traditionellen Modus, wo die Rift als zweiter Bildschirm angesprochen wird, und dem neuen ``Direct Mode'', wo die Rift direkt angesprochen wird.
 
 \subsection{Leap Motion}
 
-Die Leap Motion besteht aus einem rechteckigen Gerät mit zwei Infrarotsensoren, welche deren Daten per USB auf den angeschlossenen Computer überträgt. Nach der Installation der Leap Motion Runtime läuft auf dem Computer ein Service, der diese Daten empfängt, verarbeitet und per API mit einer variablen Framerate verschiedenen Applikationen zur Verfügung stellt.
+Die \gls{leap} besteht aus einem rechteckigen Gerät mit zwei Infrarotsensoren, welche deren Daten per USB auf den angeschlossenen Computer überträgt. Nach der Installation der Leap Motion Runtime läuft auf dem Computer ein Service, der diese Daten empfängt, verarbeitet und per API mit einer variablen Framerate verschiedenen Applikationen zur Verfügung stellt.
 
 Die Daten, welche diese API liefert, sind in sogenannte ``Frames'' gruppiert. Ein Frame ist sozusagen eine Momentaufnahme der Realität, welche sich aus erkannten Händen zusammensetzt. Durchschnittlich werden pro Sekunde etwa um die 100 dieser Frames berechnet.
 
@@ -70,15 +70,15 @@ Die Leap Motion hat ungefähr eine Reichweite von einem Meter, wobei das Interakt
 
 \subsection{Unity 5}
 
-Unity ist eine Entwicklungsumgebung und eine Spiel-Engine, die momentan aufgrund ihrer Bedienungsfreundlichkeit und einer frei erhältlichen Version sehr beliebt in der Szene der Indie-Developer ist. Gleichzeitig dient sie auch als gutes Prototyping-Tool, um schnell Ideen umzusetzen.
+\gls{unity} ist eine Entwicklungsumgebung und eine Spiel-Engine, die momentan aufgrund ihrer Bedienungsfreundlichkeit und einer frei erhältlichen Version sehr beliebt in der Szene der Indie-Developer ist. Gleichzeitig dient sie auch als gutes Prototyping-Tool, um schnell Ideen umzusetzen.
 
-Am 3. März 2015 machte Unity einen Versionssprung und ist nun als Unity 5 erhältlich. Neben anderen Neuerungen sind jetzt alle Funktionen, für die früher eine kostenpflichtige Lizenz erworben werden musste, auch in der freien Version erhältlich, was auch für dieses Projekt einen grösseren Spielraum bedeutet.
+Am 3. März 2015 machte Unity einen Versionssprung und ist nun unter dem Namen ``Unity 5'' erhältlich. Neben anderen Neuerungen sind jetzt alle Funktionen, für die früher eine kostenpflichtige Lizenz erworben werden musste, auch in der freien Version erhältlich, was für dieses Projekt einen grösseren Spielraum bedeutet.
 
-In diesem Projekt wurde Unity wegen der angenehmen Lernkurve und der guten Integrierung mit der Oculus Rift und der Leap Motion für den Einsatz gewählt. Wie bereits erwähnt ist es leicht, schnell zu Ergebnissen zu kommen und die Entwicklungsumgebung verwendet die zwei Programmiersprachen für die Entwicklung, die der Verfasser dieses Dokuments am besten beherrscht.
+In diesem Projekt wurde Unity wegen der angenehmen Lernkurve und der guten Integrierung mit der Oculus Rift und der Leap Motion für den Einsatz gewählt. Wie bereits erwähnt wurde, ist es leicht, schnell zu Ergebnissen zu kommen, und die Entwicklungsumgebung unterstützt die zwei Programmiersprachen, die der Verfasser dieses Dokuments am besten beherrscht.
 
 \section{Anwendung}
 
-Innerhalb von \gls{imvr} wird die Leap Motion mit einer Halterung an der Oculus Rift befestigt, welche auf der offiziellen Website von Leap Motion für rund \$15 erhältlich ist. Wie in Abbildung \ref{fig:uebersicht} ersichtlich ist, sind beide Geräte unter Anderem per USB am PC befestigt und senden darüber ihre Daten an die entsprechenden Services. Diese leiten wiederum die ausgewerteten Daten durch öffentliche APIs an Unity bzw. IMVR weiter.
+Innerhalb von \gls{imvr} wird die Leap Motion mit einer Halterung an der Oculus Rift befestigt, welche auf der offiziellen Website von Leap Motion für rund \$15\footnote{Siehe \url{https://www.leapmotion.com/product/vr}} erhältlich ist. Wie in Abbildung \ref{fig:uebersicht} ersichtlich ist, sind beide Geräte unter Anderem per USB am PC befestigt und senden darüber ihre Daten an die entsprechenden Services. Diese leiten wiederum die ausgewerteten Daten durch öffentliche APIs an Unity bzw. IMVR weiter.
 
 \afterpage {
 \begin{figure}[t!]
