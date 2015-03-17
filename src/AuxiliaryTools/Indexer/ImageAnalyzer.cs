@@ -16,7 +16,7 @@ namespace Indexer
 {
 
 
-    public class ImageAnalyzer : AbstractConsumer<string>
+    public class ImageAnalyzer : DualNode<FileInfo, DbAction>
     {
         private class ImageMetrics
         {
@@ -28,12 +28,8 @@ namespace Indexer
             public ExifProfile Profile;
         }
 
-        private BlockingCollection<DbAction> actions;
-
-        public ImageAnalyzer(BlockingCollection<string> inCollection,
-                             BlockingCollection<DbAction> outCollection) : base(inCollection)
+        public ImageAnalyzer(int threadCount) : base(threadCount)
         {
-            this.actions = outCollection;
         }
 
         //private void CheckAtlas()
@@ -56,13 +52,13 @@ namespace Indexer
         //}
 
 
-        protected override void ProcessItem(string path)
+        protected override void ProcessItem(FileInfo path)
         {
             try
             {
                 Stopwatch watch = new Stopwatch();
 
-                using (var image = new MagickImage(path))
+                using (var image = new MagickImage(path.FullName))
                 {
                     Console.WriteLine("Consume " + path);
 
@@ -85,11 +81,12 @@ namespace Indexer
                         Width = image.Width,
                         Height = image.Height,
                         AverageColor = baseColor,
-                        Path = path,
+                        Path = path.FullName,
                         Profile = profile
                     };
 
-                    actions.Add(GetQuery(dataBall));
+                    Console.WriteLine("Analyzed, publishing");
+                    Publish(GetQuery(dataBall));
                 }
             }
             catch (Exception e)
@@ -172,5 +169,6 @@ namespace Indexer
                 }
             };
         }
+
     }
 }

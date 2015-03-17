@@ -11,7 +11,7 @@ using VirtualHands.Data;
 namespace Indexer
 {
     public delegate void DbAction(SqliteConnection connection, SqliteTransaction transaction);
-    class DbSyncer : AbstractConsumer<DbAction>
+    class DbSyncer : ConsumerNode<DbAction>
     {
         /// <summary>
         /// Number of db actions to store before commiting.
@@ -20,8 +20,8 @@ namespace Indexer
         
         private Queue<DbAction> actions;
 
-        public DbSyncer(BlockingCollection<DbAction> actions)
-            : base(actions)
+        public DbSyncer()
+            : base(1)
         {
             this.actions = new Queue<DbAction>(100);
         }

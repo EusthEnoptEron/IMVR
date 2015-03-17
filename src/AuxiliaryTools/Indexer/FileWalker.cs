@@ -10,16 +10,17 @@ using VirtualHands.Data;
 
 namespace Indexer
 {
-    public class FileWalker : AbstractWorker
+    public class FileWalker : AbstractWorker, IProducer<FileInfo>
     {
         private string root;
-        private BlockingCollection<string> collection;
         public Predicate<FileInfo> Filter = f => { return true; };
 
-        public FileWalker(string root, BlockingCollection<string> collection)
+        private IConsumer<FileInfo> pathConsumer;
+
+
+        public FileWalker(string root) : base(1)
         {
             this.root = root;
-            this.collection = collection;
         }
 
         protected override void Process(CancellationToken token)
@@ -37,11 +38,44 @@ namespace Indexer
                         {
                             if (Options.Instance.Verbose)
                                 Console.WriteLine("Add: {0}", file.FullName);
-                            collection.Add(file.FullName);
+
+                            if (pathConsumer != null)
+                                pathConsumer.Input.Add(file);
                         }
                     }
                 }
             }
+        }
+
+        protected override void CleanUp()
+        {
+            base.CleanUp();
+            Done = true;
+        }
+
+        public void Pipe(IConsumer<FileInfo> target)
+        {
+            if (pathConsumer != null) throw new Exception("Target already set!");
+
+            target.Handshake(this);
+            pathConsumer = target;
+        }
+
+        public bool Done
+        {
+            get;
+            private set;
+        }
+
+
+        public T2 Pipe<T2>(T2 target) where T2 : IConsumer<FileInfo>
+        {
+            if (pathConsumer != null) throw new Exception("Target already set!");
+
+            target.Handshake(this);
+            pathConsumer = target;
+
+            return target;
         }
     }
 }

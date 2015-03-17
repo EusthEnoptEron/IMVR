@@ -53,7 +53,7 @@
       <HintPath>..\packages\Magick.NET-Q8-AnyCPU.7.0.0.0010\lib\net40-client\Magick.NET-AnyCPU.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\..\Application\Assets\Plugins\Managed\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\..\..\..\VirtualHands\src\Libs\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,6 +79,7 @@
     <Compile Include="FileWalker.cs" />
     <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
+    <Compile Include="IProducer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="TextureAtlas.cs" />
     <Compile Include="Program.cs" />
@@ -87,6 +88,11 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sqlite3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

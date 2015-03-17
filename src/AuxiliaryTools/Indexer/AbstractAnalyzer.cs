@@ -32,7 +32,7 @@ namespace Indexer
             CleanUp();
         }
 
-        protected virtual void CleanUp()
+        protected override void CleanUp()
         {
         }
 

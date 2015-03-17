@@ -10,6 +10,9 @@ namespace Indexer
     public abstract class AbstractWorker
     {
         private CancellationTokenSource cts;
+        private int threadCount;
+        private int remainingThreads;
+
         public Task Task
         {
             get;
@@ -18,21 +21,45 @@ namespace Indexer
 
         protected AbstractWorker()
         {
+        }
+
+        public AbstractWorker(int threadCount)
+        {
             cts = new CancellationTokenSource();
+            this.threadCount = threadCount;
         }
 
         public Task Start()
         {
-            if(Task == null)
-                Task = Task.Factory.StartNew(DoWork, cts.Token);
+            if (Task == null)
+            {
+                for (int i = 0; i < threadCount; i++ )
+                {
+                    remainingThreads++;
+                    Task = Task.Factory.StartNew(DoWork, cts.Token);
+                }
+                
+            }
             return Task;
         }
 
         private void DoWork(object obj)
         {
-            var token = (CancellationToken)obj;
+            try
+            {
+                var token = (CancellationToken)obj;
 
-            Process(token);
+                Process(token);
+            }
+            finally
+            {
+                if(--remainingThreads == 0)
+                    CleanUp();
+            }
+        }
+
+        protected virtual void CleanUp()
+        {
         }
 
         protected abstract void Process(CancellationToken token);

@@ -42,49 +42,40 @@ namespace Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                var imageCollection = new BlockingCollection<string>(COLLECTION_BOUND);
-                //var musicCollection = new BlockingCollection<string>(COLLECTION_BOUND);
-                var dbCollection = new BlockingCollection<DbAction>(1000);
-
-                var producers = new List<Task>();
-                var consumers = new List<Task>();
-                var dbWorker = new DbSyncer(dbCollection);
+                var dbWorker = new DbSyncer();
+                var imageAnalyzer = new ImageAnalyzer(IMAGE_ANALYZERS);
+                imageAnalyzer.Pipe(dbWorker);
 
                 using (var db = Database.Context)
                 {
                     new SqliteCommand("VACUUM", (SqliteConnection)db.Connection).ExecuteNonQuery();
                     
+
                     // Create producers
                     foreach (var library in db.MediaLibraries)
                     {
-                        producers.Add(new FileWalker(library.Path, imageCollection)
+                        var walker = new FileWalker(library.Path)
                         {
                             Filter = IO.IsImage
-                        }.Start());
-                    }
+                        };
 
-                    // Create consumers
-                    for (int i = 0; i < IMAGE_ANALYZERS; i++)
-                        consumers.Add(new ImageAnalyzer(imageCollection, dbCollection).Start());
+                        walker.Pipe(imageAnalyzer);
+                        walker.Start();
+                    }
 
                    // CleanDb();
 
                     // Start work
-                    //foreach (var producer in producers) producer.Start();
-                    //foreach (var consumer in consumers) consumer.Start();
-
+                    
                     db.Connection.Close();
                 }
 
-                dbWorker.Start();
+                imageAnalyzer.Start();
 
-                Task.WaitAll(producers.ToArray());
-                imageCollection.CompleteAdding();
-                Task.WaitAll(consumers.ToArray());
-                dbCollection.CompleteAdding();
+                dbWorker.Start();
                 dbWorker.Task.Wait();
 
 
