@@ -25,7 +25,7 @@ public class OculusDebug : MonoBehaviour {
 
     void Update()
     {
-        var camera = GameObject.Find("OVRCameraRig");
+        var camera = GameObject.Find("OVRCameraRig") ?? GameObject.Find("LeapOVRCameraRig");
           
         // Orientate
         gameObject.transform.position = camera.transform.position + camera.transform.forward * 0.5f + camera.transform.right * 0.2f;
@@ -47,7 +47,7 @@ public class OculusDebug : MonoBehaviour {
                 _instance = holder.AddComponent<OculusDebug>();
 
                 // Start deactivated
-                holder.SetActive(false);
+                //holder.SetActive(false);
             }
             return _instance;
         }
@@ -68,5 +68,14 @@ public class OculusDebug : MonoBehaviour {
     public static void Log(object obj)
     {
         OculusDebug.Instance.log(obj);
+    }
+    public static void LogError(object obj)
+    {
+        OculusDebug.Instance.log("<color=red>" + obj + "</color>");
+    }
+
+    public static void LogWarning(object obj)
+    {
+        OculusDebug.Instance.log("<color=yellow>" + obj + "</color>");
     }
 }

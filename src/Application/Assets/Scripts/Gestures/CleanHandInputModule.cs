@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace Gestures
 {
@@ -20,12 +20,19 @@ namespace Gestures
         public Camera eventCamera;
         public FingerType submitFinger = FingerType.Index;
 
+        /// <summary>
+        /// Maximum distance for UI objects. Everything farther away than that will
+        /// be projected on a sphere at the specified distance.
+        /// </summary>
+        public float maxDistance = 0.5f;
+
         public float pressZone = 0.01f;
         public float nearZone = 0.1f;
 
         private HandState leftHandState;
         private HandState rightHandState;
 
+        private List<Selection> selections = new List<Selection>();
 
         // Use this for initialization
         void Start()
@@ -50,8 +57,8 @@ namespace Gestures
         // Update is called once per frame
         public override void Process()
         {
-            ProcessHand(handProvider.GetHand(HandType.Left));
-            ProcessHand(handProvider.GetHand(HandType.Right));
+            ProcessHand(HandType.Left);
+            ProcessHand(HandType.Right);
         }
 
 
@@ -60,9 +67,14 @@ namespace Gestures
         /// Processes the events of a single hand.
         /// </summary>
         /// <param name="hand"></param>
-        protected void ProcessHand(GenericHand hand)
+        protected void ProcessHand(HandType type)
         {
-            if (hand == null) return;
+            var hand = handProvider.GetHand(type);
+            if (hand == null)
+            {
+                DisableHand(type);
+                return;
+            }
 
             var state = hand.IsLeft ? leftHandState : rightHandState;
 
@@ -79,6 +91,16 @@ namespace Gestures
             ProcessDrag(mainFinger.eventData.buttonData);
         }
 
+        private void DisableHand(HandType type)
+        {
+            var state = type == HandType.Left ? leftHandState : rightHandState;
+
+            foreach (var fingerType in (FingerType[])System.Enum.GetValues(typeof(HandType)))
+            {
+                state.GetFingerState(fingerType).crosshair.Visible = false;
+            }
+        }
+
 
         /// <summary>
         /// Processes the events of a finger
@@ -90,13 +112,14 @@ namespace Gestures
             PointerEventData data;
             bool created = GetPointerData(GetButtonId(finger), out data, true);
             var prevFingerState = state.GetFingerState(finger.Type);
-            GameObject pressedObject = null;
-            GameObject selectedObject = null;
+            var selection = prevFingerState.selection;
+            float currentDistance = float.PositiveInfinity;
 
 
             // Get positions
             Vector3 worldPosition = finger.TipPosition;
             Vector3 screenPosition = eventCamera.WorldToScreenPoint(worldPosition);
+
             if (created)
                 data.position = screenPosition;
 
@@ -109,88 +132,101 @@ namespace Gestures
                           ? PointerEventData.InputButton.Left
                           : PointerEventData.InputButton.Middle;
 
+            data.pointerCurrentRaycast = new RaycastResult();
+
             // Do the raycast
             eventSystem.RaycastAll(data, m_RaycastResultCache);
-
 
             // Process until one is OK
             foreach (var raycast in m_RaycastResultCache)
             {
                 if (raycast.gameObject != null)
                 {
-                    var hitPoint = eventCamera.ScreenToWorldPoint(
-                        new Vector3(screenPosition.x,
-                                    screenPosition.y, 
-                                    raycast.distance + eventCamera.nearClipPlane)
-                    );
+                    
+                    float z = raycast.distance;
 
-                    data.pointerCurrentRaycast = raycast;
+                    var offset = raycast.gameObject.GetComponentInChildren<CollisionOffset>();
+                    if (offset != null && offset.source == CollisionOffset.OffsetSource.Element)
+                        z -= offset.offset;
+                    if (offset != null && offset.source == CollisionOffset.OffsetSource.Camera)
+                        z = offset.offset;
 
-                    var hoverZone = JudgePoint(worldPosition, hitPoint, data);
+                    var hitPoint = CalculateHitPoint(screenPosition, z);
+                    var distance = GetPerpendicularDistance(worldPosition, hitPoint, raycast.gameObject.transform.forward);
 
-                    if (hoverZone < HoverZone.Far)
+                    if (selection != null && selection.valid && selection.IsSameGameObject(raycast.gameObject))
                     {
+                        data.pointerCurrentRaycast = raycast;
                         data.worldPosition = hitPoint;
 
-                        if (hoverZone == HoverZone.Touch)
-                        {
-                            // We're touching and no other candidate
-                            pressedObject = raycast.gameObject;
-                            break;
-                        }
-                        else if (prevFingerState.pressedObject == raycast.gameObject) {
-                            // Keep pressed
-                            pressedObject = raycast.gameObject;
-                            break;
-                        }
-                        else
-                        {
-                            // Select!
-                            selectedObject = raycast.gameObject;
-                        }
+                        currentDistance = distance;
+                        break;
+                    } else if (distance < currentDistance)
+                    {
+                        data.pointerCurrentRaycast = raycast;
+                        data.worldPosition = hitPoint;
+                        
+                        currentDistance = distance;
                     }
-
-                    break;
                 }
             }
 
+            if (data.pointerCurrentRaycast.isValid)
+            {
+                if (selection != null)
+                {
+
+                    if (selection.IsSameGameObject(data.pointerCurrentRaycast.gameObject))
+                    {
+
+                        selection.Update(currentDistance);
+                    }
+                    else
+                    {
+                        // Deselect
+                        selection.Update(float.PositiveInfinity);
+                    }
+
+                    prevFingerState.crosshair.Visible = finger.Type == submitFinger;
+                    prevFingerState.crosshair.Value = selection.Proximity;
+                }
+                else
+                {
+                    selection = new Selection(data.pointerCurrentRaycast.gameObject, data.worldPosition);
+                    selection.Update(currentDistance);
+                }
+
+                prevFingerState.crosshair.transform.position = CalculateHitPoint(screenPosition, data.pointerCurrentRaycast.distance, false);
+            }
+            else
+            {
+                if (selection != null)
+                {
+                    selection.Update(float.PositiveInfinity);
+                }
+                prevFingerState.crosshair.Visible = false;
+
+            }
+
             m_RaycastResultCache.Clear();
+            
+            state.SetFingerState(finger.Type, selection, data);
+        }
 
-            PointerEventData.FramePressState buttonState;
-            if (pressedObject != null && prevFingerState.pressedObject == null)
-            {
-                buttonState = PointerEventData.FramePressState.Pressed;
-            }
-            else if (pressedObject != null && pressedObject != prevFingerState.pressedObject)
-            {
-                buttonState = PointerEventData.FramePressState.Released;
-            }
-            else if(pressedObject == null && prevFingerState.pressedObject != null)
-            {
-                buttonState = PointerEventData.FramePressState.Released;
-            }
-            else if (selectedObject == null && prevFingerState.selectedObject != null)
-            {
-                DeselectIfSelectionChanged(null, data);
-                buttonState = PointerEventData.FramePressState.NotChanged;
-            }
-            else
-            {
-                buttonState = PointerEventData.FramePressState.NotChanged;
-            }
+        private Vector3 CalculateHitPoint(Vector2 screenPosition, float distance, bool cap = true)
+        {
+            distance += eventCamera.nearClipPlane;
+            if (cap) distance = Mathf.Min(maxDistance, distance);
 
-            if (pressedObject != null)
-            {
-                prevFingerState.pressedObject = pressedObject;
-                prevFingerState.selectedObject = null;
-            }
-            else
-            {
-                prevFingerState.pressedObject = null;
-                prevFingerState.selectedObject = selectedObject;
-            }
+            return eventCamera.ScreenToWorldPoint(new Vector3(screenPosition.x,
+                screenPosition.y,
+                distance));
+        }
 
-            state.SetFingerState(finger.Type, buttonState, data);
+        private float GetPerpendicularDistance(Vector3 dynamicPoint, Vector3 staticPoint, Vector3 normal)
+        {
+            var distance = dynamicPoint - staticPoint;
+            return Mathf.Abs(Vector3.Dot(distance, normal));
         }
 
         private HoverZone JudgePoint(Vector3 dynamicPoint, Vector3 staticPoint, PointerEventData data)
@@ -334,6 +370,9 @@ namespace Gestures
         {
             private List<FingerState> m_TrackedFingers = new List<FingerState>();
 
+            public HandState()
+            {
+            }
             public bool AnyPressesThisFrame()
             {
                 for (int i = 0; i < m_TrackedFingers.Count; i++)
@@ -370,22 +409,36 @@ namespace Gestures
                 {
                     // TODO: set finger
                     tracked = new FingerState { finger = finger, eventData = new MouseButtonEventData() };
+                    tracked.crosshair = (GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Crosshair")) as GameObject).GetComponent<CrosshairControl>();
                     m_TrackedFingers.Add(tracked);
                 }
                 return tracked;
             }
 
-            public void SetFingerState(FingerType finger, PointerEventData.FramePressState stateForMouseButton, PointerEventData data)
+            public void SetFingerState(FingerType finger, Selection selection, PointerEventData data)
             {
                 var toModify = GetFingerState(finger);
-                toModify.eventData.buttonState = stateForMouseButton;
+                toModify.eventData.buttonState = selection == null 
+                    ? PointerEventData.FramePressState.NotChanged
+                    : selection.GetFrameState();
+
+                if (finger == FingerType.Index && selection != null)
+
+                    Debug.LogFormat("{0} ({1})", toModify.eventData.buttonState, selection != null ? selection.distance : 1000);
+
                 toModify.eventData.buttonData = data;
+                toModify.selection = selection;
+                
+                if (selection != null && !selection.valid)
+                    toModify.selection = null;
+                //toModify.crosshair.Value = distance;
             }
+
         }
 
         protected class FingerState
         {
-            public MouseButtonEventData eventData
+            public UnityEngine.EventSystems.PointerInputModule.MouseButtonEventData eventData
             {
                 get;
                 set;
@@ -397,9 +450,83 @@ namespace Gestures
                 set;
             }
 
+            public CrosshairControl crosshair { get; set; }
+
+            public Selection selection = null;
+
             public GameObject pressedObject { get; set; }
             public GameObject selectedObject { get; set; }
 
+        }
+
+        protected class Selection
+        {
+            public GameObject target;
+            private GameObject handler;
+            private Vector3 hitPoint;
+            public float selectionTime;
+            public float distance;
+            public bool clicked = false;
+
+            public float selectionDistance = 0.2f;
+            public float pressDistance = 0.01f;
+            public float selectionDuration = 5;
+            public bool valid = true;
+
+            private PointerEventData.FramePressState pressState;
+
+            public Selection(GameObject target, Vector3 hitPoint)
+            {
+                this.target = target;
+                this.handler = ExecuteEvents.GetEventHandler<IPointerDownHandler>(target);
+                this.hitPoint = target.transform.InverseTransformPoint(hitPoint);
+                selectionTime = Time.time;
+            }
+
+            public Vector3 GetHitPoint()
+            {
+                return target.transform.TransformPoint(hitPoint);
+            }
+
+            public float Proximity
+            {
+                get
+                {
+                    return 1 - Mathf.Clamp01((distance - pressDistance) / (selectionDistance - pressDistance));
+                }
+            }
+
+            public bool IsSameGameObject(GameObject go)
+            {
+                if (handler == null) return false;
+                return ExecuteEvents.GetEventHandler<IPointerDownHandler>(go) == handler;
+            }
+
+            public void Update(float distance)
+            {
+                pressState = PointerEventData.FramePressState.NotChanged;
+                this.distance = distance;
+
+                if(distance > selectionDistance) {
+                    valid = false;
+                    if (clicked)
+                    {
+                        pressState = PointerEventData.FramePressState.Released;
+                        clicked = false;
+                    }
+                    
+                } else if(!clicked && 
+                    (distance < pressDistance /*|| Time.time - selectionTime > selectionDuration*/)) {
+                        clicked = true;
+                        pressState = PointerEventData.FramePressState.Pressed;
+                }
+                
+            }
+
+            internal PointerEventData.FramePressState GetFrameState()
+            {
+                return pressState;
+            }
         }
 
 
