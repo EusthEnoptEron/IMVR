@@ -32,7 +32,6 @@ namespace Gestures
         private HandState leftHandState;
         private HandState rightHandState;
 
-        private List<Selection> selections = new List<Selection>();
 
         // Use this for initialization
         void Start()
@@ -40,6 +39,7 @@ namespace Gestures
             handProvider = handProvider ?? GameObject.FindObjectOfType<HandProvider>();
             eventCamera = eventCamera ?? Camera.main;
 
+            if (eventCamera == null) eventCamera = Camera.main;
             if (handProvider == null)
             {
                 Debug.LogError("No hand provider found!");
@@ -86,9 +86,17 @@ namespace Gestures
             var mainFinger = state.GetFingerState(submitFinger);
 
             // Process the first finger fully
-            ProcessPress(mainFinger.eventData);
-            ProcessMove(mainFinger.eventData.buttonData);
-            ProcessDrag(mainFinger.eventData.buttonData);
+            foreach (var finger in hand.Fingers)
+            {
+                var fState = state.GetFingerState(finger.Type);
+                if (finger.Type == submitFinger)
+                {
+
+                    ProcessPress(fState.eventData);
+                }
+                ProcessMove(fState.eventData.buttonData);
+                ProcessDrag(fState.eventData.buttonData);
+            }
         }
 
         private void DisableHand(HandType type)
@@ -161,7 +169,7 @@ namespace Gestures
 
                         currentDistance = distance;
                         break;
-                    } else if (distance < currentDistance)
+                    } else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance))
                     {
                         data.pointerCurrentRaycast = raycast;
                         data.worldPosition = hitPoint;
@@ -173,6 +181,8 @@ namespace Gestures
 
             if (data.pointerCurrentRaycast.isValid)
             {
+                //if (finger.Type == submitFinger) Debug.Log(data.pointerCurrentRaycast.gameObject.name);
+
                 if (selection != null)
                 {
 
@@ -200,6 +210,8 @@ namespace Gestures
             }
             else
             {
+                //if (finger.Type == submitFinger) Debug.Log("Found nopthing");
+
                 if (selection != null)
                 {
                     selection.Update(float.PositiveInfinity);
@@ -226,7 +238,7 @@ namespace Gestures
         private float GetPerpendicularDistance(Vector3 dynamicPoint, Vector3 staticPoint, Vector3 normal)
         {
             var distance = dynamicPoint - staticPoint;
-            return Mathf.Abs(Vector3.Dot(distance, normal));
+            return -Vector3.Dot(distance, normal);
         }
 
         private HoverZone JudgePoint(Vector3 dynamicPoint, Vector3 staticPoint, PointerEventData data)
@@ -422,15 +434,17 @@ namespace Gestures
                     ? PointerEventData.FramePressState.NotChanged
                     : selection.GetFrameState();
 
-                if (finger == FingerType.Index && selection != null)
-
-                    Debug.LogFormat("{0} ({1})", toModify.eventData.buttonState, selection != null ? selection.distance : 1000);
+                //if (finger == FingerType.Index && selection != null)
+                //    Debug.LogFormat("{0} ({1})", toModify.eventData.buttonState, selection != null ? selection.distance : 1000);
 
                 toModify.eventData.buttonData = data;
                 toModify.selection = selection;
-                
-                if (selection != null && !selection.valid)
+
+                if (selection != null && !selection.valid) {
                     toModify.selection = null;
+                    data.pointerCurrentRaycast = new RaycastResult();
+                }
+
                 //toModify.crosshair.Value = distance;
             }
 
@@ -471,6 +485,9 @@ namespace Gestures
             public float selectionDistance = 0.2f;
             public float pressDistance = 0.01f;
             public float selectionDuration = 5;
+            private float timeThreshold = 0;
+
+
             public bool valid = true;
 
             private PointerEventData.FramePressState pressState;
@@ -506,19 +523,36 @@ namespace Gestures
             {
                 pressState = PointerEventData.FramePressState.NotChanged;
                 this.distance = distance;
+                if (!clicked) distance = Mathf.Abs(distance);
 
-                if(distance > selectionDistance) {
-                    valid = false;
-                    if (clicked)
+
+                if (clicked && distance > pressDistance)
+                {
+                    timeThreshold += Time.deltaTime;
+
+                    if (timeThreshold > 0.1f)
                     {
+                        valid = false;
+                       
+                        //Debug.Log(distance);
                         pressState = PointerEventData.FramePressState.Released;
                         clicked = false;
+                        
                     }
+                }
+                else if(distance > selectionDistance) {
+                    valid = false;
+                   
                     
                 } else if(!clicked && 
                     (distance < pressDistance /*|| Time.time - selectionTime > selectionDuration*/)) {
+                        timeThreshold = 0;
                         clicked = true;
                         pressState = PointerEventData.FramePressState.Pressed;
+                    }
+                else
+                {
+                    timeThreshold = 0;
                 }
                 
             }

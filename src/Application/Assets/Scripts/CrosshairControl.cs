@@ -2,27 +2,34 @@
 using System.Collections;
 using System.Linq;
 
+
+[RequireComponent(typeof(CanvasGroup))]
 public class CrosshairControl : MonoBehaviour {
 
+    private float targetValue = 0;
+    private float targetAlpha = 1;
+
     protected float m_value = 0;
+    protected float m_alpha = 0;
+
     public float Value
     {
-        get { return m_value; }
-        set { m_value = value; }
+        get { return targetValue; }
+        set { targetValue = value; }
     }
 
-    protected bool m_visible = true;
+
+    public float animationSpeed = 5;
+
     public bool Visible
     {
         get
         {
-            return m_visible;
+            return targetAlpha == 1;
         }
         set
         {
-            m_visible = value;
-            if (!m_visible) GetComponent<CanvasGroup>().alpha = 0;
-            else GetComponent<CanvasGroup>().alpha = 1;
+            targetAlpha = value ? 1 : 0;
         }
     }
 
@@ -31,16 +38,21 @@ public class CrosshairControl : MonoBehaviour {
     private RectTransform environment;
     public float startPos = 0.1f;
     public float endPos = 0.12f;
+    private CanvasGroup group;
 
 	// Use this for initialization
 	void Start () {
         environment = transform.GetComponentsInChildren<RectTransform>().First(rect => rect.name == "Environment");
-
+        group = GetComponent<CanvasGroup>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        float pos = Mathf.Lerp(startPos, endPos, Value);
+        m_value = Mathf.Lerp(m_value, targetValue, Time.deltaTime * animationSpeed);
+        m_alpha = Mathf.Lerp(m_alpha, targetAlpha, Time.deltaTime * animationSpeed);
+
+        
+        float pos = Mathf.Lerp(startPos, endPos, m_value);
         //environment.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, pos, 05f - pos);
         //environment.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, pos, 05f - pos);
         environment.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, pos);
@@ -51,6 +63,9 @@ public class CrosshairControl : MonoBehaviour {
         
         // Billboard effect
         transform.rotation = Quaternion.LookRotation((Camera.main.transform.position - transform.position).normalized);
+
+        if(group.alpha != m_alpha)
+            group.alpha = m_alpha;
 	}
 
 }
