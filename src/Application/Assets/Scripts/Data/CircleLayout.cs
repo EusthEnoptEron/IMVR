@@ -39,7 +39,6 @@ public class CircleLayout : MonoBehaviour {
     }
 
     void UpdateLayout() {
-        float progress = 1;
 
         // update tile positions
         //int tileCount = Mathf.Min(1000, tiles.Count);
@@ -47,15 +46,18 @@ public class CircleLayout : MonoBehaviour {
         int tileCount = tiles.Count;
         //float area = 2 * Mathf.PI * radius * height;
 
-        var bestResult = new BestResult { sx = 0, sy = 0, scale = 0 };
+        var bestResult = new BestResult { sx = 1, sy = 1, scale = 1 };
 
-        for (int sx = 1; sx < tileCount / 10; sx++)
+        for (int sx = 1; sx < tileCount; sx++)
         {
             int neededSy = tileCount / sx;
             float scale = radius * 2 * Mathf.Tan(Mathf.PI / sx);
-            int sy = (int)(height / scale);
+            int sy = Mathf.RoundToInt(height / scale);
+
+            //Debug.LogFormat("count: {3}, x={0}, sy={1}, sx={2}", scale, sy, sx, tileCount);
+
             //Debug.LogFormat("{0} - {1}", sx, scale);
-            if( Mathf.Abs(tileCount - (bestResult.sy * bestResult.sx)) >
+            if (Mathf.Abs(tileCount - (bestResult.sy * bestResult.sx)) >
                 Mathf.Abs(tileCount - (sy * sx)))
             {
                 bestResult = new BestResult
