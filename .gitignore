@@ -151,3 +151,6 @@ node_modules
 /src/Application/Assets/Standard Assets
 /doc/Pflichtenheft/Pflichtenheft.pdf
 /src/AuxiliaryTools/*.suo
+Magick.NET-Q8-AnyCPU.7.0.0.0010
+System.Data.SQLite.Core.1.0.94.0
+/src/Application/*.unityproj
