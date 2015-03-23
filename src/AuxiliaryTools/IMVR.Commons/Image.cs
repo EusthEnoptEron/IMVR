@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,72 +9,93 @@ namespace IMVR.Commons
     /// <summary>
     /// Represents an indexed image file.
     /// </summary>
-    public class Image
+    [ProtoContract]
+    public class Image : File
     {
         /// <summary>
         /// Gets or sets the atlas number this file was assigned to.
         /// </summary>
+        [ProtoMember(1)]
         public AtlasTicket Atlas;
+        
+        [ProtoMember(2)]
         public Dictionary<ExifTag, string> ExifValues = new Dictionary<ExifTag, string>();
 
 #region Statistics
         /// <summary>
         /// Gets or sets the mean value over all pixels.
         /// </summary>
+        [ProtoMember(3)]        
         public float Mean { get; set; }
 
         /// <summary>
         /// Gets or sets the entropy over all pixels.
         /// </summary>
+        [ProtoMember(4)]
         public float Entropy { get; set; }
 
         /// <summary>
         /// Gets or sets the kurtosis over all pixels.
         /// </summary>
+        [ProtoMember(5)]
         public float Kurtosis { get; set; }
 
         /// <summary>
         /// Gets or sets the skewness over all pixels.
         /// </summary>
+        [ProtoMember(6)]
         public float Skewness { get; set; }
 
         /// <summary>
         /// Gets or sets the variance over all pixels.
         /// </summary>
+        [ProtoMember(7)]
         public float Variance { get; set; }
 
         /// <summary>
         /// Gets or sets the average hue.
         /// </summary>
+        [ProtoMember(8)]
         public float Hue { get; set; }
 
         /// <summary>
         /// Gets or sets the average lightness / luminance.
         /// </summary>
+        [ProtoMember(9)]
         public float Lightness { get; set; }
 
         /// <summary>
         /// Gets or sets the average saturation.
         /// </summary>
+        [ProtoMember(10)]
         public float Saturation { get; set; }
 
         /// <summary>
         /// Gets or sets the width of the image.
         /// </summary>
+        [ProtoMember(11)]
         public int Width { get; set; }
 
         /// <summary>
         /// Gets or sets the height of the image.
         /// </summary>
+        [ProtoMember(12)]
         public int Height { get; set; }
 #endregion
     }
 
+
+    [ProtoContract]
     public class AtlasTicket
     {
+        [ProtoMember(1)]
         public int Number { get; set; }
+
+        [ProtoMember(2)]
         public int Position { get; set; }
 
+
+        public AtlasTicket() { }
         public AtlasTicket(int number, int position)
         {
             Number = number;
