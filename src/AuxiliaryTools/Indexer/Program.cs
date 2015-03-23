@@ -46,8 +46,11 @@ namespace Indexer
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
                 var dbWorker = new DbSyncer();
-                var imageAnalyzer = new ImageAnalyzer(IMAGE_ANALYZERS);
-                imageAnalyzer.Pipe(dbWorker);
+                var imageAnalyzer =  
+                    new ImageAnalyzer(IMAGE_ANALYZERS)
+                    {
+                        Target = dbWorker
+                    };
 
                 using (var db = Database.Context)
                 {
@@ -59,10 +62,10 @@ namespace Indexer
                     {
                         var walker = new FileWalker(library.Path)
                         {
-                            Filter = IO.IsImage
+                            Filter = IO.IsImage,
+                            Target = imageAnalyzer
                         };
 
-                        walker.Pipe(imageAnalyzer);
                         walker.Start();
                     }
 
@@ -73,11 +76,8 @@ namespace Indexer
                     db.Connection.Close();
                 }
 
-                imageAnalyzer.Start();
 
-                dbWorker.Start();
                 dbWorker.Task.Wait();
-
 
                 //// Wait for break signal
                 //while (true)

@@ -23,6 +23,18 @@ namespace Indexer
             this.root = root;
         }
 
+        public IConsumer<FileInfo> Target
+        {
+            get
+            {
+                return pathConsumer;
+            }
+            set
+            {
+                Pipe(value);
+            }
+        }
+
         protected override void Process(CancellationToken token)
         {
             using (var db = Database.Context)
@@ -45,6 +57,12 @@ namespace Indexer
                     }
                 }
             }
+        }
+
+
+        protected override void StartUp()
+        {
+            base.StartUp();
         }
 
         protected override void CleanUp()

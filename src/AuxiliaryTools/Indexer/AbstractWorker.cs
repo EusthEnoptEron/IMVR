@@ -31,16 +31,25 @@ namespace Indexer
 
         public Task Start()
         {
-            if (Task == null)
+            if (!IsStarted)
             {
+                StartUp();
+
                 for (int i = 0; i < threadCount; i++ )
                 {
                     remainingThreads++;
                     Task = Task.Factory.StartNew(DoWork, cts.Token);
                 }
-                
             }
             return Task;
+        }
+
+        public bool IsStarted
+        {
+            get
+            {
+                return Task != null;
+            }
         }
 
         private void DoWork(object obj)
@@ -56,6 +65,11 @@ namespace Indexer
                 if(--remainingThreads == 0)
                     CleanUp();
             }
+        }
+
+
+        protected virtual void StartUp()
+        {
         }
 
         protected virtual void CleanUp()

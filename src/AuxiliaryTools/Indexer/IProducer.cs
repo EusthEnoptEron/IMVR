@@ -25,6 +25,15 @@ namespace Indexer
     {
         private List<IConsumer<O>> targets = new List<IConsumer<O>>();
 
+
+        public IConsumer<O> Target
+        {
+            set
+            {
+                Pipe(value);
+            }
+        }
+
         protected DualNode(int threadCount = 1, int capacity = 10000)
             : base(threadCount, capacity)
         {
@@ -70,6 +79,8 @@ namespace Indexer
         public void Handshake(IProducer<T> producer)
         {
             producerList.Add(producer);
+
+            if (!IsStarted) Start();
         }
 
         private bool ProducersDone
