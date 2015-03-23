@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VirtualHands.Data;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public delegate void DbAction(SqliteConnection connection, SqliteTransaction transaction);
     class DbSyncer : ConsumerNode<DbAction>

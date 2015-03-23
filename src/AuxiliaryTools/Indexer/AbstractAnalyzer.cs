@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public abstract class AbstractConsumer<T> : AbstractWorker
     {

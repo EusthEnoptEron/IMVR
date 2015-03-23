@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VirtualHands.Data;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public class FileWalker : AbstractWorker, IProducer<FileInfo>
     {

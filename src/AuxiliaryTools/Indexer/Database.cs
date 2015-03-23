@@ -1,4 +1,4 @@
-﻿using Indexer;
+﻿using IMVR.Indexer;
 using Mono.Data.Sqlite;
 using DbLinq.Data.Linq;
 using System;
@@ -11,7 +11,7 @@ namespace VirtualHands.Data
 {
     public partial class Main
     {
-        public Main(Indexer.Options options) : base("Data Source=" + options.DbPath +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
+        public Main(IMVR.Indexer.Options options) : base("Data Source=" + options.DbPath +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
         {
         }
     }

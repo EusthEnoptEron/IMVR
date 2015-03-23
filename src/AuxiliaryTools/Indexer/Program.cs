@@ -16,7 +16,7 @@ using DbLinq.Sqlite;
 using EchoNest.Artist;
 using EchoNest.Song;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     class Program
     {

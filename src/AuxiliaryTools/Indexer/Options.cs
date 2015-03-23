@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public class Options
     {

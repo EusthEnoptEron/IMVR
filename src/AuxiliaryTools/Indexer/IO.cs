@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System;
 
-namespace Indexer {
+namespace IMVR.Indexer {
 
     /// <summary>
     /// Helper class for I/O operations

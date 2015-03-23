@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageMagick;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public class TextureAtlas
     {
