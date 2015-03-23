@@ -14,7 +14,8 @@ public class RingMenuItem : UIBehaviour {
     private GameObject torus;
     //private UILineRenderer lineRenderer;
     private LineRenderer lineRenderer;
-   
+
+    public float Progress { get; set; }
 
 	// Use this for initialization
 	void Awake () {
@@ -46,11 +47,12 @@ public class RingMenuItem : UIBehaviour {
 
             // Place myself
             Vector3 distance = new Vector3(0.1f, heightDifference, 0f);
-            transform.position = finger.TipPosition + Camera.main.transform.TransformDirection(distance);
+
+            //transform.position = hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Proximal).Position - hand.PalmPosition, Camera.main.transform.forward) * 4f;// + Camera.main.transform.TransformDirection(distance);
             transform.rotation = Quaternion.LookRotation((transform.position - Camera.main.transform.position).normalized);
 
             // Place torus
-            torus.GetComponentInChildren<Image>().transform.localRotation *= Quaternion.Euler(0, 0, 180 * Time.deltaTime);
+            torus.GetComponentInChildren<Image>().transform.localRotation *= Quaternion.Euler(0, 0, (180 + Progress * 1000) * Time.deltaTime);
             torus.transform.position = finger.TipPosition;
             torus.transform.rotation = Quaternion.LookRotation((torus.transform.position - Camera.main.transform.position).normalized);
             //torus.transform.localScale = Vector3.one * 0.02f;
@@ -58,6 +60,7 @@ public class RingMenuItem : UIBehaviour {
             UpdateLineRenderer(torus.transform.position, transform.position);
         }
 	}
+
 
     void OnEnable()
     {
