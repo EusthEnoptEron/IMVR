@@ -107,7 +107,7 @@ public class RingMenu : MonoBehaviour {
 
     void UpdatePosition(GenericHand hand)
     {
-        transform.position = hand.PalmPosition + Camera.main.transform.TransformDirection(Vector3.right * 0.2f);
+        //transform.position = hand.PalmPosition + Camera.main.transform.TransformDirection(Vector3.right * 0.2f);
     }
 
     void ExecuteEvent<T>(FingerType type, ExecuteEvents.EventFunction<T> handler) where T : IEventSystemHandler
@@ -115,7 +115,7 @@ public class RingMenu : MonoBehaviour {
         if(items.ContainsKey(type)) {
             ExecuteEvents.ExecuteHierarchy(
                 items[type].gameObject, 
-                new BaseEventData(EventSystem.current),
+                new PointerEventData(EventSystem.current),
                 handler  
             );
         }

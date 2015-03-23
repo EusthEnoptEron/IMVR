@@ -32,7 +32,7 @@ public class RingMenuItem : UIBehaviour {
         lineRenderer.transform.localRotation = Quaternion.identity;
         lineRenderer.transform.localScale = Vector3.one;
 
-        InitLineRenderer();
+      //  InitLineRenderer();
 	}
 
 
@@ -48,7 +48,7 @@ public class RingMenuItem : UIBehaviour {
             // Place myself
             Vector3 distance = new Vector3(0.1f, heightDifference, 0f);
 
-            //transform.position = hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Proximal).Position - hand.PalmPosition, Camera.main.transform.forward) * 4f;// + Camera.main.transform.TransformDirection(distance);
+            transform.position = finger.TipPosition;//hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Intermediate).Position - hand.PalmPosition, Camera.main.transform.forward) * 2f;// + Camera.main.transform.TransformDirection(distance);
             transform.rotation = Quaternion.LookRotation((transform.position - Camera.main.transform.position).normalized);
 
             // Place torus
@@ -57,7 +57,7 @@ public class RingMenuItem : UIBehaviour {
             torus.transform.rotation = Quaternion.LookRotation((torus.transform.position - Camera.main.transform.position).normalized);
             //torus.transform.localScale = Vector3.one * 0.02f;
             
-            UpdateLineRenderer(torus.transform.position, transform.position);
+           // UpdateLineRenderer(torus.transform.position, transform.position);
         }
 	}
 
@@ -65,13 +65,13 @@ public class RingMenuItem : UIBehaviour {
     void OnEnable()
     {
         torus.SetActive(true);
-        lineRenderer.gameObject.SetActive(true); 
+        //lineRenderer.gameObject.SetActive(true); 
     }
 
     void OnDisable()
     {
         torus.SetActive(false);
-        lineRenderer.gameObject.SetActive(false);
+        //lineRenderer.gameObject.SetActive(false);
     }
 
     private void InitLineRenderer()
@@ -94,7 +94,7 @@ public class RingMenuItem : UIBehaviour {
         p1 = p1 + diff * 0f;
         p2 = p2 - diff * 0f;
 
-        diff = p2 - p1;
+        diff = Vector3.ProjectOnPlane(p2 - p1, Camera.main.transform.right);
 
         //lineRenderer.Points = new Vector2[] {
         //    lineRenderer.transform.InverseTransformPoint(p1),
@@ -102,7 +102,7 @@ public class RingMenuItem : UIBehaviour {
         //    lineRenderer.transform.InverseTransformPoint(p2)
         //};
         lineRenderer.SetPosition(0, p1);
-        lineRenderer.SetPosition(1, new Vector3(p1.x + diff.x / 10f, p2.y, p1.z + diff.z / 10f));
+        lineRenderer.SetPosition(1, p1 + diff);
         lineRenderer.SetPosition(2, p2);
     }
 }
