@@ -7,7 +7,7 @@
     <ProjectGuid>{C366EF76-7527-42F8-A2C9-A9E4DDEA619A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Indexer</RootNamespace>
+    <RootNamespace>IMVR.Indexer</RootNamespace>
     <AssemblyName>Indexer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,7 +53,7 @@
       <HintPath>..\packages\Magick.NET-Q8-AnyCPU.7.0.0.0010\lib\net40-client\Magick.NET-AnyCPU.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\..\Application\Assets\Plugins\Managed\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\..\..\..\VirtualHands\src\Libs\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -69,24 +69,43 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractAnalyzer.cs" />
     <Compile Include="AbstractWorker.cs" />
     <Compile Include="BlockingCollection.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="ConsumerNode.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="DbSyncer.cs" />
-    <Compile Include="ImageAnalyzer.cs" />
+    <Compile Include="DBSyncNode.cs" />
+    <Compile Include="DualNode.cs" />
+    <Compile Include="IConsumer.cs" />
+    <Compile Include="ImageAnalysisNode.cs" />
     <Compile Include="FileWalker.cs" />
     <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
+    <Compile Include="IProducer.cs" />
+    <Compile Include="ArtistAnalysisNode.cs" />
+    <Compile Include="MusicNode.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="PersistenceNode.cs" />
     <Compile Include="TextureAtlas.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sqlite3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IMVR.Commons\IMVR.Commons.csproj">
+      <Project>{b8dd1849-e506-4fc6-b5a3-81a7a9aadd5b}</Project>
+      <Name>IMVR.Commons</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

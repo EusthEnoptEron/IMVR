@@ -8,10 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using VirtualHands.Data;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public delegate void DbAction(SqliteConnection connection, SqliteTransaction transaction);
-    class DbSyncer : AbstractConsumer<DbAction>
+    class DBSyncNode : ConsumerNode<DbAction>
     {
         /// <summary>
         /// Number of db actions to store before commiting.
@@ -20,8 +20,8 @@ namespace Indexer
         
         private Queue<DbAction> actions;
 
-        public DbSyncer(BlockingCollection<DbAction> actions)
-            : base(actions)
+        public DBSyncNode()
+            : base(1)
         {
             this.actions = new Queue<DbAction>(100);
         }

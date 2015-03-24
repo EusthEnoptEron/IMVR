@@ -5,36 +5,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImageMagick;
+using System.IO;
 
-namespace Indexer
+namespace IMVR.Indexer
 {
     public class TextureAtlas
     {
 
-        public const int TileSize = 128;
+        public int TileSize = 128;
         
         public bool IsFull { get; private set; }
         private List<string> entries = new List<string>();
 
         private IEnumerator<Rectangle> tiles;
+        private int tilesNo = 0;
+
         
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        public TextureAtlas(int width, int height)
+        private string path;
+
+        public TextureAtlas(string path, int width, int height)
         {
             Width = width;
             Height = height;
+            Atlas = new Commons.Atlas()
+            {
+                Path = Path.GetFileNameWithoutExtension(path),
+                TileSize = TileSize
+            };
+
+            this.path = path;
 
             Reset();
             //Texture.filterMode = FilterMode.Trilinear;
             //Texture.anisoLevel = 0;
         }
 
+
         public void Reset()
         {
             entries.Clear();
             tiles = Tiles.GetEnumerator();
+            tilesNo = 0;
             IsFull = !tiles.MoveNext();
         }
 
@@ -43,7 +57,7 @@ namespace Indexer
             return entries.Contains(file);
         }
 
-        public void Generate(string path)
+        public void Generate()
         {
             using (var bitmap = new Bitmap(Width, Height))
             using (var g = Graphics.FromImage(bitmap))
@@ -53,16 +67,32 @@ namespace Indexer
                 {
                     enumerator.MoveNext();
 
-                    using (var img = new MagickImage(entry))
-                    using (var cropped = GetCroppedImage(img)) {
-                        g.DrawImageUnscaled(cropped, enumerator.Current);
+                    using (var img = Image.FromFile(entry))
+                    {
+                        int size;
+                        if(img.Width > img.Height)
+                            size = img.Height;
+                        else 
+                            size = img.Width;
+
+                        var srcRect = new Rectangle( 
+                            (img.Width - size) / 2,
+                            (img.Height - size) / 2,
+                            size, size
+                        );
+
+                        g.DrawImage(img, enumerator.Current, srcRect, GraphicsUnit.Pixel);
                     }
+                    //using (var img = new MagickImage(entry))
+                    //using (var cropped = GetCroppedImage(img)) {
+                    //    g.DrawImageUnscaled(cropped, enumerator.Current);
+                    //}
                 }
                 bitmap.Save(path);
             }
         }
 
-        public Point Add(string file)
+        public IMVR.Commons.AtlasTicket Add(string file)
         {
             if (IsFull) throw new Exception("Atlas is full!");
 
@@ -71,8 +101,12 @@ namespace Indexer
 
             entries.Add(file);
 
-            return pos;
+            return new IMVR.Commons.AtlasTicket {
+                Atlas = Atlas,
+                Position = tilesNo++
+            };
         }
+
 
         /// <summary>
         /// Precondition: larger than TileSize
@@ -90,7 +124,7 @@ namespace Indexer
                 factor = (float)TileSize / img.Width;
 
             img.Resize(img.Width * factor, img.Height * factor);
-            var centroid = img.Moments().Composite().Centroid;
+            var centroid = new PointD(img.Width / 2.0, img.Height / 2.0);//img.Moments().Composite().Centroid;
 
             int x, y, width, height;
             width = height = TileSize;
@@ -114,9 +148,10 @@ namespace Indexer
         {
             get
             {
-                for (int x = 0; x < Width / TileSize; x++)
+                
+                for (int y = 0; y < Height / TileSize; y++)
                 {
-                    for (int y = 0; y < Height / TileSize; y++)
+                    for (int x = 0; x < Width / TileSize; x++)
                     {
                         yield return new Rectangle(x * TileSize, y * TileSize, TileSize, TileSize);
                     }
@@ -124,5 +159,7 @@ namespace Indexer
             }
         }
 
+
+        public Commons.Atlas Atlas { get; set; }
     }
 }
