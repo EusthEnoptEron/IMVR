@@ -28,4 +28,20 @@ public static class TransformExtensions {
         }
     }
 
+    public static void SetActiveInHierarchy(this GameObject obj, bool state)
+    {
+        obj.SetActive(state);
+        foreach (var ancestor in obj.transform.Ancestors())
+            ancestor.gameObject.SetActive(state);
+    }
+
+    public static IEnumerable<Transform> Ancestors(this Transform node)
+    {
+        var parent = node.parent;
+        while (parent != null)
+        {
+            yield return parent;
+            parent = parent.parent;
+        }
+    }
 }

@@ -18,6 +18,31 @@ public class RingMenu : MonoBehaviour {
     private CanvasGroup canvasGroup;
     private Dictionary<FingerType, RingMenuItem> items = new Dictionary<FingerType, RingMenuItem>();
 
+    private Transform _activeMenu;
+    public Transform ActiveMenu
+    {
+        get { return _activeMenu ?? transform; }
+        set
+        {
+            foreach (var child in ActiveMenu.Children())
+                child.gameObject.SetActive(false);
+
+            _activeMenu = value;
+
+            ActiveMenu.gameObject.SetActiveInHierarchy(true);
+            items.Clear();
+
+            foreach (var child in ActiveMenu.Children())
+            {
+                child.gameObject.SetActive(true);
+
+                var item = child.GetComponent<RingMenuItem>();
+                if(item != null)
+                    items.Add(item.fingerType, item);
+
+            }
+        }
+    }
 
     private FingerType? submitCandidate;
     private float submitDelta = 0;
@@ -26,9 +51,13 @@ public class RingMenu : MonoBehaviour {
 	void Start () {
         this.canvasGroup = GetComponent<CanvasGroup>();
 
-        foreach (var item in GetComponentsInChildren<RingMenuItem>())
-            items.Add(item.fingerType, item);
+        ActiveMenu = null;
 	}
+
+    public void ChangeMenu(Transform activeMenu)
+    {
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -175,6 +204,8 @@ public class RingMenu : MonoBehaviour {
         if (activated != enabled)
         {
             activated = enabled;
+
+            if (!activated) ActiveMenu = null;
 
             canvasGroup.DOKill();
             var animation = canvasGroup.DOFade(activated ? 1 : 0, 0.5f);

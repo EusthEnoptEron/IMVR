@@ -18,7 +18,7 @@ public class RingMenuItem : UIBehaviour {
     public float Progress { get; set; }
 
 	// Use this for initialization
-	void Awake () {
+	protected virtual void Awake () {
         torus = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Torus") as GameObject);
         torus.transform.SetParent(transform);
 
@@ -37,11 +37,10 @@ public class RingMenuItem : UIBehaviour {
 
 
 	// Update is called once per frame
-	void Update () {
+	protected virtual void Update () {
         var hand = HandProvider.Instance.GetHand(HandType.Left, NoHandStrategy.SetNull);
         if (hand != null)
         {
-            // Place torus
             var finger = hand.GetFinger(fingerType);
             var bone   = finger.GetBone(BoneType.Intermediate);
 
