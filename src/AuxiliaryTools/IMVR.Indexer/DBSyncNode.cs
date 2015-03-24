@@ -11,7 +11,7 @@ using VirtualHands.Data;
 namespace IMVR.Indexer
 {
     public delegate void DbAction(SqliteConnection connection, SqliteTransaction transaction);
-    class DbSyncer : ConsumerNode<DbAction>
+    class DBSyncNode : ConsumerNode<DbAction>
     {
         /// <summary>
         /// Number of db actions to store before commiting.
@@ -20,7 +20,7 @@ namespace IMVR.Indexer
         
         private Queue<DbAction> actions;
 
-        public DbSyncer()
+        public DBSyncNode()
             : base(1)
         {
             this.actions = new Queue<DbAction>(100);
