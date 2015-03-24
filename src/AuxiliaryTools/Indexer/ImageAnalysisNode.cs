@@ -17,21 +17,12 @@ namespace IMVR.Indexer
 {
 
 
-    public class ImageAnalyzer : DualNode<FileInfo, DBTask>
+    public class ImageAnalysisNode : DualNode<FileInfo, DBTask>
     {
-        private class ImageMetrics
-        {
-            public ChannelStatistics Statistics;
-            public int Width;
-            public int Height;
-            public MagickColor AverageColor;
-            public string Path;
-            public ExifProfile Profile;
-        }
         //private const ExifTag[] RELEVANT_TAGS = { 
         //    ExifTag.DateTimeOriginal, ExifTag.ExifVersion, ExifTag.ExposureTime, ExifTag.FocalLength, ExifTag.GPSAltitude, ExifTag.GPSLongitude, ExifTag.GPSLatitude };
 
-        public ImageAnalyzer(int threadCount) : base(threadCount, 100)
+        public ImageAnalysisNode(int threadCount) : base(threadCount, 100)
         {
         }
 

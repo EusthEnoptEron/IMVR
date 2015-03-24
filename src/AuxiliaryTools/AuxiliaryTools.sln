@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indexer", "Indexer\Indexer.csproj", "{C366EF76-7527-42F8-A2C9-A9E4DDEA619A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMVR.Indexer", "IMVR.Indexer\IMVR.Indexer.csproj", "{C366EF76-7527-42F8-A2C9-A9E4DDEA619A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMVR.Commons", "IMVR.Commons\IMVR.Commons.csproj", "{B8DD1849-E506-4FC6-B5A3-81A7A9AADD5B}"
 EndProject
@@ -28,8 +28,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

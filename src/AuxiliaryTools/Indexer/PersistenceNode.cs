@@ -10,7 +10,7 @@ namespace IMVR.Indexer
 
     public delegate void DBTask(IMDB db);
 
-    public class PersistenceWorker : ConsumerNode<DBTask>
+    public class PersistenceNode : ConsumerNode<DBTask>
     {
         /// <summary>
         /// Number of db actions to store before commiting.
@@ -20,7 +20,7 @@ namespace IMVR.Indexer
         private int changes = 0;
 
         private IMDB db;
-        public PersistenceWorker(IMDB db)
+        public PersistenceNode(IMDB db)
             : base(1)
         {
             this.db = db;

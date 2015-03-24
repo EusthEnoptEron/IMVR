@@ -61,9 +61,9 @@ namespace IMVR.Indexer
 
 
                 // Prepare workers
-                var dbWorker = new PersistenceWorker(db);
+                var dbWorker = new PersistenceNode(db);
                 var imageAnalyzer =
-                    new ImageAnalyzer(IMAGE_ANALYZERS)
+                    new ImageAnalysisNode(IMAGE_ANALYZERS)
                     {
                         Target = dbWorker
                     };
@@ -80,6 +80,7 @@ namespace IMVR.Indexer
                     walker.Start();
                 }
 
+                // Needed when there is no file walker to initialize the image analyzer
                 imageAnalyzer.Start();
                 dbWorker.Task.Wait();
                 

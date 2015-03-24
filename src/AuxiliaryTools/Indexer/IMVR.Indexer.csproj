@@ -69,19 +69,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractAnalyzer.cs" />
     <Compile Include="AbstractWorker.cs" />
     <Compile Include="BlockingCollection.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="ConsumerNode.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DbSyncer.cs" />
-    <Compile Include="ImageAnalyzer.cs" />
+    <Compile Include="DualNode.cs" />
+    <Compile Include="IConsumer.cs" />
+    <Compile Include="ImageAnalysisNode.cs" />
     <Compile Include="FileWalker.cs" />
     <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="IProducer.cs" />
+    <Compile Include="ArtistAnalysisNode.cs" />
+    <Compile Include="MusicNode.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="PersistenceWorker.cs" />
+    <Compile Include="PersistenceNode.cs" />
     <Compile Include="TextureAtlas.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
