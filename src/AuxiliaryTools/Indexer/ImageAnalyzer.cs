@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using IMVR.Commons;
 using Mono.Data.Sqlite;
 using System;
 using System.Collections.Concurrent;
@@ -16,7 +17,7 @@ namespace IMVR.Indexer
 {
 
 
-    public class ImageAnalyzer : DualNode<FileInfo, DbAction>
+    public class ImageAnalyzer : DualNode<FileInfo, DBTask>
     {
         private class ImageMetrics
         {
@@ -27,6 +28,8 @@ namespace IMVR.Indexer
             public string Path;
             public ExifProfile Profile;
         }
+        //private const ExifTag[] RELEVANT_TAGS = { 
+        //    ExifTag.DateTimeOriginal, ExifTag.ExifVersion, ExifTag.ExposureTime, ExifTag.FocalLength, ExifTag.GPSAltitude, ExifTag.GPSLongitude, ExifTag.GPSLatitude };
 
         public ImageAnalyzer(int threadCount) : base(threadCount)
         {
@@ -60,7 +63,8 @@ namespace IMVR.Indexer
 
                 using (var image = new MagickImage(path.FullName))
                 {
-                    Console.WriteLine("Consume " + path);
+                    if (Options.Instance.Verbose)
+                        Console.WriteLine("Consume " + path);
 
                     //if (image.Width > TextureAtlas.TileSize && image.Height > TextureAtlas.TileSize)
                     //    atlas.Add(path);
@@ -74,19 +78,28 @@ namespace IMVR.Indexer
                     var baseColor = firstPixel.ToColor() ??
                                 new MagickColor(firstPixel.GetChannel(0), firstPixel.GetChannel(0), firstPixel.GetChannel(0));
 
+                    var systemColor = System.Drawing.Color.FromArgb(baseColor.R, baseColor.G, baseColor.B);
 
-                    var dataBall = new ImageMetrics
+
+
+                    var dbImage = new Image()
                     {
-                        Statistics = statistics,
+                        Path = path.FullName,
+                        Entropy = (float)statistics.Entropy,
+                        Kurtosis = (float)statistics.Kurtosis,
+                        Skewness = (float)statistics.Skewness,
+                        Variance = (float)statistics.Variance,
+                        Hue = systemColor.GetHue(),
+                        Saturation = systemColor.GetSaturation(),
+                        Lightness = systemColor.GetBrightness(),
+                        Mean = (float)statistics.Mean,
                         Width = image.Width,
                         Height = image.Height,
-                        AverageColor = baseColor,
-                        Path = path.FullName,
-                        Profile = profile
+                        Indexed = DateTime.Now,
+                        LastModified = path.LastWriteTime,
                     };
 
-                    Console.WriteLine("Analyzed, publishing");
-                    Publish(GetQuery(dataBall));
+                    SaveImage(dbImage);
                 }
             }
             catch (Exception e)
@@ -95,80 +108,13 @@ namespace IMVR.Indexer
             }
         }
 
-        private DbAction GetQuery(ImageMetrics data)
+
+        private void SaveImage(Image image)
         {
-            return (connection, transaction) =>
+            Publish((db) =>
             {
-                using (var db = new Main(connection))
-                {
-                    db.Transaction = transaction;
-
-                    var file = db.Files.FirstOrDefault(f => f.Path == data.Path);
-
-                    if (file == null)
-                    {
-                        file = new VirtualHands.Data.File();
-                        db.Files.InsertOnSubmit(file);
-                    }
-
-                    file.Path = data.Path;
-                    file.Indexed = DateTime.Now;
-
-
-                    var statistic = file.ImageStatistics.FirstOrDefault();
-                    if (statistic == null)
-                    {
-                        statistic = new ImageStatistic();
-                        file.ImageStatistics.Add(statistic);
-                    }
-
-                    var systemColor = System.Drawing.Color.FromArgb(data.AverageColor.R, data.AverageColor.G, data.AverageColor.B);
-
-                    statistic.Entropy = data.Statistics.Entropy;
-                    statistic.Mean = data.Statistics.Mean;
-                    statistic.Kurtosis = data.Statistics.Kurtosis;
-                    statistic.Skewness = data.Statistics.Skewness;
-                    statistic.Variance = data.Statistics.Variance;
-                    statistic.HasExif = data.Profile != null;
-                    statistic.Version = 1;
-                    statistic.Hue = systemColor.GetHue();
-                    statistic.Saturation = systemColor.GetSaturation();
-                    statistic.Lightness = systemColor.GetBrightness();
-                    statistic.Width = data.Width;
-                    statistic.Height = data.Height;
-
-                    statistic.LastModified = new System.IO.FileInfo(data.Path).LastWriteTime;
-                    db.SubmitChanges();
-
-                    if (data.Profile != null)
-                    {
-                        var command = new SqliteCommand("DELETE FROM ExifValues WHERE FileId = @id", connection, transaction);
-                        command.Parameters.AddWithValue("@id", file.ID);
-                        command.ExecuteNonQuery();
-
-
-                        command = new SqliteCommand("INSERT INTO ExifValues(`FileId`, `Key`, `Value`) VALUES (@id, @key, @value)", connection, transaction);
-                        command.Parameters.AddWithValue("@id", file.ID);
-                        var keyVal = command.Parameters.AddWithValue("@key", "");
-                        var valVal = command.Parameters.AddWithValue("@value", "");
-
-                        foreach (var value in data.Profile.Values)
-                        {
-                            keyVal.Value = value.Tag.ToString();
-                            valVal.Value = value.Value.ToString();
-                            try
-                            {
-                                command.ExecuteNonQuery();
-                            }
-                            catch (SqliteException e)
-                            {
-                                Console.Error.WriteLine("{0}: {1}", value.Tag, e.Message);
-                            }
-                        }
-                    }
-                }
-            };
+                db.Images.Add(image);
+            });
         }
-
     }
 }

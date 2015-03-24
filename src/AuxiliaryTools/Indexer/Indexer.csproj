@@ -81,6 +81,7 @@
     <Compile Include="IO.cs" />
     <Compile Include="IProducer.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="PersistenceWorker.cs" />
     <Compile Include="TextureAtlas.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +96,12 @@
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IMVR.Commons\IMVR.Commons.csproj">
+      <Project>{b8dd1849-e506-4fc6-b5a3-81a7a9aadd5b}</Project>
+      <Name>IMVR.Commons</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

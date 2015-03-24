@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using DbLinq.Sqlite;
 using EchoNest.Artist;
 using EchoNest.Song;
+using IMVR.Commons;
 
 namespace IMVR.Indexer
 {
@@ -42,83 +43,48 @@ namespace IMVR.Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.s3db") };
+            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.bin") };
+
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                var dbWorker = new DbSyncer();
-                var imageAnalyzer =  
+                var db = IMDB.FromFile(Options.Instance.DbPath);
+
+
+                // -----DEBUG--------
+                db.Folders.Clear();
+                db.Folders.Add(@"C:\Users\Simon\Pictures");
+                // -----/DEBUG--------
+
+                // Clean db
+                db.Music.Clear();
+                db.Images.Clear();
+
+
+                // Prepare workers
+                var dbWorker = new PersistenceWorker(db);
+                var imageAnalyzer =
                     new ImageAnalyzer(IMAGE_ANALYZERS)
                     {
                         Target = dbWorker
                     };
 
-                using (var db = Database.Context)
+                // Create producers
+                foreach (var library in db.Folders.Distinct())
                 {
-                    new SqliteCommand("VACUUM", (SqliteConnection)db.Connection).ExecuteNonQuery();
-                    
-
-                    // Create producers
-                    foreach (var library in db.MediaLibraries)
+                    var walker = new FileWalker(library)
                     {
-                        var walker = new FileWalker(library.Path)
-                        {
-                            Filter = IO.IsImage,
-                            Target = imageAnalyzer
-                        };
+                        Filter = IO.IsImage,
+                        Target = imageAnalyzer
+                    };
 
-                        walker.Start();
-                    }
-
-                   // CleanDb();
-
-                    // Start work
-                    
-                    db.Connection.Close();
+                    walker.Start();
                 }
 
-
+                imageAnalyzer.Start();
                 dbWorker.Task.Wait();
-
-                //// Wait for break signal
-                //while (true)
-                //{
-             
-                //    Thread.Sleep(100);
-                //}
-               
+                
+                Console.ReadLine();
             }
-            
-          
-        }
-
-        private static async void CleanDb()
-        {
-            await Task.Run(() =>
-            {
-                using (var connection = Database.Connection)
-                {
-                    while (true)
-                    {
-                        using (var ctx = new Main(connection))
-                        {
-                            foreach (var file in ctx.Files)
-                            {
-                                if (!System.IO.File.Exists(file.Path))
-                                {
-                                    ctx.Files.DeleteOnSubmit(file);
-                                }
-                            }
-                            
-                            ctx.SubmitChanges();
-                            
-                        }
-
-                        break;
-                        //Thread.Sleep(10000);
-                    }
-
-                }
-            });
         }
     }
 }

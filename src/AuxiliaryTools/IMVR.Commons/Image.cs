@@ -16,8 +16,8 @@ namespace IMVR.Commons
         /// Gets or sets the atlas number this file was assigned to.
         /// </summary>
         [ProtoMember(1)]
-        public AtlasTicket Atlas;
-        
+        public AtlasTicket Atlas { get; set; }
+
         [ProtoMember(2)]
         public Dictionary<ExifTag, string> ExifValues = new Dictionary<ExifTag, string>();
 

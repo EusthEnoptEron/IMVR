@@ -37,5 +37,22 @@ namespace IMVR.Commons
 
         [ProtoMember(1)]
         public List<string> Folders { get; private set; }
+
+        public static IMDB FromFile(string file)
+        {
+            if (!System.IO.File.Exists(file))
+                return new IMDB();
+
+            using(var stream = System.IO.File.OpenRead(file)) {
+                return Serializer.Deserialize<IMDB>(stream);
+            }
+        }
+
+        public void Save(string file)
+        {
+            using(var stream = System.IO.File.OpenWrite(file)) {
+                Serializer.Serialize<IMDB>(stream, this);
+            }
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace IMVR.Indexer
 
         protected override void Process(CancellationToken token)
         {
-            using (var db = Database.Context)
+            //using (var db = Database.Context)
             {
                 foreach (var file in IO.GetFiles(root))
                 {
@@ -46,7 +46,7 @@ namespace IMVR.Indexer
 
                     if (Filter(file))
                     {
-                        if (db.Files.Where(f => f.Path == file.FullName).Count() == 0)
+                        //if (db.Files.Where(f => f.Path == file.FullName).Count() == 0)
                         {
                             if (Options.Instance.Verbose)
                                 Console.WriteLine("Add: {0}", file.FullName);
