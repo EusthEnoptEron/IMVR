@@ -60,6 +60,7 @@ namespace Gestures
                 return Quaternion.Inverse(Finger.Hand.LocalPalmRotation) * LocalRotation;
             }
         }
+
         public GenericFinger Finger;
 
         public GenericBone(GenericFinger finger)

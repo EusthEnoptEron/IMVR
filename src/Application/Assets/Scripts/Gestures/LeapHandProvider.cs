@@ -18,7 +18,7 @@ namespace Gestures
             public HandSnapshot(GenericHand hand, float time)
             {
                 this.Hand = hand;
-                this.dirty = dirty;
+                this.dirty = false;
                 this.Time = time;
             }
 
@@ -64,8 +64,9 @@ namespace Gestures
                 controller.SetPolicyFlags(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
+            base.Update();
 
             var frame = controller.Frame();
             Vector3 origin = root == null ? Vector3.zero : root.position;
