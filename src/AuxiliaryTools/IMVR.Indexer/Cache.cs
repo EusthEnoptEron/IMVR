@@ -55,9 +55,10 @@ namespace IMVR.Indexer
 
         private static string MakePath(string fileName)
         {
-            string first = fileName.Substring(0, 2);
-            string second = fileName.Substring(0, 4);
-            var path = Path.Combine(new string[] { Root, first, second });
+            //string first = fileName.Substring(0, 2);
+            //string second = fileName.Substring(0, 4);
+            //var path = Path.Combine(new string[] { Root, first, second });
+            var path = Root;
 
             // Make sure structure exists
             if (!Directory.Exists(path))
