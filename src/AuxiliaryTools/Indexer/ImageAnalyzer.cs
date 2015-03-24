@@ -31,7 +31,7 @@ namespace IMVR.Indexer
         //private const ExifTag[] RELEVANT_TAGS = { 
         //    ExifTag.DateTimeOriginal, ExifTag.ExifVersion, ExifTag.ExposureTime, ExifTag.FocalLength, ExifTag.GPSAltitude, ExifTag.GPSLongitude, ExifTag.GPSLatitude };
 
-        public ImageAnalyzer(int threadCount) : base(threadCount)
+        public ImageAnalyzer(int threadCount) : base(threadCount, 100)
         {
         }
 
