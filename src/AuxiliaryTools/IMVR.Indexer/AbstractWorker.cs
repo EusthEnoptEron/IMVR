@@ -13,6 +13,8 @@ namespace IMVR.Indexer
         private int threadCount;
         private int remainingThreads;
 
+        public static List<Task> Tasks = new List<Task>();
+
         public Task Task
         {
             get;
@@ -39,6 +41,7 @@ namespace IMVR.Indexer
                 {
                     remainingThreads++;
                     Task = Task.Factory.StartNew(DoWork, cts.Token);
+                    Tasks.Add(Task);
                 }
             }
             return Task;

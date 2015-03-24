@@ -41,7 +41,7 @@ namespace IMVR.Commons.Tests
         }
 
         [TestMethod]
-        public void TestSerialization()
+        public void ShouldSerialize()
         {
             using (var file = System.IO.File.OpenWrite(tempFile))
             {
@@ -53,7 +53,7 @@ namespace IMVR.Commons.Tests
         }
 
         [TestMethod]
-        public void TestDeserialization()
+        public void ShouldDeserialize()
         {
             using (var file = new MemoryStream())
             {
@@ -71,7 +71,22 @@ namespace IMVR.Commons.Tests
         }
 
         [TestMethod]
-        public void TestDeepClone()
+        public void ShouldDeserializeInSuccession()
+        {
+            // Save a larger file and then a smaller
+            db.Save(tempFile);
+
+            db.Images.Clear();
+            db.Folders.Clear();
+
+            db.Save(tempFile);
+
+            // Try to deserialize
+            IMDB.FromFile(tempFile);
+        }
+
+        [TestMethod]
+        public void ShouldDeepClone()
         {
             var clone = Serializer.DeepClone<IMDB>(db);
 

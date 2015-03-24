@@ -85,23 +85,6 @@ namespace IMVR.Commons
     }
 
 
-    [ProtoContract]
-    public class AtlasTicket
-    {
-        [ProtoMember(1)]
-        public int Number { get; set; }
-
-        [ProtoMember(2)]
-        public int Position { get; set; }
-
-
-        public AtlasTicket() { }
-        public AtlasTicket(int number, int position)
-        {
-            Number = number;
-            Position = position;
-        }
-    }
 
     // Summary:
     //     All exif tags from the Exif standard 2.2

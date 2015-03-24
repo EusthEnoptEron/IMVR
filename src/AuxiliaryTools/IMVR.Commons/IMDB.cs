@@ -25,8 +25,9 @@ namespace IMVR.Commons
         {
             Images = new List<Image>();
             Music = new List<Music>();
-
+            
             Folders = new List<string>();
+            Atlases = new List<Atlas>();
         }
 
         [ProtoMember(2)]
@@ -38,12 +39,17 @@ namespace IMVR.Commons
         [ProtoMember(1)]
         public List<string> Folders { get; private set; }
 
+        [ProtoMember(4)]
+        public List<Atlas> Atlases { get; private set; }
+
+
         public static IMDB FromFile(string file)
         {
             if (!System.IO.File.Exists(file))
                 return new IMDB();
 
-            using(var stream = System.IO.File.OpenRead(file)) {
+            using (var stream = System.IO.File.OpenRead(file))
+            {
                 return Serializer.Deserialize<IMDB>(stream);
             }
         }
@@ -52,6 +58,7 @@ namespace IMVR.Commons
         {
             using(var stream = System.IO.File.OpenWrite(file)) {
                 Serializer.Serialize<IMDB>(stream, this);
+                stream.SetLength(stream.Position);
             }
         }
     }

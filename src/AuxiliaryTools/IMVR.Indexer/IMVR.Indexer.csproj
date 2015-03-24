@@ -74,7 +74,7 @@
     <Compile Include="Cache.cs" />
     <Compile Include="ConsumerNode.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="DbSyncer.cs" />
+    <Compile Include="DBSyncNode.cs" />
     <Compile Include="DualNode.cs" />
     <Compile Include="IConsumer.cs" />
     <Compile Include="ImageAnalysisNode.cs" />

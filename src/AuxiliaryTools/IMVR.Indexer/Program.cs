@@ -47,8 +47,7 @@ namespace IMVR.Indexer
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                var db = IMDB.FromFile(Options.Instance.DbPath);
-
+                IMDB db = IMDB.FromFile(Options.Instance.DbPath);
 
                 // -----DEBUG--------
                 db.Folders.Clear();
@@ -82,7 +81,8 @@ namespace IMVR.Indexer
 
                 // Needed when there is no file walker to initialize the image analyzer
                 imageAnalyzer.Start();
-                dbWorker.Task.Wait();
+                //dbWorker.Task.Wait();
+                Task.WaitAll(AbstractWorker.Tasks.ToArray());
                 
                 Console.ReadLine();
             }

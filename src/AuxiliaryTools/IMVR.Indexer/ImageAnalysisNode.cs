@@ -22,28 +22,39 @@ namespace IMVR.Indexer
         //private const ExifTag[] RELEVANT_TAGS = { 
         //    ExifTag.DateTimeOriginal, ExifTag.ExifVersion, ExifTag.ExposureTime, ExifTag.FocalLength, ExifTag.GPSAltitude, ExifTag.GPSLongitude, ExifTag.GPSLatitude };
 
+        private TextureAtlas atlas;
+        private object atlasToken = new object();
+
         public ImageAnalysisNode(int threadCount) : base(threadCount, 100)
         {
         }
 
-        //private void CheckAtlas()
-        //{
-        //    if (atlas == null || atlas.IsFull)
-        //    {
-        //        if(atlas == null) {
-        //            atlas = new TextureAtlas(1 << 11, 1 << 11);
-        //        } else {
-        //            atlas.Generate(atlasPath.FullName);
-        //            atlas.Reset();
-        //        }
+        private void CheckAtlas()
+        {
+            if (atlas == null || atlas.IsFull)
+            {
+                if (atlas != null)
+                {
+                    var privateAtlas = atlas;
 
-        //        Console.WriteLine(atlasPath);
+                    Task.Factory.StartNew(delegate
+                    {
+                        Console.WriteLine("Start writing atlas");
+                        privateAtlas.Generate();
+                    });
 
-        //        // Create new atlas
-        //        atlas.Reset();
-        //        atlasPath = new FileInfo(Cache.GetPath());
-        //    }
-        //}
+                    Publish((db) =>
+                    {
+                        db.Atlases.Add(privateAtlas.Atlas);
+                    });
+                }
+
+                // First time -> create new one
+                // 2^11 = 2048
+                atlas = new TextureAtlas(Cache.GetPath(), 1 << 11, 1 << 11);
+            }
+            
+        }
 
 
         protected override void ProcessItem(FileInfo path)
@@ -90,6 +101,13 @@ namespace IMVR.Indexer
                         LastModified = path.LastWriteTime,
                     };
 
+                    lock (atlasToken)
+                    {
+                        CheckAtlas();
+
+                        dbImage.Atlas = atlas.Add(path.FullName);
+                    }
+
                     SaveImage(dbImage);
                 }
             }
@@ -97,6 +115,12 @@ namespace IMVR.Indexer
             {
                 Console.Error.WriteLine(e);
             }
+        }
+
+        protected override void CleanUp()
+        {
+            base.CleanUp();
+            CheckAtlas();
         }
 
 

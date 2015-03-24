@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Atlas.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IMDB.cs" />
     <Compile Include="Music.cs" />

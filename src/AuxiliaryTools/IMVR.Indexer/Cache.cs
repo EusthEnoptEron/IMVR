@@ -15,7 +15,7 @@ namespace IMVR.Indexer
         {
             get
             {
-                return Options.Instance.CachePath ?? Path.Combine(Path.GetTempPath(), "VirtualHands");
+                return Options.Instance.CachePath ?? Path.Combine(Path.GetTempPath(), "IMVR");
             }
         }
 
