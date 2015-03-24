@@ -7,6 +7,13 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class RingMenu : MonoBehaviour {
+    /// <summary>
+    /// The hand to which this ring menu applies to.
+    /// </summary>
+    public HandType handType = HandType.Left;
+    public GameObject particleEffect;
+    public float particleScale = 1f;
+
     private bool activated = false;
     private CanvasGroup canvasGroup;
     private Dictionary<FingerType, RingMenuItem> items = new Dictionary<FingerType, RingMenuItem>();
@@ -139,9 +146,25 @@ public class RingMenu : MonoBehaviour {
             if (submitDelta > 1f)
             {
                 // Submit!
-                Debug.Log("Submit " + submitCandidate);
                 ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerClickHandler);
                 submitCandidate = null;
+
+                if (particleEffect != null)
+                {
+                    var effect = GameObject.Instantiate(particleEffect, hand.PalmPosition, Quaternion.identity) as GameObject;
+                    
+                    foreach (var particle in effect.GetComponentsInChildren<ParticleSystem>())
+                    {
+                        particle.startSize *= particleScale;
+                        particle.startSpeed *= particleScale;
+                        particle.startRotation *= particleScale;
+                        particle.transform.localScale *= particleScale;
+                    }
+
+                    effect.SetActive(true);
+                    GameObject.Destroy(effect, 10);
+                }
+
             }
         }
     }
