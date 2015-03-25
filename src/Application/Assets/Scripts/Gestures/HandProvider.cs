@@ -22,14 +22,38 @@ namespace Gestures {
     public abstract class HandProvider : MonoBehaviour, IGestureHandler, IStatefulGestureHandler
     {
         private static HandProvider _instance;
-        private HashSet<GestureEventData> activeGestures = new HashSet<GestureEventData>();
+        //private HashSet<GestureEventData> activeGestures = new HashSet<GestureEventData>();
+        private Dictionary<string, GestureEventData> activeGestures = new Dictionary<string, GestureEventData>();
 
         public abstract GenericHand GetHand(HandType type,
             NoHandStrategy strategy = NoHandStrategy.SetNull);
 
         public GestureEventData[] GetGestures()
         {
-            return activeGestures.ToArray();
+            return activeGestures.Values.ToArray();
+        }
+
+        public GestureEventData GetGesture(string name)
+        {
+            return activeGestures[name];
+        }
+
+        public GestureEventData GetGestureEnter(string name)
+        {
+            var gesture = GetGesture(name);
+            if (gesture != null && gesture.State != GestureState.Enter)
+                gesture = null;
+
+            return gesture;
+        }
+
+        public GestureEventData GetGestureExit(string name)
+        {
+            var gesture = GetGesture(name);
+            if (gesture != null && gesture.State != GestureState.Leave)
+                gesture = null;
+
+            return gesture;
         }
 
         protected virtual void Update()
@@ -90,22 +114,22 @@ namespace Gestures {
 
         public void OnGesture(GestureEventData eventData)
         {
-            activeGestures.Add(eventData);
+            activeGestures.Add(eventData.Gesture.Name, eventData);
         }
 
         public void OnGestureEnter(GestureEventData eventData)
         {
-            activeGestures.Add(eventData);
+            activeGestures.Add(eventData.Gesture.Name, eventData);
         }
 
         public void OnGestureLeave(GestureEventData eventData)
         {
-            activeGestures.Add(eventData);
+            activeGestures.Add(eventData.Gesture.Name, eventData);
         }
 
         public void OnGestureMaintain(GestureEventData eventData)
         {
-            activeGestures.Add(eventData);
+            activeGestures.Add(eventData.Gesture.Name, eventData);
         }
     }
 }
