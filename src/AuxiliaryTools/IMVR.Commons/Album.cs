@@ -10,21 +10,30 @@ namespace IMVR.Commons
     [ProtoContract(AsReferenceDefault = true)]
     public class Album
     {
+        public Album()
+        {
+            Tracks = new List<Song>();
+        }
+
         /// <summary>
         /// Gets or sets the album name,
         /// </summary>
+        [ProtoMember(1)]
         public string Name { get; set; }
 
+        [ProtoMember(2)]
         public int? Year { get; set; }
 
         /// <summary>
-        /// Gets or sets the tracks in this album, ordered by their number.
+        /// Gets the tracks in this album, ordered by their number.
         /// </summary>
-        public Song[] Tracks { get; set; }
+        [ProtoMember(3)]
+        public List<Song> Tracks { get; private set; }
 
         /// <summary>
         /// Gets or sets the Atlas Ticket for the cover art.
         /// </summary>
+        [ProtoMember(4)]
         public AtlasTicket Atlas { get; set; }
 
 

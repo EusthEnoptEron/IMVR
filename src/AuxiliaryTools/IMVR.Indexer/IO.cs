@@ -75,5 +75,17 @@ namespace IMVR.Indexer {
         }
 
 
+
+        internal static bool IsMusic(FileInfo file)
+        {
+            //Debug.Log("Judge");
+            switch (file.Extension.ToLower())
+            {
+                case ".mp3":
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

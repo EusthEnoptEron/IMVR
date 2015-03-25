@@ -12,6 +12,9 @@ namespace IMVR.Commons
     [ProtoContract(AsReferenceDefault = true)]
     public class Song : File
     {
+        [ProtoMember(13)]
+        public string Title { get; set; }
+
         [ProtoMember(1)]
         public Artist Artist { get; set; }
 
@@ -19,7 +22,7 @@ namespace IMVR.Commons
         public Album Album { get; set; }
 
         [ProtoMember(3)]
-        public int TrackNo { get; set; }
+        public uint TrackNo { get; set; }
 
         /// <summary>
         /// Gets or sets the duration in seconds.

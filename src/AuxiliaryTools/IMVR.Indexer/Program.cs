@@ -52,11 +52,14 @@ namespace IMVR.Indexer
                 // -----DEBUG--------
                 db.Folders.Clear();
                 db.Folders.Add(@"C:\Users\Simon\Pictures");
+                db.Folders.Add(@"C:\Users\Simon\Music");
                 // -----/DEBUG--------
 
                 // Clean db
                 db.Songs.Clear();
                 db.Images.Clear();
+                db.Artists.Clear();
+                db.Atlases.Clear();
 
 
                 // Prepare workers
@@ -67,20 +70,30 @@ namespace IMVR.Indexer
                         Target = dbWorker
                     };
 
+                var musicAnalyzer = new MusicNode();
+              
+
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    var walker = new FileWalker(library)
+                    new FileWalker(library)
                     {
                         Filter = IO.IsImage,
                         Target = imageAnalyzer
-                    };
+                    }.Start();
 
-                    walker.Start();
+                    new FileWalker(library)
+                    {
+                        Filter = IO.IsMusic,
+                        Target = musicAnalyzer
+                    }.Start();
+
                 }
 
                 // Needed when there is no file walker to initialize the image analyzer
                 imageAnalyzer.Start();
+                musicAnalyzer.Start();
+
                 //dbWorker.Task.Wait();
                 Task.WaitAll(AbstractWorker.Tasks.ToArray());
                 

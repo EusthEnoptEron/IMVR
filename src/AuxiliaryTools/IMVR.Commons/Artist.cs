@@ -6,12 +6,13 @@ using System.Text;
 
 namespace IMVR.Commons
 {
-    [ProtoContract]
+    [ProtoContract(AsReferenceDefault=true)]
     public class Artist
     {
         public Artist()
         {
             Terms = new List<TermItem>();
+            Albums = new List<Album>();
         }
 
         /// <summary>
@@ -23,6 +24,13 @@ namespace IMVR.Commons
         /// Gets or sets the biography of this artist.
         /// </summary>
         [ProtoMember(2)] public string Biography { get; set; }
+
+
+        /// <summary>
+        /// Gets a list of albums by this artist.
+        /// </summary>
+        [ProtoMember(8)]
+        public List<Album> Albums { get; private set; }
 
         /// <summary>
         /// Gets or sets the global familiarity of this artist.
