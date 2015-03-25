@@ -6,7 +6,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class RingMenu : MonoBehaviour {
+public class RingMenu : MonoBehaviour, IRingMenu {
     /// <summary>
     /// The hand to which this ring menu applies to.
     /// </summary>
@@ -16,32 +16,34 @@ public class RingMenu : MonoBehaviour {
 
     private bool activated = false;
     private CanvasGroup canvasGroup;
-    private Dictionary<FingerType, RingMenuItem> items = new Dictionary<FingerType, RingMenuItem>();
+    public IDictionary<FingerType, RingMenuItem> Items { get; private set; }
 
-    private Transform _activeMenu;
-    public Transform ActiveMenu
+    private IRingMenu _activeMenu;
+    public IRingMenu ActiveMenu
     {
-        get { return _activeMenu ?? transform; }
+        get { return _activeMenu ?? this; }
         set
         {
-            foreach (var child in ActiveMenu.Children())
-                child.gameObject.SetActive(false);
+            foreach (var child in ActiveMenu.Items.Values)
+                child.SetVisibility(false);
 
             _activeMenu = value;
+            ActiveMenu.Node.SetActiveInHierarchy(true);
 
-            ActiveMenu.gameObject.SetActiveInHierarchy(true);
-            items.Clear();
+            foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
+                ancestor.SetVisibility(true);
 
-            foreach (var child in ActiveMenu.Children())
+            foreach (var child in ActiveMenu.Items.Values)
             {
-                child.gameObject.SetActive(true);
-
-                var item = child.GetComponent<RingMenuItem>();
-                if(item != null)
-                    items.Add(item.fingerType, item);
-
+                child.SetVisibility(true);
             }
         }
+    }
+
+    public int Level
+    {
+        get;
+        private set;
     }
 
     private FingerType? submitCandidate;
@@ -50,6 +52,15 @@ public class RingMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.canvasGroup = GetComponent<CanvasGroup>();
+
+        Items = new Dictionary<FingerType, RingMenuItem>();
+        // Fill list of items
+        foreach (var child in transform.Children())
+        {
+            var item = child.GetComponent<RingMenuItem>();
+            if (item != null)
+                Items.Add(item.fingerType, item);
+        }
 
         ActiveMenu = null;
 	}
@@ -148,9 +159,9 @@ public class RingMenu : MonoBehaviour {
 
     void ExecuteEvent<T>(FingerType type, ExecuteEvents.EventFunction<T> handler) where T : IEventSystemHandler
     {
-        if(items.ContainsKey(type)) {
+        if(ActiveMenu.Items.ContainsKey(type)) {
             ExecuteEvents.ExecuteHierarchy(
-                items[type].gameObject, 
+                ActiveMenu.Items[type].gameObject, 
                 new PointerEventData(EventSystem.current),
                 handler  
             );
@@ -160,9 +171,9 @@ public class RingMenu : MonoBehaviour {
 
     void UpdateFinger(FingerType type, float progress)
     {
-        if (items.ContainsKey(type))
+        if (ActiveMenu.Items.ContainsKey(type))
         {
-            items[type].Progress = progress;
+            ActiveMenu.Items[type].Progress = progress;
         }
     }
 
@@ -210,8 +221,12 @@ public class RingMenu : MonoBehaviour {
             canvasGroup.DOKill();
             var animation = canvasGroup.DOFade(activated ? 1 : 0, 0.5f);
 
-            if (activated) SetChildren();
-            else animation.OnComplete(SetChildren);
+            foreach (var child in ActiveMenu.Items.Values)
+            {
+                child.SetVisibility(enabled);
+            }
+            //if (activated) SetChildren();
+            //else animation.OnComplete(SetChildren);
         }
     }
 
@@ -223,10 +238,15 @@ public class RingMenu : MonoBehaviour {
 
     private void UpdateOrders()
     {
-        var orderedChild = transform.Children().OrderByDescending(child => Vector3.Distance(Camera.main.transform.position, child.position));
+        var orderedChild = ActiveMenu.Items.Values
+            .OrderBy(child => {
+                Debug.LogFormat("{0} {1}", child.name, Vector3.Distance(Camera.main.transform.position, child.transform.position));
+                return Vector3.Distance(Camera.main.transform.position, child.transform.position);
+            });
+
 
         foreach (var child in orderedChild)
-            child.SetAsFirstSibling();
+            child.transform.SetAsFirstSibling();
     }
 
 
@@ -263,5 +283,14 @@ public class RingMenu : MonoBehaviour {
             return (entries.LastOrDefault().Position - entries.FirstOrDefault().Position);
         }
     }
+
+
+
+    public GameObject Node
+    {
+        get { return gameObject; }
+    }
+
+
 }
 

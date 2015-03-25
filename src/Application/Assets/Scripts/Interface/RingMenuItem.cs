@@ -3,6 +3,7 @@ using System.Collections;
 using Gestures;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class RingMenuItem : UIBehaviour {
@@ -32,6 +33,7 @@ public class RingMenuItem : UIBehaviour {
         lineRenderer.transform.localRotation = Quaternion.identity;
         lineRenderer.transform.localScale = Vector3.one;
 
+        transform.localScale = Vector3.zero;
       //  InitLineRenderer();
 	}
 
@@ -114,4 +116,19 @@ public class RingMenuItem : UIBehaviour {
         lineRenderer.SetPosition(1, p1 + diff);
         lineRenderer.SetPosition(2, p2);
     }
+
+    
+    public virtual void SetVisibility(bool visible)    {
+        var targetSize = visible ? Vector3.one : Vector3.zero;
+
+        transform.DOKill();
+        var transition = transform.DOScale(targetSize, 0.5f);
+
+        if (!visible) transition.OnComplete(delegate
+            {
+                gameObject.SetActive(false);
+            });
+        else gameObject.SetActive(true);
+    }
+
 }
