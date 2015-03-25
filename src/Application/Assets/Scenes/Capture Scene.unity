@@ -171,7 +171,7 @@ Prefab:
     - target: {fileID: 11400000, guid: c9f2277f2b4414ff9abf05e783890171, type: 2}
       propertyPath: leftGraphicsModel
       value: 
-      objectReference: {fileID: 11400008, guid: e734beeefc33b46219db092ade06f82f,
+      objectReference: {fileID: 11400010, guid: e734beeefc33b46219db092ade06f82f,
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c9f2277f2b4414ff9abf05e783890171, type: 2}

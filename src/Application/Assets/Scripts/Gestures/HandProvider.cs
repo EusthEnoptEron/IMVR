@@ -34,27 +34,34 @@ namespace Gestures {
             return activeGestures.Values.ToArray();
         }
 
-        public GestureEventData GetGesture(string name)
+        public GestureEventData GetGestureEvent(string name)
         {
-            return activeGestures[name];
+            return activeGestures.ContainsKey(name)
+                ? activeGestures[name] 
+                : null;
         }
 
-        public GestureEventData GetGestureEnter(string name)
+        public bool GetGesture(string name)
         {
-            var gesture = GetGesture(name);
+            return activeGestures.ContainsKey(name);
+        }
+
+        public bool GetGestureEnter(string name)
+        {
+            var gesture = GetGestureEvent(name);
             if (gesture != null && gesture.State != GestureState.Enter)
                 gesture = null;
 
-            return gesture;
+            return gesture != null;
         }
 
-        public GestureEventData GetGestureExit(string name)
+        public bool GetGestureExit(string name)
         {
-            var gesture = GetGesture(name);
+            var gesture = GetGestureEvent(name);
             if (gesture != null && gesture.State != GestureState.Leave)
                 gesture = null;
 
-            return gesture;
+            return gesture != null;
         }
 
         protected virtual void LateUpdate()
@@ -134,7 +141,7 @@ namespace Gestures {
 
         public void OnGestureMaintain(GestureEventData eventData)
         {
-            if(backBuffer[eventData.Gesture.Name] == null)
+            if(!backBuffer.ContainsKey(eventData.Gesture.Name))
                 backBuffer[eventData.Gesture.Name] = eventData;
         }
     }

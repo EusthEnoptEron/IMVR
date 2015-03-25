@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using Gestures;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
 
@@ -33,6 +34,11 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
 
         menu = transform.GetComponentInParent<RingMenu>();
         Level = transform.Ancestors().Count(parent => parent.GetComponent<RingSubMenu>() != null) + 1;
+
+        var canvas = GetComponent<Canvas>();
+        if(canvas == null) canvas = gameObject.AddComponent<Canvas>();
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = Level + 1;
     }
 
 
@@ -45,7 +51,7 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
             var hand = HandProvider.Instance.GetHand(HandType.Left, NoHandStrategy.SetNull);
             if (hand != null)
             {
-                transform.position = hand.PalmPosition + hand.PalmNormal * 0.05f * Level;//hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Intermediate).Position - hand.PalmPosition, Camera.main.transform.forward) * 2f;// + Camera.main.transform.TransformDirection(distance);
+                transform.position = hand.PalmPosition + hand.PalmNormal * 0.025f * Level;//hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Intermediate).Position - hand.PalmPosition, Camera.main.transform.forward) * 2f;// + Camera.main.transform.TransformDirection(distance);
                 transform.rotation = Quaternion.LookRotation(-hand.PalmNormal, hand.PalmDirection);
             }
         }

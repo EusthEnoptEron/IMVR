@@ -13,8 +13,6 @@ public class RingMenuItem : UIBehaviour {
     public float heightDifference = 0;
 
     private GameObject torus;
-    //private UILineRenderer lineRenderer;
-    private LineRenderer lineRenderer;
 
     public float Progress { get; set; }
 
@@ -25,13 +23,6 @@ public class RingMenuItem : UIBehaviour {
 
         //torus.GetComponent<MeshRenderer>().material.SetColor("_MainColor", color);
         torus.GetComponentInChildren<Image>().color = color;
-
-        lineRenderer = new GameObject().AddComponent<LineRenderer>();
-        //lineRenderer.transform.SetParent(transform);
-
-        lineRenderer.transform.localPosition = Vector3.zero;
-        lineRenderer.transform.localRotation = Quaternion.identity;
-        lineRenderer.transform.localScale = Vector3.one;
 
         transform.localScale = Vector3.zero;
       //  InitLineRenderer();
@@ -75,58 +66,26 @@ public class RingMenuItem : UIBehaviour {
 
     void OnEnable()
     {
-        torus.SetActive(true);
+        //torus.SetActive(true);
         //lineRenderer.gameObject.SetActive(true); 
     }
 
     void OnDisable()
     {
-        torus.SetActive(false);
+        //torus.SetActive(false);
         //lineRenderer.gameObject.SetActive(false);
     }
 
-    private void InitLineRenderer()
-    {
-        //lineRenderer.color = color;
-        //lineRenderer.LineThickness = 3;
 
-        lineRenderer.material = Resources.Load("Materials/Line Material") as Material;
-        lineRenderer.material.color = color;
-
-        lineRenderer.SetColors(color, color);
-        lineRenderer.SetWidth(0.005f, 0.005f);
-        lineRenderer.SetVertexCount(3);
-    }
-
-    private void UpdateLineRenderer(Vector3 p1, Vector3 p2)
-    {
-        var diff = p2 - p1;
-
-        p1 = p1 + diff * 0f;
-        p2 = p2 - diff * 0f;
-
-        diff = Vector3.ProjectOnPlane(p2 - p1, Camera.main.transform.right);
-
-        //lineRenderer.Points = new Vector2[] {
-        //    lineRenderer.transform.InverseTransformPoint(p1),
-        //    lineRenderer.transform.InverseTransformPoint(new Vector3(p1.x + diff.x / 10f, p2.y, p1.z + diff.z / 10f)),
-        //    lineRenderer.transform.InverseTransformPoint(p2)
-        //};
-        lineRenderer.SetPosition(0, p1);
-        lineRenderer.SetPosition(1, p1 + diff);
-        lineRenderer.SetPosition(2, p2);
-    }
-
-    
     public virtual void SetVisibility(bool visible)    {
         var targetSize = visible ? Vector3.one : Vector3.zero;
-
         transform.DOKill();
         var transition = transform.DOScale(targetSize, 0.5f);
 
         if (!visible) transition.OnComplete(delegate
             {
-                gameObject.SetActive(false);
+                // TODO: Enable when this strange bug is fixed...
+                //gameObject.SetActive(false);
             });
         else gameObject.SetActive(true);
     }

@@ -7,6 +7,7 @@ public class StillSnapshotGesture : Gesture {
 
     public string gestureName;
     public float threshold = 0.7f;
+    public bool invariant = true;
 
     private GenericHand originalHand;
     private HandComparer comparer = new QuaternionComparer();
@@ -37,7 +38,7 @@ public class StillSnapshotGesture : Gesture {
 
     protected override bool Process(GenericHand hand, LinkedList<GenericHand> cache, GestureState state)
     {
-        var similarity = comparer.GetSimilarity(hand, true);
+        var similarity = comparer.GetSimilarity(hand, invariant);
 
         if (similarity > threshold)
             return true;

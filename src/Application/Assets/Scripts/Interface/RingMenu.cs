@@ -27,6 +27,9 @@ public class RingMenu : MonoBehaviour, IRingMenu {
             foreach (var child in ActiveMenu.Items.Values)
                 child.SetVisibility(false);
 
+            var self = ActiveMenu.Node.GetComponent<RingMenuItem>();
+            if (self != null) self.SetVisibility(false);
+
             _activeMenu = value;
             ActiveMenu.Node.SetActiveInHierarchy(true);
 
@@ -239,10 +242,7 @@ public class RingMenu : MonoBehaviour, IRingMenu {
     private void UpdateOrders()
     {
         var orderedChild = ActiveMenu.Items.Values
-            .OrderBy(child => {
-                Debug.LogFormat("{0} {1}", child.name, Vector3.Distance(Camera.main.transform.position, child.transform.position));
-                return Vector3.Distance(Camera.main.transform.position, child.transform.position);
-            });
+            .OrderBy(child => Vector3.Distance(Camera.main.transform.position, child.transform.position));
 
 
         foreach (var child in orderedChild)
@@ -283,8 +283,6 @@ public class RingMenu : MonoBehaviour, IRingMenu {
             return (entries.LastOrDefault().Position - entries.FirstOrDefault().Position);
         }
     }
-
-
 
     public GameObject Node
     {
