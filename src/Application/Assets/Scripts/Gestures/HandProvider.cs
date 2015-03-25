@@ -23,6 +23,7 @@ namespace Gestures {
     {
         private static HandProvider _instance;
         //private HashSet<GestureEventData> activeGestures = new HashSet<GestureEventData>();
+        private Dictionary<string, GestureEventData> backBuffer = new Dictionary<string, GestureEventData>();
         private Dictionary<string, GestureEventData> activeGestures = new Dictionary<string, GestureEventData>();
 
         public abstract GenericHand GetHand(HandType type,
@@ -56,9 +57,13 @@ namespace Gestures {
             return gesture;
         }
 
-        protected virtual void Update()
+        protected virtual void LateUpdate()
         {
-            activeGestures.Clear();
+            var temp = activeGestures;
+            activeGestures = backBuffer;
+
+            backBuffer = temp;
+            backBuffer.Clear();
         }
 
 
@@ -114,22 +119,22 @@ namespace Gestures {
 
         public void OnGesture(GestureEventData eventData)
         {
-            activeGestures.Add(eventData.Gesture.Name, eventData);
+            backBuffer[eventData.Gesture.Name] = eventData;
         }
 
         public void OnGestureEnter(GestureEventData eventData)
         {
-            activeGestures.Add(eventData.Gesture.Name, eventData);
+            backBuffer[eventData.Gesture.Name] = eventData;
         }
 
         public void OnGestureLeave(GestureEventData eventData)
         {
-            activeGestures.Add(eventData.Gesture.Name, eventData);
+            backBuffer[eventData.Gesture.Name] = eventData;
         }
 
         public void OnGestureMaintain(GestureEventData eventData)
         {
-            activeGestures.Add(eventData.Gesture.Name, eventData);
+            backBuffer[eventData.Gesture.Name] = eventData;
         }
     }
 }
