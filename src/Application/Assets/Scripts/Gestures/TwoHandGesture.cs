@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Gestures
 {
-    abstract class TwoHandGesture : Gesture
+    public abstract class TwoHandGesture : Gesture
     {
         protected override bool Filter(GenericHand hand)
         {
@@ -15,6 +15,10 @@ namespace Gestures
         protected override bool Filter(GenericHand leftHand, GenericHand rightHand)
         {
             return true;
+        }
+        protected override bool Process(GenericHand hand, LinkedList<GenericHand> cache, GestureState state)
+        {
+            return false;
         }
     }
 }

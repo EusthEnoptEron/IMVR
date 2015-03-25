@@ -14,7 +14,7 @@ public class RingMenu : MonoBehaviour, IRingMenu {
     public GameObject particleEffect;
     public float particleScale = 1f;
 
-    private bool activated = false;
+    private bool activated = true;
     private CanvasGroup canvasGroup;
     public IDictionary<FingerType, RingMenuItem> Items { get; private set; }
 
@@ -105,7 +105,8 @@ public class RingMenu : MonoBehaviour, IRingMenu {
 
     bool ShouldMaintainMenu(GenericHand hand)
     {
-        return Vector3.Dot(hand.LocalPalmNormal, new Vector3(1, 1, -1).normalized) > 0;        
+        return !HandProvider.Instance.GetGesture("Pull")
+            && Vector3.Dot(hand.LocalPalmNormal, new Vector3(1, 1, -1).normalized) > 0;        
     }
 
     void UpdateHand(GenericHand hand)
@@ -250,39 +251,6 @@ public class RingMenu : MonoBehaviour, IRingMenu {
     }
 
 
-    class VelocityMeasurer
-    {
-        public float Interval = 0.3f;
-
-        struct Entry
-        {
-            public float Time;
-            public Vector3 Position;
-        }
-
-        private List<Entry> entries = new List<Entry>();
-
-        public void AddPosition(Vector3 position)
-        {
-
-            entries.Add(new Entry { 
-                Time = Time.time,
-                Position = position
-            });
-        }
-
-        public Vector3 GetVelocity()
-        {
-            // Calculate
-            return GetDifference() / 0.5f;
-        }
-
-        public Vector3 GetDifference()
-        {
-            entries.RemoveAll(e => e.Time < Time.time - Interval);
-            return (entries.LastOrDefault().Position - entries.FirstOrDefault().Position);
-        }
-    }
 
     public GameObject Node
     {

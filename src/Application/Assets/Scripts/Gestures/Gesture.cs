@@ -83,7 +83,7 @@ namespace Gestures
                 if (handPairCache.Count == BacktrackLength && Process(handPair, handPairCache, state))
                 {
                     if (state == GestureState.Enter) state = GestureState.Maintain;
-                    else {
+                    else if(state != GestureState.Maintain) {
                         if (Stateful) state = GestureState.Enter;
                         else state = GestureState.Execute;
                     }
@@ -92,6 +92,8 @@ namespace Gestures
                 {
                     Leave(ref state);
                 }
+
+                pairState = state;
                 return state;
             }
             return GestureState.None;
