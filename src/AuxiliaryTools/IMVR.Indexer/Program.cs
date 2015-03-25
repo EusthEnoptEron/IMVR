@@ -55,7 +55,7 @@ namespace IMVR.Indexer
                 // -----/DEBUG--------
 
                 // Clean db
-                db.Music.Clear();
+                db.Songs.Clear();
                 db.Images.Clear();
 
 

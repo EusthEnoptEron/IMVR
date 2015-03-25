@@ -148,3 +148,6 @@ node_modules
 /src/Application/*.suo
 /src/AuxiliaryTools/**/bin
 /src/*.suo
+/src/AuxiliaryTools/*.psess
+/src/AuxiliaryTools/*.vsp
+/src/AuxiliaryTools/packages/**/*

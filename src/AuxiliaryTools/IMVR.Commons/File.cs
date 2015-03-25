@@ -10,7 +10,7 @@ namespace IMVR.Commons
     /// Represents an indexed file.
     /// </summary>
     [ProtoContract]
-    [ProtoInclude(100, typeof(Music))]
+    [ProtoInclude(100, typeof(Song))]
     [ProtoInclude(101, typeof(Image))]
     public abstract class File
     {

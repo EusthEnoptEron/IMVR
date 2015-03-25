@@ -25,7 +25,7 @@ namespace IMVR.Commons.Tests
                     Path = "C:\\" + i + ".mp3"
                 });
 
-                db.Music.Add(new Music()
+                db.Songs.Add(new Song()
                 {
                     Path = "C:\\" + i + ".mp3"
                 });
@@ -49,7 +49,7 @@ namespace IMVR.Commons.Tests
             }
 
             // File size should be at least the size of [number of items]
-            Assert.IsTrue(new FileInfo(tempFile).Length > (db.Images.Count + db.Music.Count), "File length is too small!");
+            Assert.IsTrue(new FileInfo(tempFile).Length > (db.Images.Count + db.Songs.Count), "File length is too small!");
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace IMVR.Commons.Tests
 
                 Assert.AreEqual(db.Folders.Count, clone.Folders.Count);
                 Assert.AreEqual(db.Images.Count, clone.Images.Count);
-                Assert.AreEqual(db.Music.Count, clone.Music.Count);
+                Assert.AreEqual(db.Songs.Count, clone.Songs.Count);
 
                 Assert.AreEqual(db.Images[0].Path, clone.Images[0].Path);
             }
@@ -91,7 +91,7 @@ namespace IMVR.Commons.Tests
             var clone = Serializer.DeepClone<IMDB>(db);
 
             Assert.AreEqual(db.Images.Count, clone.Images.Count);
-            Assert.AreEqual(db.Music.Count, clone.Music.Count);
+            Assert.AreEqual(db.Songs.Count, clone.Songs.Count);
             Assert.AreEqual(db.Images[0].Path, clone.Images[0].Path);
         }
     }
