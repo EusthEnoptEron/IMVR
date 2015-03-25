@@ -16,8 +16,8 @@ namespace Gestures
         // Use this for initialization
         void Awake()
         {
-            if(provider == null)
-                provider = GetComponent<HandProvider>() ?? GetComponentInParent<HandProvider>();
+            if (provider == null)
+                provider = HandProvider.Instance;
         }
 
         // Update is called once per frame

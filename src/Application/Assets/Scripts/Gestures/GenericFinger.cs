@@ -20,8 +20,7 @@ namespace Gestures
     public class GenericFinger
     {
         private static int ID_COUNTER = 0;
-
-        [NonSerialized]
+        
         public GenericHand Hand;
 
         public int Id { get; private set; }

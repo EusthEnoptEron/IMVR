@@ -77,7 +77,7 @@ public class ImageManager : MonoBehaviour {
 
     void OnApplicationQuit()
     {
-        source.Dispose();
+        //source.Dispose();
     }
 
 }
