@@ -64,10 +64,8 @@ namespace Gestures
                 controller.SetPolicyFlags(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
         }
 
-        protected override void Update()
+        protected void Update()
         {
-            base.Update();
-
             var frame = controller.Frame();
             Vector3 origin = root == null ? Vector3.zero : root.position;
 

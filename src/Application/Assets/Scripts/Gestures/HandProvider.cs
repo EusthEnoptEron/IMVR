@@ -134,7 +134,8 @@ namespace Gestures {
 
         public void OnGestureMaintain(GestureEventData eventData)
         {
-            backBuffer[eventData.Gesture.Name] = eventData;
+            if(backBuffer[eventData.Gesture.Name] == null)
+                backBuffer[eventData.Gesture.Name] = eventData;
         }
     }
 }
