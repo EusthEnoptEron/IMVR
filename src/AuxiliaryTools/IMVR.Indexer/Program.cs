@@ -8,7 +8,6 @@ using System.Data;
 using VirtualHands.Data;
 using System.IO;
 using DbLinq;
-using Mono.Data.Sqlite;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +18,9 @@ using IMVR.Commons;
 
 namespace IMVR.Indexer
 {
+    /// <summary>
+    /// Entry point of this application.
+    /// </summary>
     class Program
     {
         private const int COLLECTION_BOUND = 100;
