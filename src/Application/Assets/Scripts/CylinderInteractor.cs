@@ -96,9 +96,7 @@ public class CylinderInteractor : MonoBehaviour {
 
         if (velocity.magnitude > LOW_SPEED_THRESHOLD)
         {
-            layout.GetComponent<Rigidbody>().AddRelativeTorque(
-                Vector3.up * Vector3.Dot(velocity, Camera.main.transform.right) * factor
-            );
+            layout.AddTorque(Vector3.Dot(velocity, Camera.main.transform.right) * factor);
         } else {
 
         }

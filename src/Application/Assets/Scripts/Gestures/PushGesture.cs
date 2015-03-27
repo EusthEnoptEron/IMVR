@@ -7,16 +7,6 @@ using System.Linq;
 
 public class PushGesture : TwoHandGesture {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
     public override int BacktrackLength
     {
         get { return 1; }

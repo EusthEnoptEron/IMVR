@@ -31,7 +31,7 @@ namespace Gestures
 
         private HandState leftHandState;
         private HandState rightHandState;
-
+        
 
         // Use this for initialization
         void Start()

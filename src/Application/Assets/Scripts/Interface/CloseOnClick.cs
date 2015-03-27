@@ -23,7 +23,7 @@ public class CloseOnClick : MonoBehaviour, IPointerClickHandler {
         else
             UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.isPlaying = false;       
+        Application.Quit();
 #endif
     }
 }

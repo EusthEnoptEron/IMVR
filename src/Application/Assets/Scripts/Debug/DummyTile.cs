@@ -49,15 +49,17 @@ public class DummyTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
         
         //m_image = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
-        rectTransform.sizeDelta = Vector2.one;
+        rectTransform.sizeDelta = Vector2.one * 100;
         m_image = new GameObject().AddComponent<Image>();
 
         // Create tile
-        m_image.transform.parent = transform;
+        m_image.transform.SetParent(transform);
         m_image.transform.localPosition = Vector3.zero;
         m_image.transform.localRotation = Quaternion.identity;
         m_image.transform.localScale = Vector3.one;
         m_image.sprite = maskSprite;
+        //m_image.text = Random.Range(0, 100).ToString();
+        //m_image.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
 
         var imageRect = m_image.GetComponent<RectTransform>();
         {
@@ -67,6 +69,7 @@ public class DummyTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
             imageRect.offsetMin = new Vector2(0, 0);
             imageRect.offsetMax = new Vector2(0, 0);
         }
+
     }
 
 	
@@ -112,5 +115,9 @@ public class DummyTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
 
             m_image.DOColor(Color.green, 1f);
         }
+    }
+
+    public class LightImage : Image
+    {
     }
 }

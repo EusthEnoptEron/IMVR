@@ -7,7 +7,8 @@ public class DummyTileFeeder : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+	IEnumerator Start () {
+        yield return new WaitForSeconds(2);
 	    // Create tiles
 
         List<Tile> tiles = new List<Tile>();
@@ -24,11 +25,6 @@ public class DummyTileFeeder : MonoBehaviour {
         layout.tiles = tiles;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 
     public static Color HSVToRGB(float H, float S, float V)
      {

@@ -15,18 +15,20 @@ public class OculusDebug : MonoBehaviour {
 
     private const int maxLines = 28;
     private List<string> lines = new List<string>(maxLines);
-
+    private GameObject rig;
 
     void Start()
     {        
         console = gameObject.GetComponentInChildren<Text>();
         console.text = "";
+
+        rig = GameObject.FindGameObjectWithTag("CameraRig");
     }
 
     void Update()
     {
-        var camera = GameObject.Find("OVRCameraRig") ?? GameObject.Find("LeapOVRCameraRig");
-          
+        var camera = rig;
+
         // Orientate
         gameObject.transform.position = camera.transform.position + camera.transform.forward * 0.5f + camera.transform.right * 0.2f;
         gameObject.transform.rotation =

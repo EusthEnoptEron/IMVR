@@ -3,49 +3,88 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using UnityEngine.UI;
+using System;
 
+[RequireComponent(typeof(TileBlanket))]
 public class CircleLayout : MonoBehaviour {
-
-    private List<Tile> _tiles = new List<Tile>();
-
     [HideInInspector]
     public List<Tile> tiles {
         get {
-            return _tiles;
+            return blanket.tiles;
         }
         set {
-            _tiles = value;
+            blanket.SetTiles(value);
             UpdateLayout();
         }
     }
+
+    public Tile[,] tileMat;
+
 
     public float height = 5;
     public float radius = 5;
 
     private bool changing;
 
-    private int xSegments = 1;
-    private int ySegments = 1;
-    private float tileScale = 1;
+    public int xSegments { get; private set; }
+    public int ySegments { get; private set; }
+    public float tileScale { get; private set; }
 
+    private TileBlanket blanket;
+
+    private Transform world;
+    protected virtual void Start() {
+        blanket = GetComponent<TileBlanket>();
+        world = GameObject.Find("World").transform;
+    }
 
     void Update()
     {
+        // Annetuation
+        //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
+        v *= (1 - Time.deltaTime);
+
+        if (Mathf.Abs(v) > 0)
+            world.localRotation *= Quaternion.Euler(0, -v, 0);
+
         if (changing) return;
         //Debug.Log("iüdate");
-        UpdatePositions(Time.deltaTime * 5);
+        //UpdatePositions(Time.deltaTime * 5);
+    }
+
+    public Tile GetTileAtPosition(Vector3 pos)
+    {
+        var locP = transform.InverseTransformPoint(pos);
+
+        // WORKAROUND
+        //pos = (world.localRotation) * pos;
+        // / WORKAROUND
+        
+        int y = Mathf.RoundToInt((locP.y + height / 2) / tileScale);
+        int x = Mathf.RoundToInt(
+            Mathf.Atan2(pos.z, pos.x) / (2 * Mathf.PI) * xSegments
+        );
+
+        x = (x + xSegments) % xSegments;
+
+        if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0)
+            return tileMat[y, x];
+        else
+            return null;
     }
 
     struct BestResult { public int sy; public int sx; public float scale; }
 
     void UpdatePositions(float progress)
     {
+        tileMat = new Tile[ySegments, xSegments];
+
         //return;
 
         //float area = 2 * Mathf.PI * radius * height * 0.5f;
         //float tileScale = area / (tileCount / 4f);
 
-        int tileCountVertical = ySegments;
         //Debug.LogFormat("{0} {1} {2} {3}", area, radius, height, tileScale);
 
         int rowsPerRevolution = Mathf.Max(1, xSegments);
@@ -57,11 +96,16 @@ public class CircleLayout : MonoBehaviour {
         int i = 0;
         for (; i < tileCount; i++)
         {
-            tiles[i].transform.SetParent(transform);
+            //tiles[i].transform.SetParent(transform);
+            int x = (i / ySegments);
+            int y = (i % ySegments);
+   
+            tileMat[y, x] = tiles[i];
+
 
             Vector2 pos = new Vector2(
-                (i / tileCountVertical) * (2f / rowsPerRevolution) * Mathf.PI,  //  latitude
-                (i % tileCountVertical) / (float)tileCountVertical); // # of vertical position
+                x * (2f / rowsPerRevolution) * Mathf.PI,  //  latitude
+                y / (float)ySegments); // % of vertical position
 
             if (pos.x >= 2 * Mathf.PI)
             {
@@ -71,7 +115,9 @@ public class CircleLayout : MonoBehaviour {
             {
                 tiles[i].gameObject.SetActive(true);
 
-                var endPosition = new Vector3(Mathf.Cos(pos.x) * radius, pos.y * height - height / 2, Mathf.Sin(pos.x) * radius);
+                var endPosition = new Vector3(Mathf.Cos(pos.x) * radius, 
+                                              pos.y * height - height / 2, 
+                                              Mathf.Sin(pos.x) * radius);
                 var endRotation = Quaternion.LookRotation(-Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
 
                 tiles[i].targetPosition = endPosition;
@@ -83,7 +129,7 @@ public class CircleLayout : MonoBehaviour {
 
                 tiles[i].transform.localPosition = Vector3.Lerp(tiles[i].transform.localPosition, endPosition, progress);
                 tiles[i].transform.localRotation = Quaternion.Slerp(tiles[i].transform.localRotation, endRotation, progress);
-                tiles[i].transform.localScale = Vector3.one * tileScale;
+                tiles[i].transform.localScale = Vector3.one * tileScale / 100f;
             }
         }
     }
@@ -108,7 +154,7 @@ public class CircleLayout : MonoBehaviour {
 
             //Debug.LogFormat("{0} - {1}", sx, scale);
             if (Mathf.Abs(tileCount - (bestResult.sy * bestResult.sx)) >
-                Mathf.Abs(tileCount - (sy * sx)))
+                Mathf.Abs(tileCount - (sy * sx)) && sy * sx >= tileCount)
             {
                 bestResult = new BestResult
                 {
@@ -127,6 +173,8 @@ public class CircleLayout : MonoBehaviour {
         ySegments = bestResult.sy;
         xSegments = bestResult.sx;
         tileScale = bestResult.scale;
+
+        UpdatePositions(1);
     }
 
     void LateUpdate() {
@@ -247,7 +295,12 @@ public class CircleLayout : MonoBehaviour {
 
     }
 
-   
+
+    private float v = 0;
+    public void AddTorque(float N)
+    {
+        v += N / radius * Time.deltaTime;
+    }
 }
 public static class ListExtensions
 {
