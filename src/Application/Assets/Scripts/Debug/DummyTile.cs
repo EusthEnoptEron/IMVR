@@ -50,25 +50,30 @@ public class DummyTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
         //m_image = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
         rectTransform.sizeDelta = Vector2.one * 100;
-        m_image = new GameObject().AddComponent<Image>();
+
+        var component = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/DebugPanel"));
+        //m_image = new GameObject().AddComponent<Image>();
+        m_image = component.GetComponentInChildren<Image>();
 
         // Create tile
-        m_image.transform.SetParent(transform);
-        m_image.transform.localPosition = Vector3.zero;
-        m_image.transform.localRotation = Quaternion.identity;
-        m_image.transform.localScale = Vector3.one;
+        component.transform.SetParent(transform, false);
+        //component.transform.localPosition = Vector3.zero;
+        //component.transform.localRotation = Quaternion.identity;
+        //component.transform.localScale = Vector3.one;
         m_image.sprite = maskSprite;
         //m_image.text = Random.Range(0, 100).ToString();
         //m_image.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
 
-        var imageRect = m_image.GetComponent<RectTransform>();
-        {
-            // Fille rect
-            imageRect.anchorMin = new Vector2(0, 0);
-            imageRect.anchorMax = new Vector2(1, 1);
-            imageRect.offsetMin = new Vector2(0, 0);
-            imageRect.offsetMax = new Vector2(0, 0);
-        }
+        //var imageRect = m_image.GetComponent<RectTransform>();
+        //{
+        //    //imageRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 1);
+
+        //    // Fill rect
+        //    imageRect.anchorMin = new Vector2(0, 0);
+        //    imageRect.anchorMax = new Vector2(1, 1);
+        //    imageRect.offsetMin = new Vector2(0, 0);
+        //    imageRect.offsetMax = new Vector2(0, 0);
+        //}
 
     }
 
