@@ -46,6 +46,8 @@ namespace IMVR.Indexer
                     {
                         Name = artistName
                     };
+
+                    artistList.Add(artistName, artist);
                 }
 
                 // Determine album
@@ -76,7 +78,6 @@ namespace IMVR.Indexer
 
                 album.Tracks.Add(song);
                 
-
                 // Foward music file
                 Publish(song);
 

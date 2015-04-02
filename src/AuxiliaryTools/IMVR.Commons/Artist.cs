@@ -54,7 +54,7 @@ namespace IMVR.Commons
         /// Gets or sets the year this artist stopped their musical activities.
         /// </summary>
         [ProtoMember(6)]
-        public int EndYear { get; set; }
+        public int? EndYear { get; set; }
 
         /// <summary>
         /// Gets a list of terms describing this artist (i.e. genres)
@@ -62,6 +62,18 @@ namespace IMVR.Commons
         /// </summary>
         [ProtoMember(7)]
         public List<TermItem> Terms { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the location the artist hails from.
+        /// </summary>
+        [ProtoMember(10)]
+        public string Location { get; set; }
+
+        /// <summary>
+        /// Gets or sets the coordinate of the artist's origin.
+        /// </summary>
+        [ProtoMember(11)]
+        public GeoCoordinate Coordinate { get; set; }
     }
 
     [ProtoContract]
@@ -70,5 +82,28 @@ namespace IMVR.Commons
         public string Name { get; set;}
         public float Weight { get; set; }
         public float Frequency { get; set; }
+    }
+
+    [ProtoContract]
+    public struct GeoCoordinate
+    {
+        [ProtoMember(1)]
+        private readonly float latitude;
+        [ProtoMember(2)]
+        private readonly float longitude;
+
+        public float Latitude { get { return latitude; } }
+        public float Longitude { get { return longitude; } }
+
+        public GeoCoordinate(float latitude, float longitude)
+        {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", Latitude, Longitude);
+        }
     }
 }

@@ -28,15 +28,6 @@ namespace IMVR.Indexer
         private const int MUSIC_ANALYZERS = 5;
 
 
-        private static ArtistBucket AllBuckets
-        {
-
-            get
-            {
-                return ArtistBucket.Biographies | ArtistBucket.Familiarity | ArtistBucket.Terms | ArtistBucket.Hotttnesss | ArtistBucket.YearsActive | ArtistBucket.ArtistLocation;
-            }
-        }
-
         static void Main(string[] args)
         {
 
@@ -78,11 +69,11 @@ namespace IMVR.Indexer
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    new FileWalker(library)
-                    {
-                        Filter = IO.IsImage,
-                        Target = imageAnalyzer
-                    }.Start();
+                    //new FileWalker(library)
+                    //{
+                    //    Filter = IO.IsImage,
+                    //    Target = imageAnalyzer
+                    //}.Start();
 
                     new FileWalker(library)
                     {
