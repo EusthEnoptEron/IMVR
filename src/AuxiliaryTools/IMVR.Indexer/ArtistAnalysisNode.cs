@@ -31,23 +31,26 @@ namespace IMVR.Indexer
                 // All right, we found something!
 
                 // ---- Collect artist meta information ----
-                artist.Biography = profile.Artist.Biographies.Count > 0
-                                    ? profile.Artist.Biographies.First().Text
-                                    : "";
-                artist.Familiarity = (float) (profile.Artist.Familiarity ?? float.NaN);
-                artist.Hotttness = (float) (profile.Artist.Hotttnesss ?? float.NaN);
-                artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
+                lock (artist)
                 {
-                    Frequency = (float)item.Frequency,
-                    Name = item.Name,
-                    Weight = (float)item.Weight
-                }));
+                    artist.Biography = profile.Artist.Biographies.Count > 0
+                                        ? profile.Artist.Biographies.First().Text
+                                        : "";
+                    artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
+                    artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
+                    artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
+                    {
+                        Frequency = (float)item.Frequency,
+                        Name = item.Name,
+                        Weight = (float)item.Weight
+                    }));
 
-                var yearsActive = profile.Artist.YearsActive.LastOrDefault();
-                if (yearsActive != null)
-                {
-                    artist.StartYear = yearsActive.Start;
-                    artist.EndYear   = yearsActive.End;
+                    var yearsActive = profile.Artist.YearsActive.LastOrDefault();
+                    if (yearsActive != null)
+                    {
+                        artist.StartYear = yearsActive.Start;
+                        artist.EndYear = yearsActive.End;
+                    }
                 }
                 // /----------------------------------------
 
@@ -57,22 +60,26 @@ namespace IMVR.Indexer
 
                 if (songs.Status.Code == ResponseCode.Success)
                 {
-                    for (int i = 0; i < songs.Songs.Count; i++)
+                    lock (artist)
                     {
-                        var song = songs.Songs[i];
-
-                        if (i == 0)
+                        for (int i = 0; i < songs.Songs.Count; i++)
                         {
-                            artist.Location = song.ArtistLocation.Location;
-                            artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
-                        }
+                            var song = songs.Songs[i];
 
-                        foreach (var album in artist.Albums)
-                        {
-                            foreach(var track in album.Tracks.Where(track => track.Title == song.Title)) {
-                                track.Danceability = (float)song.AudioSummary.Danceability;
-                                track.Energy = (float)song.AudioSummary.Energy;
-                                track.Tempo = (float)song.AudioSummary.Tempo;
+                            if (i == 0)
+                            {
+                                artist.Location = song.ArtistLocation.Location;
+                                artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
+                            }
+
+                            foreach (var album in artist.Albums)
+                            {
+                                foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
+                                {
+                                    track.Danceability = (float)song.AudioSummary.Danceability;
+                                    track.Energy = (float)song.AudioSummary.Energy;
+                                    track.Tempo = (float)song.AudioSummary.Tempo;
+                                }
                             }
                         }
                     }
