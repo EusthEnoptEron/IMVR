@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>bcdcc8de-cd50-44a3-838a-33680b6d45f4</ProjectGuid>
+    <ProjectGuid>{476BEAC1-1410-4FBE-A91B-CF3C8B01FC84}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IMVR.SpeechServer</RootNamespace>
@@ -46,6 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IMVR.Commons\IMVR.Commons.csproj">
+      <Project>{b8dd1849-e506-4fc6-b5a3-81a7a9aadd5b}</Project>
+      <Name>IMVR.Commons</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
