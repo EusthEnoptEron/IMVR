@@ -38,6 +38,17 @@ namespace IMVR.Indexer
             }
         }
 
+        protected override void StartUp()
+        {
+            base.StartUp();
+
+            foreach(var target in targets.OfType<AbstractWorker>()) {
+                if (!target.IsStarted)
+                    target.Start();
+            }
+
+        }
+
         protected override void CleanUp()
         {
             base.CleanUp();

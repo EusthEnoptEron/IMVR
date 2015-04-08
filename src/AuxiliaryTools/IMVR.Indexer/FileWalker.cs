@@ -50,8 +50,8 @@ namespace IMVR.Indexer
                     {
                         //if (db.Files.Where(f => f.Path == file.FullName).Count() == 0)
                         {
-                            if (Options.Instance.Verbose)
-                                Console.WriteLine("Add: {0}", file.FullName);
+                            //if (Options.Instance.Verbose)
+                            //    Console.WriteLine("Add: {0}", file.FullName);
 
                             if (pathConsumer != null)
                                 pathConsumer.Input.Add(file);
@@ -65,6 +65,12 @@ namespace IMVR.Indexer
         protected override void StartUp()
         {
             base.StartUp();
+
+            if (pathConsumer is AbstractWorker)
+            {
+                var worker = pathConsumer as AbstractWorker;
+                worker.Start();
+            }
         }
 
         protected override void CleanUp()

@@ -12,8 +12,11 @@ namespace IMVR.Indexer
         private CancellationTokenSource cts;
         private int threadCount;
         private int remainingThreads;
-
-        public static List<Task> Tasks = new List<Task>();
+        private bool _isStarted = false;
+        private bool _isInitialized = false;
+        private object _initializationLock = new object();
+        
+        private static List<Task> Tasks = new List<Task>();
 
         public Task Task
         {
@@ -35,7 +38,7 @@ namespace IMVR.Indexer
         {
             if (!IsStarted)
             {
-                StartUp();
+                _isStarted = true;
 
                 for (int i = 0; i < threadCount; i++ )
                 {
@@ -51,7 +54,7 @@ namespace IMVR.Indexer
         {
             get
             {
-                return Task != null;
+                return _isStarted;
             }
         }
 
@@ -61,12 +64,28 @@ namespace IMVR.Indexer
             {
                 var token = (CancellationToken)obj;
 
+                lock (_initializationLock)
+                {
+                    if (!_isInitialized)
+                    {
+                        _isInitialized = true;
+                        StartUp();
+                    }
+                }
+
                 Process(token);
             }
             finally
             {
-                if(--remainingThreads == 0)
+                if (--remainingThreads == 0)
+                {
+                    var type = this.GetType();
+                    lock (type)
+                    {
+                        Monitor.PulseAll(type);
+                    }
                     CleanUp();
+                }
             }
         }
 
@@ -88,5 +107,26 @@ namespace IMVR.Indexer
         }
 
 
+        /// <summary>
+        /// Waits until *all* AbstractWorkers are done with their work.
+        /// </summary>
+        internal static void Wait()
+        {
+            while (Tasks.Count > 0)
+            {
+                var tasks = Tasks.ToArray();
+                Tasks.Clear();
+
+                Task.WaitAll(tasks);
+            }
+        }
+
+
+        public static Task StartNew(Action action)
+        {
+            var task = Task.Factory.StartNew(action);
+            Tasks.Add(task);
+            return task;
+        }
     }
 }

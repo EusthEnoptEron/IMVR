@@ -30,6 +30,7 @@ namespace IMVR.Indexer
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.Unicode;
 
             //var session = new EchoNest.EchoNestSession("IIYVSIK0ZCRCMU3VS");
             //var profileResponse = session.Query<Profile>().Execute("ストロベリーソングオーケストラ", AllBuckets);
@@ -46,6 +47,7 @@ namespace IMVR.Indexer
                 db.Folders.Clear();
                 db.Folders.Add(@"C:\Users\Simon\Pictures");
                 db.Folders.Add(@"C:\Users\Simon\Music");
+                db.Folders.Add(@"C:\Users\meers1\Music");
                 db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
@@ -65,22 +67,25 @@ namespace IMVR.Indexer
                     };
 
                 var musicAnalyzer = new MusicNode();
+                {
+                    musicAnalyzer.Pipe(new ArtistAnalysisNode());
+                }
               
 
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    new FileWalker(library)
-                    {
-                        Filter = IO.IsImage,
-                        Target = imageAnalyzer
-                    }.Start();
-
                     //new FileWalker(library)
                     //{
-                    //    Filter = IO.IsMusic,
-                    //    Target = musicAnalyzer
+                    //    Filter = IO.IsImage,
+                    //    Target = imageAnalyzer
                     //}.Start();
+
+                    new FileWalker(library)
+                    {
+                        Filter = IO.IsMusic,
+                        Target = musicAnalyzer
+                    }.Start();
                 }
 
                 // Needed when there is no file walker to initialize the image analyzer
@@ -88,9 +93,9 @@ namespace IMVR.Indexer
                 musicAnalyzer.Start();
 
                 //dbWorker.Task.Wait();
-                Task.WaitAll(AbstractWorker.Tasks.ToArray());
-                
-                Console.ReadLine();
+                AbstractWorker.Wait();
+
+                //Console.ReadLine();
             }
         }
     }

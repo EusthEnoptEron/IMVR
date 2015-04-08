@@ -22,8 +22,6 @@ namespace IMVR.Indexer
         public void Handshake(IProducer<T> producer)
         {
             producerList.Add(producer);
-
-            if (!IsStarted) Start();
         }
 
         private bool ProducersDone
@@ -36,7 +34,7 @@ namespace IMVR.Indexer
 
         protected override void Process(CancellationToken token)
         {
-            while (!Input.IsCompleted && !token.IsCancellationRequested && !ProducersDone)
+            while (!Input.IsCompleted && !(Input.Count == 0 && ProducersDone) && !token.IsCancellationRequested)
             {
                 //Console.WriteLine(collection.IsCompleted + " " + collection.IsAddingCompleted + " "  + collection.Count);
                 T item;

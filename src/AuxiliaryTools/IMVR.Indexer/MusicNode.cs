@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TagLib;
 
@@ -24,6 +25,13 @@ namespace IMVR.Indexer
         // Only make one of these
         public MusicNode() : base(1) { }
 
+        protected override void StartUp()
+        {
+            base.StartUp();
+
+            if(artistAnalyzer != null && artistAnalyzer is AbstractWorker)
+                ((AbstractWorker)artistAnalyzer).Start();
+        }
 
         protected override void ProcessItem(FileInfo item)
         {
@@ -77,14 +85,22 @@ namespace IMVR.Indexer
                 };
 
                 album.Tracks.Add(song);
-                
+
+                if(Options.Instance.Verbose)
+                    Konsole.WriteLine("Analyzing: {0}", ConsoleColor.Green, song.Title);
+
                 // Foward music file
                 Publish(song);
 
                 if (artistAnalyzer != null)
                     artistAnalyzer.Input.Add(artist);
             }
+            else
+            {
+                if (Options.Instance.Verbose)
+                    Konsole.WriteLine("Dropping: {0}", ConsoleColor.Red, item.Name);
 
+            }
            
         }
 

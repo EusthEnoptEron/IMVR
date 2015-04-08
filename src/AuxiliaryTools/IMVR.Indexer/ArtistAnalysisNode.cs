@@ -21,9 +21,22 @@ namespace IMVR.Indexer
             session = new EchoNestSession(API_KEY);
         }
 
+        protected override void StartUp()
+        {
+            base.StartUp();
+
+            // Wait until MusicNode is done.
+            lock (typeof(MusicNode))
+            {
+                Monitor.Wait(typeof(MusicNode));
+            }
+        }
+
 
         protected override void ProcessItem(Artist artist)
         {
+            if(Options.Instance.Verbose)
+                Console.WriteLine("Artist: {0}", artist.Name);
 
             var profile = session.Query<Profile>().Execute(artist.Name, AllBuckets);
             if (profile.Status.Code == ResponseCode.Success)
