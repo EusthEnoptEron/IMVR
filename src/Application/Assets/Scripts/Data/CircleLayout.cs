@@ -36,7 +36,7 @@ public class CircleLayout : MonoBehaviour {
     private Transform world;
     protected virtual void Start() {
         blanket = GetComponent<TileBlanket>();
-        world = GameObject.Find("World").transform;
+        world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
     }
 
     void Update()
@@ -56,14 +56,14 @@ public class CircleLayout : MonoBehaviour {
     public Tile GetTileAtPosition(Vector3 pos)
     {
         var locP = transform.InverseTransformPoint(pos);
-
+        //Debug.Log(locP.x);
         // WORKAROUND
         //pos = (world.localRotation) * pos;
         // / WORKAROUND
         
         int y = Mathf.RoundToInt((locP.y + height / 2) / tileScale);
         int x = Mathf.RoundToInt(
-            Mathf.Atan2(pos.z, pos.x) / (2 * Mathf.PI) * xSegments
+            Mathf.Atan2(locP.z, locP.x) / (2 * Mathf.PI) * xSegments
         );
 
         x = (x + xSegments) % xSegments;

@@ -36,10 +36,9 @@ namespace Gestures
         // Use this for initialization
         void Start()
         {
-            handProvider = handProvider ?? GameObject.FindObjectOfType<HandProvider>();
-            eventCamera = eventCamera ?? Camera.main;
-
             if (eventCamera == null) eventCamera = Camera.main;
+            if (handProvider == null) handProvider =  HandProvider.Instance;
+
             if (handProvider == null)
             {
                 Debug.LogError("No hand provider found!");

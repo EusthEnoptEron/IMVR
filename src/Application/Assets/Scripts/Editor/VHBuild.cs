@@ -7,6 +7,7 @@ using System.IO;
 public class VHBuild  {
     private static string[] filesToCopy = {
         "Database.s3db",
+        "Database.bin",
         "Plugins/sqlite3.dll",
         "Plugins/sqlite3.def"                      
     };

@@ -32,7 +32,7 @@ namespace IMVR.Indexer
             Height = height;
             Atlas = new Commons.Atlas()
             {
-                Path = Path.GetFileNameWithoutExtension(path),
+                Path = path,
                 TileSize = TileSize
             };
 

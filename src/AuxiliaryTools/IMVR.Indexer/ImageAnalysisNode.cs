@@ -33,27 +33,32 @@ namespace IMVR.Indexer
         {
             if (atlas == null || atlas.IsFull)
             {
-                if (atlas != null)
-                {
-                    var privateAtlas = atlas;
-
-                    Task.Factory.StartNew(delegate
-                    {
-                        Console.WriteLine("Start writing atlas");
-                        privateAtlas.Generate();
-                    });
-
-                    Publish((db) =>
-                    {
-                        db.Atlases.Add(privateAtlas.Atlas);
-                    });
-                }
-
+                SaveAtlas();
+  
                 // First time -> create new one
                 // 2^11 = 2048
                 atlas = new TextureAtlas(Cache.GetPath(), 1 << 11, 1 << 11);
             }
             
+        }
+
+        private void SaveAtlas()
+        {
+            if (atlas != null)
+            {
+                var privateAtlas = atlas;
+
+                Task.Factory.StartNew(delegate
+                {
+                    Console.WriteLine("Start writing atlas");
+                    privateAtlas.Generate();
+                });
+
+                Publish((db) =>
+                {
+                    db.Atlases.Add(privateAtlas.Atlas);
+                });
+            }
         }
 
 
@@ -120,7 +125,7 @@ namespace IMVR.Indexer
         protected override void CleanUp()
         {
             base.CleanUp();
-            CheckAtlas();
+            SaveAtlas();
         }
 
 

@@ -7,11 +7,14 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CircleLayout))]
 public class CylinderRaycaster : BaseRaycaster {
     private const float D3_EPSILON = 0.01f;
+    private Camera camera;
+
     CircleLayout cylinder;
 
     public void Start()
     {
         cylinder = GetComponent<CircleLayout>();
+        camera = GameObject.FindGameObjectWithTag("ForegroundCamera").GetComponentInChildren<Camera>();
     }
 
 
@@ -23,12 +26,12 @@ public class CylinderRaycaster : BaseRaycaster {
         if (d3RayCylinderIntersection(ray, out lambda))
         {
             //Debug.DrawLine(ray.origin + ray.direction * lambda, ray.origin + ray.direction * (lambda + 0.1f), Color.green);
-            
+
             //var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //sphere.gameObject.layer = LayerMask.NameToLayer("Foreground");
             //sphere.transform.localScale = Vector3.one * 0.01f;
             //sphere.transform.position = ray.origin + ray.direction * lambda;
             //Destroy(sphere, 0.1f);
-
             var tile = cylinder.GetTileAtPosition(ray.origin + ray.direction * lambda);
             if (tile == null) return;
 
@@ -123,6 +126,6 @@ public class CylinderRaycaster : BaseRaycaster {
 
     public override Camera eventCamera
     {
-        get { return Camera.main; }
+        get { return camera; }
     }
 }

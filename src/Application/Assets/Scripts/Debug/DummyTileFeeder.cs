@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using IMVR.Commons;
+using System.IO;
+using System.Linq;
 
 public class DummyTileFeeder : MonoBehaviour {
     public int tileCount = 1000;
@@ -14,13 +17,33 @@ public class DummyTileFeeder : MonoBehaviour {
         List<Tile> tiles = new List<Tile>();
         CircleLayout layout = GetComponent<CircleLayout>();
 
-        for (int i = 0; i < tileCount; i++)
-        {
-            var tile = new GameObject().AddComponent<DummyTile>();
-            tile.Color = HSVToRGB( ((float)i / tileCount) * 1, 0.5f, 0.5f);
+        var db = IMDB.FromFile(
+            Path.Combine(Application.dataPath, PlayerPrefs.GetString("DBPath"))
+        );
 
+
+        Debug.Log(Path.Combine(Application.dataPath, PlayerPrefs.GetString("DBPath")));
+
+        foreach (var image in db.Images)
+        {
+            var tile = new GameObject().AddComponent<ImageTile>();
+            tile.Image = image;
             tiles.Add(tile);
         }
+        //yield return new WaitForSeconds(6);
+
+        //foreach (var tile in tiles.Cast<ImageTile>())
+        //{
+        //    tile.Image = tile.Image;
+        //}
+
+        //for (int i = 0; i < tileCount; i++)
+        //{
+        //    var tile = new GameObject().AddComponent<DummyTile>();
+        //    tile.Color = HSVToRGB( ((float)i / tileCount) * 1, 0.5f, 0.5f);
+
+        //    tiles.Add(tile);
+        //}
 
         layout.tiles = tiles;
 	}

@@ -117,7 +117,6 @@ public class DummyTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
         if (!clicked)
         {
             m_image.DOKill();
-
             m_image.DOColor(Color.green, 1f);
         }
     }

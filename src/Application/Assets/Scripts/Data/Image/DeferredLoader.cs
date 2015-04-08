@@ -3,6 +3,8 @@ using Foundation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -125,8 +127,8 @@ namespace VirtualHands.Data.Image
                     yield return StartCoroutine(task.WaitRoutine());
 
                     int done = 0;
-                    for (int x = 0; x < WIDTH; x++)
-                        for (int y = 0; y < HEIGHT; y++)
+                    for (int x = 0; x < job.Texture.width; x++)
+                        for (int y = 0; y < job.Texture.height; y++)
                         {
                             //var pxl = result.GetPixel(x, y);
 
@@ -139,8 +141,9 @@ namespace VirtualHands.Data.Image
                             }
                         }
 
+                    Debug.Log("DONE");
                     job.Done();
-                    //job.Texture.Apply(true);
+                    job.Texture.Apply(true);
                 }
                 //yield return new WaitForSeconds(DELAY);
                 yield return 0;
@@ -149,19 +152,29 @@ namespace VirtualHands.Data.Image
 
         private Task<Color32[,]> Load(string file)
         {
+            return Load(file, Vector2.zero);
+        }
+        private Task<Color32[,]> Load(string file, Vector2 targetSize)
+        {
             return Task<Color32[,]>.Run(delegate
             {
-                Color32[,] pixels = new Color32[WIDTH, HEIGHT];
 
+                Color32[,] pixels;
+                
                 using (var img = System.Drawing.Image.FromFile(file))
-                using (var result = ImageUtilities.ResizeImage(img, WIDTH, HEIGHT))
+                using (var result = targetSize == Vector2.zero
+                            ? img as Bitmap
+                            : ImageUtilities.ResizeImage(img, (int)targetSize.x, (int)targetSize.y))
                 {
+                    pixels = new Color32[result.Width, result.Height];
+
+
                     for (int x = 0; x < result.Width; x++)
                         for (int y = 0; y < result.Height; y++)
                         {
                             var pxl = result.GetPixel(x, y);
 
-                            pixels[x, HEIGHT - y - 1] = new Color32(pxl.R, pxl.G, pxl.B, pxl.A);
+                            pixels[x, result.Height - y - 1] = new Color32(pxl.R, pxl.G, pxl.B, pxl.A);
                         }
                 }
                 
@@ -192,9 +205,9 @@ namespace VirtualHands.Data.Image
         }
 
 
-        public Texture2D LoadTexture(string file)
+        public Texture2D LoadTexture(string file, Action callback = null)
         {
-            var existingJob = jobs.FirstOrDefault(job => job.File == file);
+            var existingJob = jobs.FirstOrDefault(j => j.File == file);
 
             if (existingJob != null)
             {
@@ -202,10 +215,27 @@ namespace VirtualHands.Data.Image
                 return existingJob.Texture;
             }
 
-            var texture = new Texture2D(WIDTH, HEIGHT);
+            int width, height;
 
-            jobs.Enqueue(new Job(file, texture));
-            
+            using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+            {
+                using (System.Drawing.Image tif = System.Drawing.Image.FromStream(stream: stream,
+                                                    useEmbeddedColorManagement: false,
+                                                    validateImageData: false))
+                {
+                     width = (int)tif.PhysicalDimension.Width;
+                     height = (int)tif.PhysicalDimension.Height;
+                }
+            }
+
+
+            var texture = new Texture2D(width, height);
+            var job = new Job(file, texture);
+            if(callback != null)
+                job.Done += callback;
+
+            jobs.Enqueue(job);
+
             return texture;
         }
 

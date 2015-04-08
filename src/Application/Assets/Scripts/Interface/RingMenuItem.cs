@@ -4,15 +4,23 @@ using Gestures;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class RingMenuItem : UIBehaviour {
+public class RingMenuItem : UIBehaviour, IPointerClickHandler {
     public FingerType fingerType = FingerType.Index;
     public float pixelsRatio = 1000;
     public Color color = Color.blue;
     public float heightDifference = 0;
 
     private GameObject torus;
+
+    [System.Serializable]
+    public class ButtonClickedEvent : UnityEvent { }
+
+    // Event delegates triggered on click.
+    [SerializeField]
+    private ButtonClickedEvent m_OnClick = new ButtonClickedEvent();
 
     public float Progress { get; set; }
 
@@ -90,4 +98,20 @@ public class RingMenuItem : UIBehaviour {
         else gameObject.SetActive(true);
     }
 
+    private void Press()
+    {
+        if (!IsActive())
+            return;
+
+        m_OnClick.Invoke();
+    }
+
+    // Trigger all registered callbacks.
+    public virtual void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Left)
+            return;
+
+        Press();
+    }
 }

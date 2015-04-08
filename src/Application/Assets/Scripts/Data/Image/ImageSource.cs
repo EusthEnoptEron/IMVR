@@ -143,7 +143,7 @@ public class ImageSource : IDataSource {
 
 
         var sprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
-        tile.sprite = sprite;
+        //tile.sprite = sprite;
 
         yield return new WaitForSeconds(0.05f);
     }
