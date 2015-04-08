@@ -17,14 +17,15 @@ namespace IMVR.Commons
             get
             {
                 foreach (var image in Images) yield return image;
-                foreach (var audio in Music) yield return audio;
+                foreach (var audio in Songs) yield return audio;
             }
         }
 
         public IMDB()
         {
             Images = new List<Image>();
-            Music = new List<Music>();
+            Songs = new List<Song>();
+            Artists = new List<Artist>();
             
             Folders = new List<string>();
             Atlases = new List<Atlas>();
@@ -34,7 +35,7 @@ namespace IMVR.Commons
         public List<Image> Images { get; private set; }
 
         [ProtoMember(3)]
-        public List<Music> Music { get; private set; }
+        public List<Song> Songs { get; private set; }
 
         [ProtoMember(1)]
         public List<string> Folders { get; private set; }
@@ -42,6 +43,11 @@ namespace IMVR.Commons
         [ProtoMember(4)]
         public List<Atlas> Atlases { get; private set; }
 
+        [ProtoMember(5)]
+        public List<Artist> Artists { get; private set; }
+
+
+        #region Persistence Implementation
 
         public static IMDB FromFile(string file)
         {
@@ -61,5 +67,7 @@ namespace IMVR.Commons
                 stream.SetLength(stream.Position);
             }
         }
+
+        #endregion
     }
 }

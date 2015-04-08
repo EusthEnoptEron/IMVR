@@ -39,10 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Album.cs" />
+    <Compile Include="Artist.cs" />
     <Compile Include="Atlas.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IMDB.cs" />
-    <Compile Include="Music.cs" />
+    <Compile Include="Song.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

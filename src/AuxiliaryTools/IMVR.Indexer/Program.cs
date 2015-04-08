@@ -8,7 +8,6 @@ using System.Data;
 using VirtualHands.Data;
 using System.IO;
 using DbLinq;
-using Mono.Data.Sqlite;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,21 +18,15 @@ using IMVR.Commons;
 
 namespace IMVR.Indexer
 {
+    /// <summary>
+    /// Entry point of this application.
+    /// </summary>
     class Program
     {
         private const int COLLECTION_BOUND = 100;
         private const int IMAGE_ANALYZERS = 5;
         private const int MUSIC_ANALYZERS = 5;
 
-
-        private static ArtistBucket AllBuckets
-        {
-
-            get
-            {
-                return ArtistBucket.Biographies | ArtistBucket.Familiarity | ArtistBucket.Terms | ArtistBucket.Hotttnesss | ArtistBucket.YearsActive | ArtistBucket.ArtistLocation;
-            }
-        }
 
         static void Main(string[] args)
         {
@@ -43,7 +36,7 @@ namespace IMVR.Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.bin") };
+            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/IMVR/src/Application/Assets", "Database.bin") };
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
@@ -52,11 +45,15 @@ namespace IMVR.Indexer
                 // -----DEBUG--------
                 db.Folders.Clear();
                 db.Folders.Add(@"C:\Users\Simon\Pictures");
+                db.Folders.Add(@"C:\Users\Simon\Music");
+                db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
                 // Clean db
-                db.Music.Clear();
+                db.Songs.Clear();
                 db.Images.Clear();
+                db.Artists.Clear();
+                db.Atlases.Clear();
 
 
                 // Prepare workers
@@ -67,20 +64,29 @@ namespace IMVR.Indexer
                         Target = dbWorker
                     };
 
+                var musicAnalyzer = new MusicNode();
+              
+
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    var walker = new FileWalker(library)
+                    new FileWalker(library)
                     {
                         Filter = IO.IsImage,
                         Target = imageAnalyzer
-                    };
+                    }.Start();
 
-                    walker.Start();
+                    //new FileWalker(library)
+                    //{
+                    //    Filter = IO.IsMusic,
+                    //    Target = musicAnalyzer
+                    //}.Start();
                 }
 
                 // Needed when there is no file walker to initialize the image analyzer
                 imageAnalyzer.Start();
+                musicAnalyzer.Start();
+
                 //dbWorker.Task.Wait();
                 Task.WaitAll(AbstractWorker.Tasks.ToArray());
                 
