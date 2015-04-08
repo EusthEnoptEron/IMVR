@@ -39,6 +39,8 @@ namespace IMVR.Indexer
         {
             //using (var db = Database.Context)
             {
+                if (!Directory.Exists(root)) return;
+
                 foreach (var file in IO.GetFiles(root))
                 {
                     if (Task.Factory.CancellationToken.IsCancellationRequested)

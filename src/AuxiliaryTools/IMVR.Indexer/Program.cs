@@ -36,7 +36,7 @@ namespace IMVR.Indexer
             //session.Query<
             
 
-            args = new string[] { "-v", "-d", Path.Combine("E:/Dev/VirtualHands/src/Application/Assets", "Database.bin") };
+            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/IMVR/src/Application/Assets", "Database.bin") };
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
@@ -46,6 +46,7 @@ namespace IMVR.Indexer
                 db.Folders.Clear();
                 db.Folders.Add(@"C:\Users\Simon\Pictures");
                 db.Folders.Add(@"C:\Users\Simon\Music");
+                db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
                 // Clean db
@@ -69,18 +70,17 @@ namespace IMVR.Indexer
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    //new FileWalker(library)
-                    //{
-                    //    Filter = IO.IsImage,
-                    //    Target = imageAnalyzer
-                    //}.Start();
-
                     new FileWalker(library)
                     {
-                        Filter = IO.IsMusic,
-                        Target = musicAnalyzer
+                        Filter = IO.IsImage,
+                        Target = imageAnalyzer
                     }.Start();
 
+                    //new FileWalker(library)
+                    //{
+                    //    Filter = IO.IsMusic,
+                    //    Target = musicAnalyzer
+                    //}.Start();
                 }
 
                 // Needed when there is no file walker to initialize the image analyzer
