@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageMagick;
 using System.IO;
+using System.Net;
 
 namespace IMVR.Indexer
 {
     public class TextureAtlas
     {
 
-        public int TileSize = 128;
+        public readonly int TileSize;
         
         public bool IsFull { get; private set; }
         private List<string> entries = new List<string>();
@@ -26,10 +27,11 @@ namespace IMVR.Indexer
 
         private string path;
 
-        public TextureAtlas(string path, int width, int height)
+        public TextureAtlas(string path, int width, int height, int tileSize = 128)
         {
             Width = width;
             Height = height;
+            TileSize = tileSize;
             Atlas = new Commons.Atlas()
             {
                 Path = path,
@@ -67,7 +69,9 @@ namespace IMVR.Indexer
                 {
                     enumerator.MoveNext();
 
-                    using (var img = Image.FromFile(entry))
+                    WebRequest req = WebRequest.Create(new Uri(entry).AbsoluteUri);
+                    using (Stream stream = req.GetResponse().GetResponseStream())
+                    using (var img = Image.FromStream(stream))
                     {
                         int size;
                         if(img.Width > img.Height)
@@ -89,6 +93,7 @@ namespace IMVR.Indexer
                     //}
                 }
                 bitmap.Save(path);
+                Konsole.Log("Wrote atlas to {0}", ConsoleColor.Gray, path);
             }
         }
 

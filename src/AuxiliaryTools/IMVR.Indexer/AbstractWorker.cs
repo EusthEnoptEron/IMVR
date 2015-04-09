@@ -12,16 +12,25 @@ namespace IMVR.Indexer
         private CancellationTokenSource cts;
         private int threadCount;
         private int remainingThreads;
+        private bool _done = false;
         private bool _isStarted = false;
         private bool _isInitialized = false;
         private object _initializationLock = new object();
         
         private static List<Task> Tasks = new List<Task>();
+        private List<AbstractWorker> _sequentialWorkers = new List<AbstractWorker>();
 
         public Task Task
         {
             get;
             private set;
+        }
+
+        public void ContinueWith(AbstractWorker worker)
+        {
+            if (_done) throw new Exception("Cannot add a sequential worker when this node is already done!");
+
+            _sequentialWorkers.Add(worker);
         }
 
         protected AbstractWorker()
@@ -79,12 +88,13 @@ namespace IMVR.Indexer
             {
                 if (--remainingThreads == 0)
                 {
-                    var type = this.GetType();
-                    lock (type)
-                    {
-                        Monitor.PulseAll(type);
-                    }
+                    _done = true;
                     CleanUp();
+
+                    foreach (var worker in _sequentialWorkers)
+                    {
+                        worker.Start();
+                    }
                 }
             }
         }

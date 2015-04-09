@@ -25,6 +25,7 @@ namespace IMVR.Indexer
                     Console.ForegroundColor = color;
                     Console.WriteLine(text);
                     Console.ForegroundColor = oldColor;
+                    //Console.Out.Flush();
                 }
             }
         }
@@ -32,5 +33,22 @@ namespace IMVR.Indexer
             WriteLine(String.Format(format, args), color);
         }
 
+
+        public static void Log(object text, ConsoleColor color = ConsoleColor.Gray)
+        {
+            if(Options.Instance.Verbose)
+                WriteLine(text.ToString(), color);
+        }
+
+        public static void Log(string text, ConsoleColor color = ConsoleColor.Gray)
+        {
+            if (Options.Instance.Verbose)
+                WriteLine(text, color);
+        }
+        public static void Log(string format, ConsoleColor color = ConsoleColor.Gray, params object[] args)
+        {
+            if (Options.Instance.Verbose)
+                WriteLine(String.Format(format, args), color);
+        }
     }
 }

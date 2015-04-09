@@ -16,52 +16,16 @@ using VirtualHands.Data;
 namespace IMVR.Indexer
 {
 
-
     public class ImageAnalysisNode : DualNode<FileInfo, DBTask>
     {
         //private const ExifTag[] RELEVANT_TAGS = { 
         //    ExifTag.DateTimeOriginal, ExifTag.ExifVersion, ExifTag.ExposureTime, ExifTag.FocalLength, ExifTag.GPSAltitude, ExifTag.GPSLongitude, ExifTag.GPSLatitude };
 
-        private TextureAtlas atlas;
-        private object atlasToken = new object();
+        private AtlasManager manager = new AtlasManager();
 
         public ImageAnalysisNode(int threadCount) : base(threadCount, 100)
         {
         }
-
-        private void CheckAtlas()
-        {
-            if (atlas == null || atlas.IsFull)
-            {
-                SaveAtlas();
-  
-                // First time -> create new one
-                // 2^11 = 2048
-                atlas = new TextureAtlas(Cache.GetPath(), 1 << 11, 1 << 11);
-            }
-            
-        }
-
-        private void SaveAtlas()
-        {
-            if (atlas != null)
-            {
-                var privateAtlas = atlas;
-
-                AbstractWorker.StartNew(delegate
-                {
-                    Console.WriteLine("Start writing atlas");
-                    privateAtlas.Generate();
-                });
-
-                Publish((db) =>
-                {
-                    db.Atlases.Add(privateAtlas.Atlas);
-                });
-            }
-        }
-
-
         protected override void ProcessItem(FileInfo path)
         {
             try
@@ -106,12 +70,7 @@ namespace IMVR.Indexer
                         LastModified = path.LastWriteTime,
                     };
 
-                    lock (atlasToken)
-                    {
-                        CheckAtlas();
-
-                        dbImage.Atlas = atlas.Add(path.FullName);
-                    }
+                    dbImage.Atlas = manager.GetTicket(path.FullName);
 
                     SaveImage(dbImage);
                 }
@@ -125,7 +84,7 @@ namespace IMVR.Indexer
         protected override void CleanUp()
         {
             base.CleanUp();
-            SaveAtlas();
+            manager.Save();
         }
 
 

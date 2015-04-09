@@ -64,15 +64,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libs\EchoNest-Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="IF.Lastfm.Core">
+      <HintPath>..\packages\IF.Lastfm.Zumicts.0.4.1\lib\portable-net45+win+wpa81+wp80+MonoAndroid+MonoTouch\IF.Lastfm.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Magick.NET-AnyCPU">
       <HintPath>..\packages\Magick.NET-Q8-AnyCPU.7.0.0.0010\lib\net40-client\Magick.NET-AnyCPU.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\..\Libs\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libs\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ParkSquare.Gracenote">
+      <HintPath>..\packages\ParkSquare.Gracenote.1.3.0.0\lib\net40\ParkSquare.Gracenote.dll</HintPath>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp">
       <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
@@ -82,15 +88,27 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
     <Reference Include="taglib-sharp">
       <HintPath>..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractWorker.cs" />
+    <Compile Include="AtlasManager.cs" />
     <Compile Include="BlockingCollection.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="ConsumerNode.cs" />
@@ -103,9 +121,10 @@
     <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="IProducer.cs" />
-    <Compile Include="ArtistAnalysisNode.cs" />
+    <Compile Include="EchoNestNode.cs" />
     <Compile Include="Konsole.cs" />
-    <Compile Include="MusicNode.cs" />
+    <Compile Include="LastFmNode.cs" />
+    <Compile Include="MusicIndexer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PersistenceNode.cs" />
     <Compile Include="TextureAtlas.cs" />
@@ -119,6 +138,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\No_Cover.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -147,6 +169,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

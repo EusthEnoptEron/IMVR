@@ -11,32 +11,23 @@ using EchoNest.Song;
 
 namespace IMVR.Indexer
 {
-    public class ArtistAnalysisNode : DualNode<Artist, DbAction>
+    public class EchoNestNode : ConsumerNode<Artist>
     {
         private const string API_KEY = "IIYVSIK0ZCRCMU3VS";
         private EchoNestSession session;
 
-        public ArtistAnalysisNode() : base(1)
+        // ONLY ONE THREAD
+        public EchoNestNode() : base(1)
         {
             session = new EchoNestSession(API_KEY);
         }
 
-        protected override void StartUp()
-        {
-            base.StartUp();
-
-            // Wait until MusicNode is done.
-            lock (typeof(MusicNode))
-            {
-                Monitor.Wait(typeof(MusicNode));
-            }
-        }
-
-
         protected override void ProcessItem(Artist artist)
         {
+
             if(Options.Instance.Verbose)
-                Console.WriteLine("Artist: {0}", artist.Name);
+                Konsole.WriteLine("Artist: {0}",  ConsoleColor.Yellow, artist.Name);
+            return;
 
             var profile = session.Query<Profile>().Execute(artist.Name, AllBuckets);
             if (profile.Status.Code == ResponseCode.Success)
@@ -44,26 +35,23 @@ namespace IMVR.Indexer
                 // All right, we found something!
 
                 // ---- Collect artist meta information ----
-                lock (artist)
+                artist.Biography = profile.Artist.Biographies.Count > 0
+                                    ? profile.Artist.Biographies.First().Text
+                                    : "";
+                artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
+                artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
+                artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
                 {
-                    artist.Biography = profile.Artist.Biographies.Count > 0
-                                        ? profile.Artist.Biographies.First().Text
-                                        : "";
-                    artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
-                    artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
-                    artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
-                    {
-                        Frequency = (float)item.Frequency,
-                        Name = item.Name,
-                        Weight = (float)item.Weight
-                    }));
+                    Frequency = (float)item.Frequency,
+                    Name = item.Name,
+                    Weight = (float)item.Weight
+                }));
 
-                    var yearsActive = profile.Artist.YearsActive.LastOrDefault();
-                    if (yearsActive != null)
-                    {
-                        artist.StartYear = yearsActive.Start;
-                        artist.EndYear = yearsActive.End;
-                    }
+                var yearsActive = profile.Artist.YearsActive.LastOrDefault();
+                if (yearsActive != null)
+                {
+                    artist.StartYear = yearsActive.Start;
+                    artist.EndYear = yearsActive.End;
                 }
                 // /----------------------------------------
 
@@ -73,30 +61,28 @@ namespace IMVR.Indexer
 
                 if (songs.Status.Code == ResponseCode.Success)
                 {
-                    lock (artist)
+                    for (int i = 0; i < songs.Songs.Count; i++)
                     {
-                        for (int i = 0; i < songs.Songs.Count; i++)
+                        var song = songs.Songs[i];
+
+                        if (i == 0)
                         {
-                            var song = songs.Songs[i];
+                            artist.Location = song.ArtistLocation.Location;
+                            artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
+                        }
 
-                            if (i == 0)
+                        foreach (var album in artist.Albums)
+                        {
+                            foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
                             {
-                                artist.Location = song.ArtistLocation.Location;
-                                artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
-                            }
-
-                            foreach (var album in artist.Albums)
-                            {
-                                foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
-                                {
-                                    track.Danceability = (float)song.AudioSummary.Danceability;
-                                    track.Energy = (float)song.AudioSummary.Energy;
-                                    track.Tempo = (float)song.AudioSummary.Tempo;
-                                }
+                                track.Danceability = (float)song.AudioSummary.Danceability;
+                                track.Energy = (float)song.AudioSummary.Energy;
+                                track.Tempo = (float)song.AudioSummary.Tempo;
                             }
                         }
                     }
                 }
+                
             }
             //else if (profile.Status.Code == ResponseCode.RateLimitExceeded)
             //{
@@ -108,13 +94,13 @@ namespace IMVR.Indexer
             //}
         }
 
-        private EchoNest.Song.SearchArgument GetSearchArgument(string artistName)
+        private EchoNest.Song.SearchArgument GetSearchArgument(string artistName, int? offset = null)
         {
             var argument = new EchoNest.Song.SearchArgument();
             argument.Bucket = AllSongBuckets;
             argument.Artist = artistName;
             argument.Results = 100;
-
+            argument.Start = offset;
             return argument;
         }
 

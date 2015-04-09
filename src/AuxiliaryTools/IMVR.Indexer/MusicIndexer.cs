@@ -16,21 +16,21 @@ namespace IMVR.Indexer
     /// 1) the analyzer that parses the audio files 
     /// 2) the analyzer that connects to the Echo Nest API to acquire artist information
     /// </summary>
-    public class MusicNode : DualNode<FileInfo, Song>, IProducer<Artist>
+    public class MusicIndexer : DualNode<FileInfo, Artist>
     {
         private IConsumer<Artist> artistAnalyzer;
 
         private Dictionary<string, Artist> artistList = new Dictionary<string,Artist>();
 
         // Only make one of these
-        public MusicNode() : base(1) { }
+        public MusicIndexer() : base(1) { }
 
-        protected override void StartUp()
+        protected override void CleanUp()
         {
-            base.StartUp();
+            base.CleanUp();
 
-            if(artistAnalyzer != null && artistAnalyzer is AbstractWorker)
-                ((AbstractWorker)artistAnalyzer).Start();
+            foreach (var artist in artistList.Values)
+                Publish(artist);
         }
 
         protected override void ProcessItem(FileInfo item)
@@ -88,12 +88,6 @@ namespace IMVR.Indexer
 
                 if(Options.Instance.Verbose)
                     Konsole.WriteLine("Analyzing: {0}", ConsoleColor.Green, song.Title);
-
-                // Foward music file
-                Publish(song);
-
-                if (artistAnalyzer != null)
-                    artistAnalyzer.Input.Add(artist);
             }
             else
             {
@@ -102,12 +96,6 @@ namespace IMVR.Indexer
 
             }
            
-        }
-
-        public void Pipe(IConsumer<Artist> target)
-        {
-            target.Handshake(this);
-            artistAnalyzer = target;
         }
     }
 }

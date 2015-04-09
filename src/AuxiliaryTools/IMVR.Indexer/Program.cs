@@ -1,19 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Data.Linq;
-using System.Text;
-using ImageMagick;
-using System.Data;
-using VirtualHands.Data;
 using System.IO;
-using DbLinq;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
-using DbLinq.Sqlite;
-using EchoNest.Artist;
-using EchoNest.Song;
 using IMVR.Commons;
 
 namespace IMVR.Indexer
@@ -23,32 +10,40 @@ namespace IMVR.Indexer
     /// </summary>
     class Program
     {
+
         private const int COLLECTION_BOUND = 100;
         private const int IMAGE_ANALYZERS = 5;
         private const int MUSIC_ANALYZERS = 5;
 
+        private const string accessKeyId = "AKIAI6KMD7GWHAFA46ZA";
+        private const string secretKey = "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";
 
+        
         static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.Unicode;
+            //var client = new GracenoteClient("13232384-4CA925FFEF026C96B030F81372DB39CA");
+            //var albumSearcher = new AlbumSearcher(client);
+            //var searchResult  = albumSearcher.Search(new SearchCriteria
+            //{
+            //    AlbumTitle = "TVアニメ「ダンタリアンの書架」オリジナル・サウンド トラック組曲「ダンタリアンの書架」 Disc 1",
+            //    Artist = "辻陽",
+            //    SearchMode = SearchMode.BestMatchWithCoverArt  
+            //});
 
-            //var session = new EchoNest.EchoNestSession("IIYVSIK0ZCRCMU3VS");
-            //var profileResponse = session.Query<Profile>().Execute("ストロベリーソングオーケストラ", AllBuckets);
-            //session.Query<
-            
-
+            //Console.WriteLine(searchResult.Count);
             args = new string[] { "-v", "-d", Path.Combine("D:/Dev/IMVR/src/Application/Assets", "Database.bin") };
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
-                IMDB db = IMDB.FromFile(Options.Instance.DbPath);
+                IMDB db = Options.Instance.DB;
 
                 // -----DEBUG--------
                 db.Folders.Clear();
-                db.Folders.Add(@"C:\Users\Simon\Pictures");
-                db.Folders.Add(@"C:\Users\Simon\Music");
-                db.Folders.Add(@"C:\Users\meers1\Music");
-                db.Folders.Add(@"C:\Users\meers1\Pictures");
+                //db.Folders.Add(@"C:\Users\Simon\Pictures");
+                //db.Folders.Add(@"C:\Users\Simon\Music");
+                db.Folders.Add(@"C:\Users\meers1\Music\NoisyCell");
+                db.Folders.Add(@"C:\Users\meers1\Music\Music\anime");
+                //db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
                 // Clean db
@@ -66,20 +61,21 @@ namespace IMVR.Indexer
                         Target = dbWorker
                     };
 
-                var musicAnalyzer = new MusicNode();
+                var musicAnalyzer = new MusicIndexer();
                 {
-                    musicAnalyzer.Pipe(new ArtistAnalysisNode());
+                    musicAnalyzer.Pipe(new LastFmNode());
+                    musicAnalyzer.Pipe(new EchoNestNode());
                 }
               
 
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    //new FileWalker(library)
-                    //{
-                    //    Filter = IO.IsImage,
-                    //    Target = imageAnalyzer
-                    //}.Start();
+                    new FileWalker(library)
+                    {
+                        Filter = IO.IsImage,
+                        Target = imageAnalyzer
+                    }.Start();
 
                     new FileWalker(library)
                     {
@@ -92,10 +88,9 @@ namespace IMVR.Indexer
                 imageAnalyzer.Start();
                 musicAnalyzer.Start();
 
-                //dbWorker.Task.Wait();
                 AbstractWorker.Wait();
 
-                //Console.ReadLine();
+                Console.ReadLine();
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using IMVR.Commons;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,20 @@ namespace IMVR.Indexer
                     _instance = new Options();
                 }
                 return _instance;
+            }
+        }
+
+
+        private IMDB _db = null;
+        public IMDB DB
+        {
+            get
+            {
+                if (_db == null)
+                {
+                    _db = IMDB.FromFile(DbPath);
+                }
+                return _db;
             }
         }
 
