@@ -37,6 +37,7 @@
 		Cull Off
 		Lighting Off
 		ZWrite Off
+		Offset 0, -1
 		ZTest [unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
 		ColorMask [_ColorMask]

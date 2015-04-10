@@ -43,7 +43,7 @@ namespace IMVR.Indexer
                 //db.Folders.Add(@"C:\Users\Simon\Music");
                 db.Folders.Add(@"C:\Users\meers1\Music\NoisyCell");
                 db.Folders.Add(@"C:\Users\meers1\Music\Music\anime");
-                //db.Folders.Add(@"C:\Users\meers1\Pictures");
+                db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
                 // Clean db

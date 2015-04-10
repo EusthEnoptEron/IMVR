@@ -36,6 +36,17 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
       //  InitLineRenderer();
 	}
 
+    //protected virtual void Start() {
+    //    foreach (var img in GetComponentsInChildren<Image>())
+    //    {
+    //        img.material = Resources.Load<Material>("Materials/UI-Material");
+    //    }
+    //    foreach (var text in GetComponentsInChildren<Text>())
+    //    {
+    //        text.material = Resources.Load<Material>("Materials/UI-Text");
+    //    }
+
+    //}
 
 	// Update is called once per frame
 	protected virtual void Update () {

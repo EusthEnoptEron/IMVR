@@ -49,6 +49,7 @@ public class ImageTile : Tile, IPointerDownHandler, IPointerUpHandler, IPointerE
     protected void Awake()
     {
         m_image = GetComponent<Image>();
+        //m_image.material = Resources.Load<Material>("Materials/UI-Material");
    
     }
     protected void Start()

@@ -24,9 +24,9 @@ public class TileBlanket : MonoBehaviour {
             //foreach (var child in canvas.transform.Children())
             //    child.SetParent(trashBin.transform);
             canvas.transform.DetachChildren();
-            Destroy(canvas.gameObject);
+            Destroy(canvas.gameObject, 1);
         }
-
+        canvasList.Clear();
         this.tiles = tiles;
 
         CreateCanvas();

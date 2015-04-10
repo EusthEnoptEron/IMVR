@@ -45,3 +45,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Debug Sorting Layer
+    uniqueID: 2651647601
+    locked: 0

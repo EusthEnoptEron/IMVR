@@ -27,12 +27,6 @@ namespace IMVR.Commons
 
 
         /// <summary>
-        /// Gets a list of albums by this artist.
-        /// </summary>
-        [ProtoMember(8)]
-        public List<Album> Albums { get; private set; }
-
-        /// <summary>
         /// Gets or sets the global familiarity of this artist.
         /// </summary>
         [ProtoMember(3)]
@@ -62,18 +56,28 @@ namespace IMVR.Commons
         /// </summary>
         [ProtoMember(7)]
         public List<TermItem> Terms { get; private set; }
-
+        /// <summary>
+        /// Gets a list of albums by this artist.
+        /// </summary>
+        [ProtoMember(8)]
+        public List<Album> Albums { get; private set; }
         /// <summary>
         /// Gets or sets the location the artist hails from.
         /// </summary>
-        [ProtoMember(10)]
+        [ProtoMember(9)]
         public string Location { get; set; }
 
         /// <summary>
         /// Gets or sets the coordinate of the artist's origin.
         /// </summary>
-        [ProtoMember(11)]
+        [ProtoMember(10)]
         public GeoCoordinate Coordinate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image of the artist.
+        /// </summary>
+        [ProtoMember(11)]
+        public AtlasTicket Image { get; set; }
     }
 
     [ProtoContract]

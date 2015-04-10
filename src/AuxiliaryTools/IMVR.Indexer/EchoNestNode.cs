@@ -53,6 +53,7 @@ namespace IMVR.Indexer
                     artist.StartYear = yearsActive.Start;
                     artist.EndYear = yearsActive.End;
                 }
+                //profile.Artist.Images.FirstOrDefault().Url
                 // /----------------------------------------
 
 
@@ -125,6 +126,7 @@ namespace IMVR.Indexer
                 return ArtistBucket.Biographies | 
                        ArtistBucket.Familiarity | 
                        ArtistBucket.Terms | 
+                       ArtistBucket.Images |
                        ArtistBucket.Hotttnesss | 
                        ArtistBucket.YearsActive | 
                        ArtistBucket.ArtistLocation;

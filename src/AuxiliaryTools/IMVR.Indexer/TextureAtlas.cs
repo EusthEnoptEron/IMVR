@@ -69,8 +69,9 @@ namespace IMVR.Indexer
                 {
                     enumerator.MoveNext();
 
-                    WebRequest req = WebRequest.Create(new Uri(entry).AbsoluteUri);
-                    using (Stream stream = req.GetResponse().GetResponseStream())
+                    using (Stream stream = entry.StartsWith("http") 
+                            ? WebRequest.Create(new Uri(entry).AbsoluteUri).GetResponse().GetResponseStream()
+                            : File.OpenRead(entry))
                     using (var img = Image.FromStream(stream))
                     {
                         int size;

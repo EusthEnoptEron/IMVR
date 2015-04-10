@@ -14,7 +14,8 @@ public class CylinderRaycaster : BaseRaycaster {
     public void Start()
     {
         cylinder = GetComponent<CircleLayout>();
-        camera = GameObject.FindGameObjectWithTag("ForegroundCamera").GetComponentInChildren<Camera>();
+        camera = Camera.main;
+        //camera = GameObject.FindGameObjectWithTag("ForegroundCamera").GetComponentInChildren<Camera>();
     }
 
 

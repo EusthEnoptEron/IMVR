@@ -36,7 +36,8 @@ public class CircleLayout : MonoBehaviour {
     private Transform world;
     protected virtual void Start() {
         blanket = GetComponent<TileBlanket>();
-        world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
+        //world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
+        world = GameObject.Find("World").transform;
     }
 
     void Update()
