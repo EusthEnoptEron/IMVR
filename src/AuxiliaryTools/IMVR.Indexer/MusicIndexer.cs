@@ -56,6 +56,7 @@ namespace IMVR.Indexer
                     };
 
                     artistList.Add(artistName, artist);
+                    Options.Instance.DB.Artists.Add(artist);
                 }
 
                 // Determine album
@@ -85,6 +86,7 @@ namespace IMVR.Indexer
                 };
 
                 album.Tracks.Add(song);
+                Options.Instance.DB.Songs.Add(song);
 
                 if(Options.Instance.Verbose)
                     Konsole.WriteLine("Analyzing: {0}", ConsoleColor.Green, song.Title);

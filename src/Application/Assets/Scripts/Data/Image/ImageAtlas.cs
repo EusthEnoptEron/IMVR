@@ -35,8 +35,27 @@ public class ImageAtlas {
 
     public Sprite GetSpriteAt(int i)
     {
+        // ORIGIN: bottom left
+        /*
+         |
+         |
+         |
+         -------------> x
+         |
+         |
+         |
+         v
+         y 
+         
+         
+         HOWEVER: sprites are defined with an origin at top left!
+         */
+
+
         int x = (i % tilesPerRow) * TileSize;
-        int y = (i / tilesPerRow) * TileSize;
+        int y = texture.height - TileSize - (i / tilesPerRow) * TileSize;
+
+        //Debug.LogFormat("{0} => {1}|{2} ({3})", i, x, y, Path);
 
         return Sprite.Create(
             texture,

@@ -9,7 +9,7 @@ using System;
 [RequireComponent(typeof(TileBlanket))]
 public class CircleLayout : MonoBehaviour {
     [HideInInspector]
-    public List<Tile> tiles {
+    public virtual List<Tile> tiles {
         get {
             return blanket.tiles;
         }
@@ -21,15 +21,16 @@ public class CircleLayout : MonoBehaviour {
 
     public Tile[,] tileMat;
 
-
+    public bool ignoreHeight = true;
+    public bool autoLayout = true;
     public float height = 5;
     public float radius = 5;
 
     private bool changing;
 
-    public int xSegments { get; private set; }
-    public int ySegments { get; private set; }
-    public float tileScale { get; private set; }
+    public int xSegments { get; protected set; }
+    public int ySegments { get; protected set; }
+    public float tileScale { get; protected set; }
 
     private TileBlanket blanket;
 
@@ -40,7 +41,7 @@ public class CircleLayout : MonoBehaviour {
         world = GameObject.Find("World").transform;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         // Annetuation
         //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
@@ -54,7 +55,7 @@ public class CircleLayout : MonoBehaviour {
         UpdatePositions(Time.deltaTime * 5);
     }
 
-    public Tile GetTileAtPosition(Vector3 pos)
+    public virtual GameObject GetTileAtPosition(Vector3 pos)
     {
         var locP = transform.InverseTransformPoint(pos);
         //Debug.Log(locP.x);
@@ -69,18 +70,19 @@ public class CircleLayout : MonoBehaviour {
 
         x = (x + xSegments) % xSegments;
 
+        if(ignoreHeight) y = Mathf.Clamp(y, 0, tileMat.GetLength(0)-1);
+
         if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0)
-            return tileMat[y, x];
+            return tileMat[y, x].gameObject;
         else
             return null;
     }
 
     struct BestResult { public int sy; public int sx; public float scale; }
 
-    void UpdatePositions(float progress)
+    public void UpdatePositions(float progress)
     {
         tileMat = new Tile[ySegments, xSegments];
-
         //return;
 
         //float area = 2 * Mathf.PI * radius * height * 0.5f;
@@ -99,6 +101,7 @@ public class CircleLayout : MonoBehaviour {
         int i = 0;
         for (; i < tileCount; i++)
         {
+
             //tiles[i].transform.SetParent(transform);
             int x = (i / ySegments);
             int y = (i % ySegments);
@@ -107,6 +110,7 @@ public class CircleLayout : MonoBehaviour {
 
             float latitude = x * indexToLatitude;
             float verticalProgress = y / ySegmentsF;
+            if (y == 0 && ySegments == 1) verticalProgress = 0.5f;
 
             if (latitude >= 2 * Mathf.PI)
             {
@@ -126,7 +130,6 @@ public class CircleLayout : MonoBehaviour {
                 tiles[i].targetPosition = endPosition;
                 tiles[i].targetRotation = endRotation;
                 tiles[i].targetScale = tileScale * Vector3.one;
-
                 //tiles[i].transform.DOLocalMove(endPosition, 0.5f);
                 //tiles[i].transform.DOLocalRotate(endRotation.eulerAngles, 0.5f);
                 //tiles[i].transform.DOScale(tileScale * Vector3.one, 0.5f);
@@ -139,6 +142,7 @@ public class CircleLayout : MonoBehaviour {
     }
 
     void UpdateLayout() {
+        if (!autoLayout) return;
 
         // update tile positions
         //int tileCount = Mathf.Min(1000, tiles.Count);
@@ -170,8 +174,6 @@ public class CircleLayout : MonoBehaviour {
 
         }
 
-
-
         Debug.LogFormat("count: {3}, x={0}, sy={1}, sx={2}", bestResult.scale, bestResult.sy, bestResult.sx, tileCount);
 
         ySegments = bestResult.sy;
@@ -180,68 +182,6 @@ public class CircleLayout : MonoBehaviour {
 
         UpdatePositions(1);
     }
-
-    void LateUpdate() {
-        if (changing) return;
-
-        bool transition = false;
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            if (Input.GetKey(KeyCode.LeftControl))
-            {
-                tiles.Shuffle();
-            }
-            else
-            { 
-                tiles.Reverse();
-            }
-            transition = true;
-        }
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Saturation.Value.CompareTo(y.File.ImageStatistics.First().Saturation.Value));
-            transition = true;
-        }
-        if (Input.GetKeyUp(KeyCode.H))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Hue.Value.CompareTo(y.File.ImageStatistics.First().Hue.Value));
-            transition = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.L))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Lightness.Value.CompareTo(y.File.ImageStatistics.First().Lightness.Value));
-            transition = true;
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.V))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Variance.Value.CompareTo(y.File.ImageStatistics.First().Variance.Value));
-            transition = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.M))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Mean.Value.CompareTo(y.File.ImageStatistics.First().Mean.Value));
-            transition = true;
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Entropy.Value.CompareTo(y.File.ImageStatistics.First().Entropy.Value));
-            transition = true;
-        }
-        if (transition)
-        {
-            if (!Input.GetKey(KeyCode.LeftShift))
-            {
-                StartCoroutine(SwapTiles());
-            }
-        }
-    }
-
 
     private void Rotate(float from, float to, float duration, Transform transform)
     {

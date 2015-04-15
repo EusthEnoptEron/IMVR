@@ -37,7 +37,9 @@ public class CylinderRaycaster : BaseRaycaster {
             if (tile == null) return;
 
             var canvas = tile.GetComponentInParent<Canvas>();
-            
+
+            //Debug.Log(tile.name);
+
             resultAppendList.Add(new RaycastResult()
             {
                 gameObject = tile.gameObject,
@@ -45,8 +47,8 @@ public class CylinderRaycaster : BaseRaycaster {
                 depth = 1,
                 distance = lambda,
                 index = resultAppendList.Count,
-                sortingLayer = canvas.sortingLayerID,
-                sortingOrder = canvas.sortingOrder
+                sortingLayer = canvas ? canvas.sortingLayerID : 0,
+                sortingOrder = canvas ? canvas.sortingOrder : 0
             });
         }
     }

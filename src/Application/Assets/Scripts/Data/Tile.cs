@@ -16,6 +16,7 @@ public abstract class Tile : UIBehaviour {
     public Vector3 targetScale;
 
     public float animationSpeed = 5;
+    public const int PIXELS_PER_UNIT = 100;
 
     protected abstract void OnDestroy();
 
