@@ -4,8 +4,10 @@ using IMVR.Commons;
 using UnityEngine.UI;
 using VirtualHands.Data.Image;
 using System.Linq;
+using UnityEngine.EventSystems;
+using DG.Tweening;
 
-public class ArtistTile : Tile {
+public class ArtistTile : Tile, IPointerClickHandler, IPointerDownHandler {
     private RectTransform rectTransform;
     private UnityEngine.UI.Image m_image;
     private Text m_text;
@@ -40,10 +42,32 @@ public class ArtistTile : Tile {
 
         //m_image = ImageAtlas.LoadSprite(artist.)
         m_text.text = artist.Name;
+        name = artist.Name;
     }
 
     protected override void OnDestroy()
     {
         //throw new System.NotImplementedException();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("CLICK");
+        m_image.DOComplete();
+
+        m_image.DOColor(Color.red, 0.1f).OnComplete(delegate {
+            m_image.DOColor(Color.white, 1f);
+        });
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("DOWN");
+        m_image.DOComplete();
+
+        m_image.DOColor(Color.blue, 0.1f).OnComplete(delegate
+        {
+            m_image.DOColor(Color.white, 1f);
+        });
     }
 }

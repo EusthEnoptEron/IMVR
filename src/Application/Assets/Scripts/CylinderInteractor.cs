@@ -3,10 +3,11 @@ using System.Collections;
 using Gestures;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 
 [RequireComponent(typeof(CircleLayout))]
-public class CylinderInteractor : MonoBehaviour {
+public class CylinderInteractor : MonoBehaviour, IDragHandler {
 
     private const float LOW_SPEED_THRESHOLD = 0.1f;
 
@@ -111,41 +112,8 @@ public class CylinderInteractor : MonoBehaviour {
     }
 
 
-
-
-    class VelocityMeasurer
+    public void OnDrag(PointerEventData eventData)
     {
-        public float Interval = 0.3f;
-
-        struct Entry
-        {
-            public float Time;
-            public Vector3 Position;
-        }
-
-        private List<Entry> entries = new List<Entry>();
-
-        public void AddPosition(Vector3 position)
-        {
-
-            entries.Add(new Entry
-            {
-                Time = Time.time,
-                Position = position
-            });
-        }
-
-        public Vector3 GetVelocity()
-        {
-            // Calculate
-            return GetDifference() / 0.5f;
-        }
-
-        public Vector3 GetDifference()
-        {
-            entries.RemoveAll(e => e.Time < Time.time - Interval);
-            return (entries.LastOrDefault().Position - entries.FirstOrDefault().Position);
-        }
+        Debug.Log("DRAG");
     }
-
 }

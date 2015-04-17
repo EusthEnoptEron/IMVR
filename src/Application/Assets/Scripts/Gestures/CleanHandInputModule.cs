@@ -145,11 +145,16 @@ namespace Gestures
             eventSystem.RaycastAll(data, m_RaycastResultCache);
 
             // Process until one is OK
+            if (finger.Type == submitFinger)
+                Debug.Log("______________");
+
             foreach (var raycast in m_RaycastResultCache)
             {
                 if (raycast.gameObject != null)
                 {
-                    
+                    if (finger.Type == submitFinger)
+                        Debug.Log(raycast.gameObject.GetPath());
+
                     float z = raycast.distance;
 
                     var offset = raycast.gameObject.GetComponentInChildren<CollisionOffset>();
@@ -161,14 +166,20 @@ namespace Gestures
                     var hitPoint = CalculateHitPoint(screenPosition, z);
                     var distance = GetPerpendicularDistance(worldPosition, hitPoint, raycast.gameObject.transform.forward);
 
-                    if (selection != null && selection.valid && selection.IsSameGameObject(raycast.gameObject))
+                    if (selection != null && selection.valid 
+                        && selection.IsSameGameObject(raycast.gameObject)
+                        && selection.target.GetComponent<LooseGroup>() == null )
                     {
                         data.pointerCurrentRaycast = raycast;
                         data.worldPosition = hitPoint;
 
                         currentDistance = distance;
+                        if(finger.Type == submitFinger)
+                            Debug.Log("BUBUBUBUBU");
                         break;
-                    } else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance))
+                    } else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance)
+                      //  || raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
+                        )
                     {
                         data.pointerCurrentRaycast = raycast;
                         data.worldPosition = hitPoint;
@@ -177,7 +188,10 @@ namespace Gestures
                     }
                 }
             }
+            
+            if (finger.Type == submitFinger)
 
+                Debug.Log("______________");
             if (data.pointerCurrentRaycast.isValid)
             {
                 //if (finger.Type == submitFinger) Debug.Log(data.pointerCurrentRaycast.gameObject.name);
@@ -187,11 +201,15 @@ namespace Gestures
 
                     if (selection.IsSameGameObject(data.pointerCurrentRaycast.gameObject))
                     {
-
+                        if (finger.Type == submitFinger) {
+                            Debug.LogFormat("{0} = {1}", selection.target.GetPath(), data.pointerCurrentRaycast.gameObject.GetPath());
+                        }
                         selection.Update(currentDistance);
                     }
                     else
                     {
+                        if (finger.Type == submitFinger)
+                            Debug.Log("X: " + data.pointerCurrentRaycast.gameObject.GetPath());
                         // Deselect
                         selection.Update(float.PositiveInfinity);
                     }
@@ -201,6 +219,9 @@ namespace Gestures
                 }
                 else
                 {
+                    if (finger.Type == submitFinger)
+                        Debug.Log("--> " + data.pointerCurrentRaycast.gameObject.GetPath());
+
                     selection = new Selection(data.pointerCurrentRaycast.gameObject, data.worldPosition);
                     selection.Update(currentDistance);
                 }
@@ -317,6 +338,8 @@ namespace Gestures
 
                 pointerEvent.pointerPress = newPressed;
                 pointerEvent.rawPointerPress = currentOverGo;
+
+                Debug.LogFormat("CLICK {0}", currentOverGo.GetPath());
 
                 pointerEvent.clickTime = time;
 
@@ -494,7 +517,7 @@ namespace Gestures
             public Selection(GameObject target, Vector3 hitPoint)
             {
                 this.target = target;
-                this.handler = ExecuteEvents.GetEventHandler<IPointerDownHandler>(target);
+                this.handler = GetEventHandler(target);
                 this.hitPoint = target.transform.InverseTransformPoint(hitPoint);
                 selectionTime = Time.time;
             }
@@ -515,7 +538,13 @@ namespace Gestures
             public bool IsSameGameObject(GameObject go)
             {
                 if (handler == null) return false;
-                return ExecuteEvents.GetEventHandler<IPointerDownHandler>(go) == handler;
+                return GetEventHandler(go) == handler;
+            }
+
+            private GameObject GetEventHandler(GameObject go)
+            {
+                var candidate = ExecuteEvents.GetEventHandler<IEventSystemHandler>(go);
+                return candidate;
             }
 
             public void Update(float distance)

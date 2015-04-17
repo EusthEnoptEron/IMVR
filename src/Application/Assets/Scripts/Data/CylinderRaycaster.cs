@@ -3,12 +3,13 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 [RequireComponent(typeof(CircleLayout))]
 public class CylinderRaycaster : BaseRaycaster {
     private const float D3_EPSILON = 0.01f;
     private Camera camera;
-
+    public bool castInChildren = true;
     CircleLayout cylinder;
 
     public void Start()
@@ -36,6 +37,24 @@ public class CylinderRaycaster : BaseRaycaster {
             var tile = cylinder.GetTileAtPosition(ray.origin + ray.direction * lambda);
             if (tile == null) return;
 
+            if (castInChildren)
+            {
+                int before = resultAppendList.Count;
+                cylinder.GetComponentsInChildren<BaseRaycaster>()
+                    .Where(raycaster => !raycaster.enabled)
+                    .ToList()
+                    .ForEach(raycaster => raycaster.Raycast(eventData, resultAppendList));
+                if (resultAppendList.Count > before)
+                {
+                    //Debug.Log("------------");
+                    //for (int i = resultAppendList.Count - (resultAppendList.Count - before); i < resultAppendList.Count; i++)
+                    //    Debug.LogFormat("{0} ({1})", resultAppendList[i].gameObject.GetPath(), resultAppendList[i].module.gameObject.GetPath());
+                    //Debug.Log("____________");
+                    return;
+                }
+            }
+
+
             var canvas = tile.GetComponentInParent<Canvas>();
 
             //Debug.Log(tile.name);
@@ -48,7 +67,7 @@ public class CylinderRaycaster : BaseRaycaster {
                 distance = lambda,
                 index = resultAppendList.Count,
                 sortingLayer = canvas ? canvas.sortingLayerID : 0,
-                sortingOrder = canvas ? canvas.sortingOrder : 0
+                sortingOrder = canvas ? canvas.sortingOrder : -20
             });
         }
     }
