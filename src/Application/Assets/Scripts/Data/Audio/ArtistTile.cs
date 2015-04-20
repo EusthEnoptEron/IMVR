@@ -7,10 +7,11 @@ using System.Linq;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 
-public class ArtistTile : Tile, IPointerClickHandler, IPointerDownHandler {
+public class ArtistTile : Tile, IPointerClickHandler {
     private RectTransform rectTransform;
     private UnityEngine.UI.Image m_image;
     private Text m_text;
+    private Artist m_artist;
 
     protected override void Awake()
     {
@@ -43,6 +44,8 @@ public class ArtistTile : Tile, IPointerClickHandler, IPointerDownHandler {
         //m_image = ImageAtlas.LoadSprite(artist.)
         m_text.text = artist.Name;
         name = artist.Name;
+
+        m_artist = artist;
     }
 
     protected override void OnDestroy()
@@ -52,22 +55,8 @@ public class ArtistTile : Tile, IPointerClickHandler, IPointerDownHandler {
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("CLICK");
-        m_image.DOComplete();
-
-        m_image.DOColor(Color.red, 0.1f).OnComplete(delegate {
-            m_image.DOColor(Color.white, 1f);
-        });
+        var artistView = FlowManager.Instance.PushView<ArtistView>();
+        artistView.artist = m_artist;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("DOWN");
-        m_image.DOComplete();
-
-        m_image.DOColor(Color.blue, 0.1f).OnComplete(delegate
-        {
-            m_image.DOColor(Color.white, 1f);
-        });
-    }
 }

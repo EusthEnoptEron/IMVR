@@ -94,7 +94,7 @@ namespace Gestures
                     ProcessPress(fState.eventData);
                 }
                 ProcessMove(fState.eventData.buttonData);
-                ProcessDrag(fState.eventData.buttonData);
+                //ProcessDrag(fState.eventData.buttonData);
             }
         }
 
@@ -132,7 +132,6 @@ namespace Gestures
 
             // Clear the used flag
             data.Reset();
-
             data.delta =  (Vector2)screenPosition - data.position;
             data.position = screenPosition;
             data.button = finger.Type == submitFinger
@@ -145,15 +144,15 @@ namespace Gestures
             eventSystem.RaycastAll(data, m_RaycastResultCache);
 
             // Process until one is OK
-            if (finger.Type == submitFinger)
-                Debug.Log("______________");
 
             foreach (var raycast in m_RaycastResultCache)
             {
                 if (raycast.gameObject != null)
                 {
-                    if (finger.Type == submitFinger)
-                        Debug.Log(raycast.gameObject.GetPath());
+                   
+
+                    //if (finger.Type == submitFinger)
+                    //    Debug.Log(raycast.gameObject.GetPath());
 
                     float z = raycast.distance;
 
@@ -166,20 +165,42 @@ namespace Gestures
                     var hitPoint = CalculateHitPoint(screenPosition, z);
                     var distance = GetPerpendicularDistance(worldPosition, hitPoint, raycast.gameObject.transform.forward);
 
-                    if (selection != null && selection.valid 
-                        && selection.IsSameGameObject(raycast.gameObject)
-                        && selection.target.GetComponent<LooseGroup>() == null )
-                    {
-                        data.pointerCurrentRaycast = raycast;
-                        data.worldPosition = hitPoint;
+                    bool isChild = data.pointerCurrentRaycast.gameObject
+                                    ? raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
+                                    : false;
+                    bool isParent = data.pointerCurrentRaycast.gameObject 
+                                ? data.pointerCurrentRaycast.gameObject.transform.IsChildOf(raycast.gameObject.transform)
+                                : false;
 
-                        currentDistance = distance;
-                        if(finger.Type == submitFinger)
-                            Debug.Log("BUBUBUBUBU");
-                        break;
-                    } else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance)
-                      //  || raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
-                        )
+                    if (data.eligibleForClick)
+                    {
+                        if (selection.IsSameGameObject(raycast.gameObject))
+                        {
+                            data.pointerCurrentRaycast = raycast;
+                            data.worldPosition = hitPoint;
+
+                            currentDistance = distance;
+                        }
+                        else continue;
+                    }
+
+                    if (isChild ||
+                        (!isParent && Mathf.Abs(distance) < Mathf.Abs(currentDistance))
+                    )
+                    //if (selection != null && selection.valid 
+                    //    && selection.IsSameGameObject(raycast.gameObject)
+                    //    && selection.target.GetComponent<LooseGroup>() == null )
+                    //{
+                    //    data.pointerCurrentRaycast = raycast;
+                    //    data.worldPosition = hitPoint;
+
+                    //    currentDistance = distance;
+                    //    if(finger.Type == submitFinger)
+                    //        Debug.Log("BUBUBUBUBU");
+                    //    break;
+                    //} else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance)
+                    //  //  || raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
+                    //    )
                     {
                         data.pointerCurrentRaycast = raycast;
                         data.worldPosition = hitPoint;
@@ -188,10 +209,8 @@ namespace Gestures
                     }
                 }
             }
-            
-            if (finger.Type == submitFinger)
 
-                Debug.Log("______________");
+
             if (data.pointerCurrentRaycast.isValid)
             {
                 //if (finger.Type == submitFinger) Debug.Log(data.pointerCurrentRaycast.gameObject.name);
@@ -201,17 +220,15 @@ namespace Gestures
 
                     if (selection.IsSameGameObject(data.pointerCurrentRaycast.gameObject))
                     {
-                        if (finger.Type == submitFinger) {
-                            Debug.LogFormat("{0} = {1}", selection.target.GetPath(), data.pointerCurrentRaycast.gameObject.GetPath());
-                        }
                         selection.Update(currentDistance);
                     }
                     else
                     {
-                        if (finger.Type == submitFinger)
-                            Debug.Log("X: " + data.pointerCurrentRaycast.gameObject.GetPath());
+                        //if (finger.Type == submitFinger)
+                        //    Debug.Log("X: " + data.pointerCurrentRaycast.gameObject.GetPath());
                         // Deselect
-                        selection.Update(float.PositiveInfinity);
+                        if(!data.eligibleForClick)
+                            selection.Update(float.PositiveInfinity);
                     }
 
                     prevFingerState.crosshair.Visible = finger.Type == submitFinger;
@@ -219,9 +236,6 @@ namespace Gestures
                 }
                 else
                 {
-                    if (finger.Type == submitFinger)
-                        Debug.Log("--> " + data.pointerCurrentRaycast.gameObject.GetPath());
-
                     selection = new Selection(data.pointerCurrentRaycast.gameObject, data.worldPosition);
                     selection.Update(currentDistance);
                 }
@@ -299,6 +313,7 @@ namespace Gestures
             // PointerDown notification
             if (data.PressedThisFrame())
             {
+                //Debug.LogFormat("PRESS {0}", currentOverGo.GetPath());
                 pointerEvent.eligibleForClick = true;
                 pointerEvent.delta = Vector2.zero;
                 pointerEvent.dragging = false;
@@ -339,7 +354,7 @@ namespace Gestures
                 pointerEvent.pointerPress = newPressed;
                 pointerEvent.rawPointerPress = currentOverGo;
 
-                Debug.LogFormat("CLICK {0}", currentOverGo.GetPath());
+                //Debug.LogFormat("CLICK {0}", currentOverGo.GetPath());
 
                 pointerEvent.clickTime = time;
 
@@ -353,6 +368,8 @@ namespace Gestures
             // PointerUp notification
             if (data.ReleasedThisFrame())
             {
+                //Debug.LogFormat("RELEASE {0}", pointerEvent.pointerPress.gameObject.GetPath());
+
                 // Debug.Log("Executing pressup on: " + pointer.pointerPress);
                 ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
 
@@ -362,7 +379,7 @@ namespace Gestures
                 var pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
 
                 // PointerClick and Drop events
-                if (pointerEvent.pointerPress == pointerUpHandler && pointerEvent.eligibleForClick)
+                if (/*pointerEvent.pointerPress == pointerUpHandler && */pointerEvent.eligibleForClick)
                 {
                     ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerClickHandler);
                 }

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Gestures;
-using Assets.Scripts;
 using System.Collections.Generic;
 
 public class QuaternionComparer : HandComparer
