@@ -78,6 +78,7 @@ namespace IMVR.Indexer
                     Album = album,
                     Artist = artist,
                     TrackNo = file.Tag.Track,
+                    Duration = (float)file.Properties.Duration.TotalSeconds,
 
                     // File properties
                     Path = item.FullName,
