@@ -9,7 +9,7 @@ public abstract class View : MonoBehaviour {
     {
         name = this.GetType().FullName;
 
-        transform.position = GameObject.FindGameObjectWithTag("CameraRig").transform.position;
+        transform.position = World.CameraRig.transform.position;
     }
 
     protected void FadeIn(CanvasGroup group)

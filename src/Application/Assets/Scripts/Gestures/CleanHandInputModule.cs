@@ -94,7 +94,7 @@ namespace Gestures
                     ProcessPress(fState.eventData);
                 }
                 ProcessMove(fState.eventData.buttonData);
-                //ProcessDrag(fState.eventData.buttonData);
+                ProcessDrag(fState.eventData.buttonData);
             }
         }
 
@@ -118,6 +118,11 @@ namespace Gestures
             // Get event data
             PointerEventData data;
             bool created = GetPointerData(GetButtonId(finger), out data, true);
+            if (created)
+            {
+                data.useDragThreshold = true;
+                eventSystem.pixelDragThreshold = 100;
+            }
             var prevFingerState = state.GetFingerState(finger.Type);
             var selection = prevFingerState.selection;
             float currentDistance = float.PositiveInfinity;
@@ -461,6 +466,7 @@ namespace Gestures
                     // TODO: set finger
                     tracked = new FingerState { finger = finger, eventData = new MouseButtonEventData() };
                     tracked.crosshair = (GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Crosshair")) as GameObject).GetComponent<CrosshairControl>();
+                    tracked.crosshair.Visible = false;
                     m_TrackedFingers.Add(tracked);
                 }
                 return tracked;

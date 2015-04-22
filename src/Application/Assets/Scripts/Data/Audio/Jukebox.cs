@@ -64,6 +64,36 @@ public class Jukebox : Singleton<Jukebox> {
         }
     }
 
+    public float Progress
+    {
+        get
+        {
+            return m_audio.time / m_audio.clip.length;
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public TimeSpan Time
+    {
+        get
+        {
+            // TODO: Cache
+            return TimeSpan.FromSeconds(m_audio.time);
+        }
+    }
+
+    public TimeSpan TotalTime
+    {
+        get
+        {
+            // TODO: Cache
+            return TimeSpan.FromSeconds(m_audio.clip.length);
+        }
+    }
+
     private IEnumerator PlayRoutine(Song song)
     {
         loading = true;
@@ -135,6 +165,23 @@ public class Jukebox : Singleton<Jukebox> {
         // Clean CSCAudioClip if need be
         if (currentClip != null)
             currentClip.Dispose();
+    }
+
+    public void Seek(float time)
+    {
+        if (m_audio.clip)
+        {
+            m_audio.time = time;
+        }
+    }
+
+    public void SeekRatio(float ratio)
+    {
+        if (m_audio.clip)
+        {
+            ratio = Mathf.Clamp01(ratio);
+            m_audio.time = m_audio.clip.length * ratio;
+        }
     }
 
     /// <summary>

@@ -113,7 +113,7 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
 
 
     private float delta;
-    private float deadZone = 2;
+    private float deadZone = 0;
     public void OnDrag(PointerEventData eventData)
     {
         float angleDelta = eventData.delta.y * .05f;

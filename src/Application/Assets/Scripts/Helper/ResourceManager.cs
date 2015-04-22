@@ -14,3 +14,22 @@ public static class ResourceManager {
         }
     }
 }
+
+public static class World
+{
+    public static GameObject CameraRig
+    {
+        get
+        {
+            return GameObject.FindGameObjectWithTag("CameraRig");
+        }
+    }
+
+    public static GameObject WorldNode
+    {
+        get
+        {
+            return GameObject.Find("World");
+        }
+    }
+}

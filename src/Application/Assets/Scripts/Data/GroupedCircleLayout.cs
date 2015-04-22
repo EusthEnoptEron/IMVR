@@ -19,6 +19,8 @@ public class GroupedCircleLayout : CircleLayout {
 
             foreach (var tile in _tiles)
                 tile.transform.SetParent(transform, false);
+
+            BuildTileMatrix();
         }
     }
 

@@ -24,29 +24,44 @@ public class ArtistView : View {
         }
         else
         {
-            m_artistView = GameObject.Instantiate<GameObject>(
-                Resources.Load<GameObject>("Prefabs/pref_ArtistView")
-            );
+            // Move down by 50cm
+            transform.localPosition += Vector3.down * 0.5f;
 
-            m_artistView.transform.SetParent(transform, false);
-            m_artistView.transform.localScale = Vector3.one / 640f;
-            m_artistView.transform.localPosition = Camera.main.transform.forward;
-            m_artistView.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+            var canvas = gameObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            gameObject.AddComponent<GraphicRaycaster>();
 
-            m_albumList = m_artistView.transform.FindRecursively("AlbumList");
+            var layout = gameObject.AddComponent<CanvasCircleLayout>();
+            layout.radius = 0.5f;
+            layout.height = 1;
+            layout.scale = 1 / 800f;
+            layout.Resize(10, 1);
+
+            gameObject.AddComponent<CylinderInteractor>();
+
+            //m_artistView = GameObject.Instantiate<GameObject>(
+            //    Resources.Load<GameObject>("Prefabs/pref_ArtistView")
+            //);
+
+            //m_artistView.transform.SetParent(transform, false);
+            //m_artistView.transform.localScale = Vector3.one / 640f;
+            //m_artistView.transform.localPosition = Camera.main.transform.forward;
+            //m_artistView.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+
+            //m_albumList = m_artistView.transform.FindRecursively("AlbumList");
 
             pref_albumView = Resources.Load<GameObject>("Prefabs/pref_AlbumView");
             pref_songItem = Resources.Load<GameObject>("Prefabs/pref_SongItem");
 
+            int i = 0;
             foreach (var album in artist.Albums)
             {
-                InitAlbum(album);
+                layout.SetTile(i++, 0, InitAlbum(album));
             }
-
         }
     }
 
-    private void InitAlbum(Album album)
+    private GameObject InitAlbum(Album album)
     {
         var albumView = GameObject.Instantiate<GameObject>(pref_albumView);
         albumView.transform.SetParent(m_albumList, false);
@@ -65,5 +80,7 @@ public class ArtistView : View {
             songItem.transform.SetParent(songList, false);
             songItem.song = song;
         }
+
+        return albumView;
     }
 }
