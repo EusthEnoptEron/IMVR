@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using IMVR.Commons;
 
 public class FlowManager : Singleton<FlowManager>
 {
@@ -19,8 +20,24 @@ public class FlowManager : Singleton<FlowManager>
 
     void Awake()
     {
+        viewStack = new Stack<View>();
         viewStack.Push(null);
+
+        //StartCoroutine(PlayDebug());
     }
+
+    //IEnumerator PlayDebug()
+    //{
+    //    var db = IMDB.FromFile(Prefs.Instance.DBPath);
+    //    Jukebox.Instance.Playlist.Add(db.Songs);
+    //    Jukebox.Instance.Playlist.Cyclic = true;
+    //    Jukebox.Instance.Play();
+
+    //    yield return new WaitForSeconds(2);
+    //    Jukebox.Instance.Pause();
+    //    yield return new WaitForSeconds(2);
+    //    Jukebox.Instance.Play();
+    //}
 
     // Use this for initialization
     void Start()

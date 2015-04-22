@@ -57,6 +57,9 @@ public class ArtistTile : Tile, IPointerClickHandler {
     {
         var artistView = FlowManager.Instance.PushView<ArtistView>();
         artistView.artist = m_artist;
+
+        Jukebox.Instance.Playlist.Add(m_artist.Albums.SelectMany(a => a.Tracks));
+        Jukebox.Instance.Play();
     }
 
 }

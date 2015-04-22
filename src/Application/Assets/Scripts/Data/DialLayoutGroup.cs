@@ -66,8 +66,8 @@ public class DialLayout : UnityEngine.UI.LayoutGroup {
 
             minAngle = Mathf.Min(minAngle, angleDeg);
             maxAngle = Mathf.Max(maxAngle, angleDeg);
-            Debug.Log(angleDeg);
+            //Debug.Log(angleDeg);
         }
-        Debug.Log(offset);
+        //Debug.Log(offset);
     }
 }
