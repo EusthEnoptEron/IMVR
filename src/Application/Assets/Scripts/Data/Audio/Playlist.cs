@@ -48,6 +48,12 @@ public class Playlist
         Add(song);
     }
 
+    public void Override(IEnumerable<Song> songs)
+    {
+        Clear();
+        Add(songs);
+    }
+
     public bool IsEmpty
     {
         get

@@ -32,7 +32,7 @@ public class Jukebox : Singleton<Jukebox> {
 
     private void OnIndexChange(object sender, EventArgs e)
     {
-        StartCoroutine(Play(Playlist.Current));
+        StartCoroutine(PlayRoutine(Playlist.Current));
     }
 
     protected void Update()
@@ -42,7 +42,7 @@ public class Jukebox : Singleton<Jukebox> {
             if (!m_audio.isPlaying)
             {
                 if (Playlist.MoveForward())
-                    StartCoroutine(Play(Playlist.Current));
+                    StartCoroutine(PlayRoutine(Playlist.Current));
                 else
                     Stop();
             }
@@ -64,7 +64,7 @@ public class Jukebox : Singleton<Jukebox> {
         }
     }
 
-    private IEnumerator Play(Song song)
+    private IEnumerator PlayRoutine(Song song)
     {
         loading = true;
         Debug.Log("LOADING...");
@@ -125,6 +125,9 @@ public class Jukebox : Singleton<Jukebox> {
 
     public void Stop()
     {
+        m_audio.Stop();
+        playing = false;
+
     }
 
     private void OnApplicationQuit()
@@ -132,5 +135,16 @@ public class Jukebox : Singleton<Jukebox> {
         // Clean CSCAudioClip if need be
         if (currentClip != null)
             currentClip.Dispose();
+    }
+
+    /// <summary>
+    /// Plays a song immediately. Overrides the playlist.
+    /// </summary>
+    /// <param name="song">The song that will be played on the spot.</param>
+    public void Play(Song song)
+    {
+        playing = true;
+        Playlist.Override(song);
+        Playlist.MoveForward();
     }
 }

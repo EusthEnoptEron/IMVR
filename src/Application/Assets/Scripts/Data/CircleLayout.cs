@@ -227,7 +227,6 @@ public class CircleLayout : MonoBehaviour {
             {
                 tile.transform.localRotation *= halfRevolution;
                 
-
                 Rotate(0, 180, duration, tile.transform);
             }
         }

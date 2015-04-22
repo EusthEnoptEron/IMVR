@@ -55,4 +55,9 @@ public static class TransformExtensions {
     {
         return node.AncestorsAndThis().Skip(1);
     }
+
+    public static Transform FindRecursively(this Transform node, string name)
+    {
+        return node.Descendants().FirstOrDefault(transform => transform.name == name);
+    }
 }
