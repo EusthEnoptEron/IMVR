@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using IMVR.Commons;
 using System.Linq;
+using Gestures;
 
 public class FlowManager : Singleton<FlowManager>
 {
@@ -46,11 +47,38 @@ public class FlowManager : Singleton<FlowManager>
         ChangeView<ArtistOverView>();
     }
 
+
+    private Vector3 m_pullStartPosition;
+    private bool m_pulling = false;
     // Update is called once per frame
     void Update()
     {
+        if(HandProvider.Instance.GetGestureEnter("Pull")) {
+            m_pullStartPosition = HandProvider.Instance.GetHand(HandType.Left).PalmPosition;
+            m_pulling = true;
+        }
 
+        if (m_pulling)
+        {
+            var pullEndPosition = HandProvider.Instance.GetHand(HandType.Left).PalmPosition;
+            var axis = (Camera.main.transform.position - m_pullStartPosition).normalized;
+            var distance = Vector3.Dot(pullEndPosition - m_pullStartPosition, axis);
+
+            if (distance > 0.05f)
+            {
+                if (viewStack.Count > 1) {
+                    PopView();
+                }
+                m_pulling = false;
+            }
+        }
+
+        if (HandProvider.Instance.GetGestureExit("Pull"))
+        {
+            m_pulling = false;
+        }
     }
+
 
     public void ChangeView(View view, bool pop = true)
     {

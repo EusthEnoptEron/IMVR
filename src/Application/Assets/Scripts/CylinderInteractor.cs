@@ -47,14 +47,14 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         {
             Handle(hand);
 
-            if (handInput.GetGestureEnter("Push"))
-            {
-                StartCoroutine(PushPull(true));
-            }
-            if (handInput.GetGestureEnter("Pull"))
-            {
-                StartCoroutine(PushPull(false));
-            }
+            //if (handInput.GetGestureEnter("Push"))
+            //{
+            //    StartCoroutine(PushPull(true));
+            //}
+            //if (handInput.GetGestureEnter("Pull"))
+            //{
+            //    StartCoroutine(PushPull(false));
+            //}
         }
         else if(interacting)
         {

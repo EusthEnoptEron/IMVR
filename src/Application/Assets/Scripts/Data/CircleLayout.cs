@@ -57,8 +57,10 @@ public class CircleLayout : MonoBehaviour {
         //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
         v *= (1 - Time.deltaTime);
 
-        if (Mathf.Abs(v) > 0)
-            world.localRotation *= Quaternion.Euler(0, -v, 0);
+        if (Mathf.Abs(v) > 0.0001f)
+        {
+            World.WorldNode.transform.localRotation *= Quaternion.Euler(0, -v, 0);
+        }
 
         //Debug.Log("iüdate");
         UpdatePositions(Time.deltaTime * 5);

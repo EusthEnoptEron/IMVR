@@ -76,7 +76,11 @@ public abstract class View : MonoBehaviour {
     {
         level++;
 
-        if (level > 0) SetInteraction(false);
+        if (level == 1)
+        {
+            transform.SetParent(World.WorldNode.transform);
+            SetInteraction(false);
+        }
 
         OnPush();
     }
@@ -85,7 +89,11 @@ public abstract class View : MonoBehaviour {
     {
         level--;
 
-        if (level == 0) SetInteraction(true);
+        if (level == 0)
+        {
+            transform.SetParent(null);
+            SetInteraction(true);
+        }
 
         OnPull();
     }
