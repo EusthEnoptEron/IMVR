@@ -5,10 +5,11 @@ using System.Linq;
 using System.Collections.Generic;
 
 public abstract class View : MonoBehaviour {
+    private int level = 0;
+
     protected virtual void Awake()
     {
         name = this.GetType().FullName;
-
         transform.position = World.CameraRig.transform.position;
     }
 
@@ -40,12 +41,90 @@ public abstract class View : MonoBehaviour {
 
     }
 
-    public virtual void OnDisable()
+    public void Disable()
+    {
+        SetInteraction(false);
+        OnViewDisable();
+    }
+
+    public void Enable()
+    {
+        SetInteraction(true);
+        OnViewEnable();
+    }
+
+    public virtual void SetInteraction(bool enabled)
+    {
+        this.enabled = enabled;
+        foreach (var group in GetCanvasGroups())
+        {
+            group.interactable = enabled;
+            group.blocksRaycasts = enabled;
+            group.Fade(enabled ? 1 : 0.5f, 0.5f);
+        }
+
+        var circle = GetComponent<CircleLayout>();
+        if (circle)
+        {
+            var raycaster = circle.GetComponent<CylinderRaycaster>();
+            if (raycaster)
+                raycaster.enabled = enabled;
+        }
+    }
+
+    public void Push()
+    {
+        level++;
+
+        if (level > 0) SetInteraction(false);
+
+        OnPush();
+    }
+
+    public void Pull()
+    {
+        level--;
+
+        if (level == 0) SetInteraction(true);
+
+        OnPull();
+    }
+
+    protected virtual void OnPush()
+    {
+        var circle = GetComponent<CircleLayout>();
+        if (circle != null)
+        {
+            // Increase radius
+            DOTween.To(
+                () => circle.radius,
+                val => circle.radius = val,
+                circle.radius + 1,
+            1).Play();
+
+        }
+    }
+
+    protected virtual void OnPull()
+    {
+        var circle = GetComponent<CircleLayout>();
+        if (circle != null)
+        {
+            // Increase radius
+            DOTween.To(
+                () => circle.radius,
+                val => circle.radius = val,
+                circle.radius - 1,
+            1).Play();
+        }
+    }
+
+    protected virtual void OnViewDisable()
     {
         GetCanvasGroups().ToList().ForEach(FadeOut);
     }
 
-    public virtual void OnEnable()
+    protected virtual void OnViewEnable()
     {
         GetCanvasGroups().ToList().ForEach(FadeIn);
     }

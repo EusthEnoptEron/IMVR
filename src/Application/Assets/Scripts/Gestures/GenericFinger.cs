@@ -127,5 +127,19 @@ namespace Gestures
             return Bones[(int)type];
         }
 
+
+
+        public static int GetId(GenericFinger finger)
+        {
+            return GetId(finger.Type, finger.Hand.IsLeft ? HandType.Left : HandType.Right);
+            //return (int)finger.Type + (finger.Hand.IsLeft ? 5 : 0);
+        }
+
+        public static int GetId(FingerType fingerType, HandType handType)
+        {
+            return (int)fingerType + (handType == HandType.Left ? 5 : 0);
+        }
+
+
     }
 }

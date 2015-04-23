@@ -83,7 +83,7 @@ public class CSCAudioClip : IDisposable
         if (m_disposed) return;
 
         //Debug.LogFormat("Set Position: {0}", position);
-        m_decoder.Position = position;
+        m_decoder.Position = position * m_decoder.WaveFormat.Channels;
     }
 
     /// <summary>

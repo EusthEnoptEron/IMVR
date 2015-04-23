@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using DG.Tweening;
+using Gestures;
 
 [RequireComponent(typeof(Canvas), typeof(GraphicRaycaster))]
-public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandler {
+public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
 
+    private int m_fingers = 0;
     public float heightPerElement = 50;
     private float scrollSpeed = 0;
     private Text text;
     private float currentAngle = 0;
-
+    private float m_alpha = 0.05f;
     private float TargetAngle
     {
         get
@@ -51,7 +54,7 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
         var outline = mask.gameObject.AddComponent<Outline>();
         outline.useGraphicAlpha = false;
         mask.showMaskGraphic = true;
-        mask.GetComponent<Image>().color = new Color(1, 1, 1, 0.05f);
+        mask.GetComponent<Image>().color = new Color(1, 1, 1, m_alpha);
        
         // Configure layout
         var layoutRect = layout.GetComponent<RectTransform>();
@@ -160,6 +163,7 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
 
         }
 
+
         layout.transform.localPosition = new Vector3(layout.transform.localPosition.x,
                                                      layout.transform.localPosition.y,
                                                      layout.Radius);
@@ -211,12 +215,51 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
         //dragging = true;
         accumulator.Clear();
         delta = 0;
+
+        var image = mask.GetComponent<Image>();
+        image.DOKill();
+        image.DOColor(new Color(0.8f, 1, 0.8f, m_alpha), 0.5f);
+        
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         scrollSpeed = accumulator.Values.Sum();
         dragging = false;
+
+
+        var image = mask.GetComponent<Image>();
+        image.DOKill();
+        image.DOColor(new Color(1, 1, 1, m_alpha), 0.5f);
     }
 
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+       
+
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+
+    }
+
+
+    public void OnFingerUp(FingerEventData eventData, FingerEventData submitFinger)
+    {
+        m_fingers--;
+    }
+
+    public void OnFingerDown(FingerEventData eventData, FingerEventData submitFinger)
+    {
+        m_fingers++;
+
+        if (m_fingers == 3 && !submitFinger.dragging)
+        {
+            OnBeginDrag(submitFinger);
+            submitFinger.dragging = true;
+        }
+    }
 }

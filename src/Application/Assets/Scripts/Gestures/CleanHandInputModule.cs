@@ -88,13 +88,12 @@ namespace Gestures
             foreach (var finger in hand.Fingers)
             {
                 var fState = state.GetFingerState(finger.Type);
-                if (finger.Type == submitFinger)
-                {
 
-                    ProcessPress(fState.eventData);
-                }
+                ProcessPress(fState.eventData, finger);
                 ProcessMove(fState.eventData.buttonData);
-                ProcessDrag(fState.eventData.buttonData);
+
+                if(finger.Type == submitFinger)
+                    ProcessDrag(fState.eventData.buttonData);
             }
         }
 
@@ -108,6 +107,29 @@ namespace Gestures
             }
         }
 
+        private bool GetFingerData(int id, out PointerEventData data, bool create)
+        {
+            if (!m_PointerData.TryGetValue(id, out data) && create)
+            {
+                data = new FingerEventData(eventSystem)
+                {
+                    pointerId = id,
+                    finger = null,
+                    useDragThreshold = true,
+                };
+                m_PointerData.Add(id, data);
+                eventSystem.pixelDragThreshold = 50;
+
+                return true;
+            }
+            return false;
+        }
+
+        private bool GetFingerData(GenericFinger finger, out PointerEventData data, bool create)
+        {
+            return GetFingerData(GenericFinger.GetId(finger), out data, create);
+        }
+
 
         /// <summary>
         /// Processes the events of a finger
@@ -117,12 +139,8 @@ namespace Gestures
         {
             // Get event data
             PointerEventData data;
-            bool created = GetPointerData(GetButtonId(finger), out data, true);
-            if (created)
-            {
-                data.useDragThreshold = true;
-                eventSystem.pixelDragThreshold = 100;
-            }
+            bool created = GetFingerData(finger, out data, true);
+    
             var prevFingerState = state.GetFingerState(finger.Type);
             var selection = prevFingerState.selection;
             float currentDistance = float.PositiveInfinity;
@@ -301,19 +319,16 @@ namespace Gestures
         }
 
 
-        private int GetButtonId(GenericFinger finger)
-        {
-            return (int)finger.Type + (finger.Hand.IsLeft ? 5 : 0);
-        }
-
-
         /// <summary>
         /// Process the current mouse press.
         /// </summary>
-        private void ProcessPress(MouseButtonEventData data)
+        private void ProcessPress(MouseButtonEventData data, GenericFinger finger)
         {
-            var pointerEvent = data.buttonData;
+            var pointerEvent = (FingerEventData)data.buttonData;
             var currentOverGo = pointerEvent.pointerCurrentRaycast.gameObject;
+            bool submittable = finger.Type == submitFinger;
+
+            pointerEvent.finger = finger;
 
             // PointerDown notification
             if (data.PressedThisFrame())
@@ -326,71 +341,85 @@ namespace Gestures
                 pointerEvent.pressPosition = pointerEvent.position;
                 pointerEvent.pointerPressRaycast = pointerEvent.pointerCurrentRaycast;
 
-                DeselectIfSelectionChanged(currentOverGo, pointerEvent);
-
-                // search for the control that will receive the press
-                // if we can't find a press handler set the press
-                // handler to be what would receive a click.
-                var newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.pointerDownHandler);
-
-                // didnt find a press handler... search for a click handler
-                if (newPressed == null)
-                    newPressed = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
-
-                // Debug.Log("Pressed: " + newPressed);
-
                 float time = Time.unscaledTime;
 
-                if (newPressed == pointerEvent.lastPress)
+                // FingerDown
+                pointerEvent.fingerDown = ExecuteEvents.ExecuteHierarchy<IFingerDownHandler>(currentOverGo, pointerEvent, FingerDownHandler);
+
+                if (submittable)
                 {
-                    var diffTime = time - pointerEvent.clickTime;
-                    if (diffTime < 0.3f)
-                        ++pointerEvent.clickCount;
+                    DeselectIfSelectionChanged(currentOverGo, pointerEvent);
+
+                    // search for the control that will receive the press
+                    // if we can't find a press handler set the press
+                    // handler to be what would receive a click.
+                    var newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.pointerDownHandler);
+
+                    // didnt find a press handler... search for a click handler
+                    if (newPressed == null)
+                        newPressed = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
+
+                    // Debug.Log("Pressed: " + newPressed);
+
+
+                    if (newPressed == pointerEvent.lastPress)
+                    {
+                        var diffTime = time - pointerEvent.clickTime;
+                        if (diffTime < 0.3f)
+                            ++pointerEvent.clickCount;
+                        else
+                            pointerEvent.clickCount = 1;
+
+                        pointerEvent.clickTime = time;
+                    }
                     else
+                    {
                         pointerEvent.clickCount = 1;
+                    }
+
+                    pointerEvent.pointerPress = newPressed;
+                    pointerEvent.rawPointerPress = currentOverGo;
+
+                    //Debug.LogFormat("CLICK {0}", currentOverGo.GetPath());
 
                     pointerEvent.clickTime = time;
+
+                    // Save the drag handler as well
+                    pointerEvent.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(currentOverGo);
+
+                    if (pointerEvent.pointerDrag != null)
+                        ExecuteEvents.Execute(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.initializePotentialDrag);
+
                 }
-                else
-                {
-                    pointerEvent.clickCount = 1;
-                }
-
-                pointerEvent.pointerPress = newPressed;
-                pointerEvent.rawPointerPress = currentOverGo;
-
-                //Debug.LogFormat("CLICK {0}", currentOverGo.GetPath());
-
-                pointerEvent.clickTime = time;
-
-                // Save the drag handler as well
-                pointerEvent.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(currentOverGo);
-
-                if (pointerEvent.pointerDrag != null)
-                    ExecuteEvents.Execute(pointerEvent.pointerDrag, pointerEvent, ExecuteEvents.initializePotentialDrag);
             }
 
             // PointerUp notification
             if (data.ReleasedThisFrame())
             {
-                //Debug.LogFormat("RELEASE {0}", pointerEvent.pointerPress.gameObject.GetPath());
 
-                // Debug.Log("Executing pressup on: " + pointer.pointerPress);
-                ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
+                ExecuteEvents.Execute<IFingerUpHandler>(pointerEvent.fingerDown, pointerEvent, FingerUpHandler);
 
-                // Debug.Log("KeyCode: " + pointer.eventData.keyCode);
-
-                // see if we mouse up on the same element that we clicked on...
-                var pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
-
-                // PointerClick and Drop events
-                if (/*pointerEvent.pointerPress == pointerUpHandler && */pointerEvent.eligibleForClick)
+                if (submittable)
                 {
-                    ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerClickHandler);
-                }
-                else if (pointerEvent.pointerDrag != null)
-                {
-                    ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.dropHandler);
+                    //Debug.LogFormat("RELEASE {0}", pointerEvent.pointerPress.gameObject.GetPath());
+
+                    // Debug.Log("Executing pressup on: " + pointer.pointerPress);
+                    ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerUpHandler);
+
+                    // Debug.Log("KeyCode: " + pointer.eventData.keyCode);
+
+                    // see if we mouse up on the same element that we clicked on...
+                    var pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
+
+                    // PointerClick and Drop events
+                    if (/*pointerEvent.pointerPress == pointerUpHandler && */pointerEvent.eligibleForClick)
+                    {
+                        ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerClickHandler);
+                    }
+                    else if (pointerEvent.pointerDrag != null)
+                    {
+                        ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.dropHandler);
+                    }
                 }
 
                 pointerEvent.eligibleForClick = false;
@@ -414,6 +443,31 @@ namespace Gestures
                 }
             }
         }
+
+        private void FingerDownHandler(IFingerDownHandler handler, BaseEventData eventData)
+        {
+            var evt = ExecuteEvents.ValidateEventData<FingerEventData>(eventData);
+
+            PointerEventData submitEventData;
+            GetFingerData(GenericFinger.GetId(submitFinger, evt.finger.Hand.IsLeft ? HandType.Left : HandType.Right), out submitEventData, true);
+
+            var submitEvt = ExecuteEvents.ValidateEventData<FingerEventData>(submitEventData);
+
+            handler.OnFingerDown(evt, submitEvt);
+        }
+
+        private void FingerUpHandler(IFingerUpHandler handler, BaseEventData eventData)
+        {
+            var evt = ExecuteEvents.ValidateEventData<FingerEventData>(eventData);
+
+            PointerEventData submitEventData;
+            GetFingerData(GenericFinger.GetId(submitFinger, evt.finger.Hand.IsLeft ? HandType.Left : HandType.Right), out submitEventData, true);
+
+            var submitEvt = ExecuteEvents.ValidateEventData<FingerEventData>(submitEventData);
+
+            handler.OnFingerUp(evt, submitEvt);
+        }
+
 
 
 

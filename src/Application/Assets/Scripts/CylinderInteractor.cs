@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(CircleLayout))]
 public class CylinderInteractor : MonoBehaviour, IDragHandler {
 
-    private const float LOW_SPEED_THRESHOLD = 0.1f;
+    private const float LOW_SPEED_THRESHOLD = 0.05f;
 
     private HandProvider handInput;
     private VelocityMeasurer measurer = new VelocityMeasurer();
@@ -20,6 +20,8 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
     /// The maximum speed the head may rotate before ignoring all input.
     /// </summary>
     public float ovrSpeedThreshold = 0.2f;
+
+    private bool interacting = false;
 
 	// Use this for initialization
 	void Start () {
@@ -39,8 +41,9 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         //}
         
         var hand = handInput.GetHand(HandType.Right);
-        if (hand != null && 
-            OVRManager.display.angularVelocity.sqrMagnitude < ovrSpeedThreshold)
+        if (hand != null 
+        //    && OVRManager.display.angularVelocity.sqrMagnitude < ovrSpeedThreshold
+        )
         {
             Handle(hand);
 
@@ -52,6 +55,11 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
             {
                 StartCoroutine(PushPull(false));
             }
+        }
+        else if(interacting)
+        {
+            interacting = false;
+            GetComponentInParent<View>().SetInteraction(true);
         }
     }
 
@@ -90,17 +98,33 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         measurer.AddPosition(hand.GetFinger(FingerType.Pinky).TipPosition);
         var velocity = measurer.GetVelocity();
 
-        if (Vector3.Dot(velocity.normalized, hand.PalmNormal) < 0.2f) return;
-        if (!hand.Fingers.All(f => f.Extended)) return;
-        
-        float factor = velocity.sqrMagnitude > 0.5 ? 10 : 5;
-
-        if (velocity.magnitude > LOW_SPEED_THRESHOLD)
+        if(hand.Fingers
+            .Where(f => f.Type != FingerType.Thumb)
+            .All(f => ( Vector3.ProjectOnPlane(f.TipPosition - transform.position, transform.up).magnitude > layout.radius)))
         {
-            layout.AddTorque(Vector3.Dot(velocity, Camera.main.transform.right) * factor);
-        } else {
+            //Debug.LogFormat("{0}: {1} ({2})", name,, layout.radius );
+            var horizontalVelocity = Vector3.Dot(velocity, Camera.main.transform.right);
 
+            if (horizontalVelocity > LOW_SPEED_THRESHOLD || interacting)
+            {
+                if (!interacting)
+                    GetComponentInParent<View>().SetInteraction(false);
+                interacting = true;
+
+                float factor = horizontalVelocity > 0.5 ? 20 : 10;
+                layout.AddTorque(horizontalVelocity * factor);
+            }
         }
+        else
+        {
+            if(interacting)
+                GetComponentInParent<View>().SetInteraction(true);
+            interacting = false;
+        }
+            return;
+
+        //if (Vector3.Dot(velocity.normalized, hand.PalmNormal) < 0.2f) return;
+        //if (!hand.Fingers.All(f => f.Extended)) return;
     }
 
     IEnumerator Swipe(HandType handType)

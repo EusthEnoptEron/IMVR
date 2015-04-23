@@ -81,7 +81,7 @@ public class Jukebox : Singleton<Jukebox> {
         get
         {
             // TODO: Cache
-            return TimeSpan.FromSeconds(m_audio.time);
+            return TimeSpan.FromSeconds(m_audio.timeSamples / m_audio.clip.frequency);
         }
     }
 
@@ -127,8 +127,9 @@ public class Jukebox : Singleton<Jukebox> {
             }
             if(cscClip != null) currentClip = new CSCAudioClip(song.Path);
 
+            m_audio.time = 0;
             m_audio.clip = audioClip;
-
+            
             //m_audio.clip = www.GetAudioClip(false);
             loading = false;
             if (playing)
@@ -171,7 +172,8 @@ public class Jukebox : Singleton<Jukebox> {
     {
         if (m_audio.clip)
         {
-            m_audio.time = time;
+            m_audio.timeSamples = (int)(time * m_audio.clip.frequency);
+            //m_audio.time = time;
         }
     }
 
@@ -180,7 +182,7 @@ public class Jukebox : Singleton<Jukebox> {
         if (m_audio.clip)
         {
             ratio = Mathf.Clamp01(ratio);
-            m_audio.time = m_audio.clip.length * ratio;
+            Seek(m_audio.clip.length * ratio);            
         }
     }
 

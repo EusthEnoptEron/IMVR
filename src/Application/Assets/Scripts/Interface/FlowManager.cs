@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using IMVR.Commons;
+using System.Linq;
 
 public class FlowManager : Singleton<FlowManager>
 {
@@ -23,21 +24,21 @@ public class FlowManager : Singleton<FlowManager>
         viewStack = new Stack<View>();
         viewStack.Push(null);
 
-        //StartCoroutine(PlayDebug());
+        StartCoroutine(PlayDebug());
     }
 
-    //IEnumerator PlayDebug()
-    //{
-    //    var db = IMDB.FromFile(Prefs.Instance.DBPath);
-    //    Jukebox.Instance.Playlist.Add(db.Songs);
-    //    Jukebox.Instance.Playlist.Cyclic = true;
-    //    Jukebox.Instance.Play();
-
-    //    yield return new WaitForSeconds(2);
-    //    Jukebox.Instance.Pause();
-    //    yield return new WaitForSeconds(2);
-    //    Jukebox.Instance.Play();
-    //}
+    IEnumerator PlayDebug()
+    {
+        var db = IMDB.FromFile(Prefs.Instance.DBPath);
+        Jukebox.Instance.Playlist.Add(db.Songs);
+        Jukebox.Instance.Playlist.Cyclic = true;
+        Jukebox.Instance.Play();
+        yield return null;
+        //yield return new WaitForSeconds(2);
+        //Jukebox.Instance.Pause();
+        //yield return new WaitForSeconds(2);
+        //Jukebox.Instance.Play();
+    }
 
     // Use this for initialization
     void Start()
@@ -60,13 +61,16 @@ public class FlowManager : Singleton<FlowManager>
 
         if (activeView != null)
         {
-            activeView.enabled = false;
+            if (pop)
+                activeView.Disable();
+            else
+                PushStack();
         }
 
         activeView = view;
         viewStack.Push(activeView);
 
-        activeView.enabled = true;
+        activeView.Enable();
     }
 
     public T ChangeView<T>() where T : View
@@ -84,5 +88,27 @@ public class FlowManager : Singleton<FlowManager>
         ChangeView(view, false);
 
         return view;
+    }
+
+    public View PopView()
+    {
+        var view = viewStack.Pop();
+        view.Disable();
+
+        PullStack();
+
+        return view;
+    }
+
+    private void PushStack()
+    {
+        foreach (var view in viewStack.ToArray())
+            view.Push();
+    }
+
+    private void PullStack()
+    {
+        foreach (var view in viewStack.ToArray())
+            view.Pull();
     }
 }

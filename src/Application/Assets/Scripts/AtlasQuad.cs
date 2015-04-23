@@ -28,7 +28,7 @@ public class AtlasQuad : MonoBehaviour {
                 _renderer.sharedMaterial.SetFloat("_Glossiness", 0);
                 _renderer.sharedMaterial.SetFloat("_Metallic", 0);
             }
-            _renderer.sharedMaterial.mainTexture = sprite.texture;
+            _renderer.material.mainTexture = sprite.texture;
 
             MakeMesh();
         }
