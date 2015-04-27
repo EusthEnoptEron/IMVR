@@ -61,14 +61,14 @@ namespace IMVR.Indexer
                 {
                     artist.Biography = artistInfo.Bio.Summary;
 
-                    if (artist.Image == null && artistInfo.MainImage.Largest != null)
-                    {
-                        var image = artistInfo.MainImage.Largest;
-                        if (image != null)
-                        {
-                            artist.Image = _manager.GetTicket(image.AbsoluteUri);
-                        }
-                    }
+                    //if (artist.Image == null && artistInfo.MainImage.Largest != null)
+                    //{
+                    //    var image = artistInfo.MainImage.Largest;
+                    //    if (image != null)
+                    //    {
+                    //        artist.Image = _manager.GetTicket(image.AbsoluteUri);
+                    //    }
+                    //}
                 }
             });
 

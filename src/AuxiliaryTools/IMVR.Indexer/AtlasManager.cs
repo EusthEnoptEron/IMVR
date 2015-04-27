@@ -36,7 +36,7 @@ namespace IMVR.Indexer
                     atlas = null;
                     AbstractWorker.StartNew(delegate
                     {
-                        Console.WriteLine("Start writing atlas");
+                        Konsole.Log("Start writing atlas");
                         privateAtlas.Generate();
                     });
 

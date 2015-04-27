@@ -89,13 +89,11 @@ namespace IMVR.Indexer
                 album.Tracks.Add(song);
                 Options.Instance.DB.Songs.Add(song);
 
-                if(Options.Instance.Verbose)
-                    Konsole.WriteLine("Analyzing: {0}", ConsoleColor.Green, song.Title);
+                Konsole.Log("Analyzing: {0}", ConsoleColor.Green, song.Title);
             }
             else
             {
-                if (Options.Instance.Verbose)
-                    Konsole.WriteLine("Dropping: {0}", ConsoleColor.Red, item.Name);
+                Konsole.Log("Dropping: {0}", ConsoleColor.Red, item.Name);
 
             }
            

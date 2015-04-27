@@ -14,22 +14,24 @@ namespace IMVR.Indexer
     public class EchoNestNode : ConsumerNode<Artist>
     {
         private const string API_KEY = "IIYVSIK0ZCRCMU3VS";
-        private EchoNestSession session;
+        private EchoNestSession _session;
+        private AtlasManager _manager = new AtlasManager();
 
+        private const int RESULT_COUNT = 100;
         // ONLY ONE THREAD
         public EchoNestNode() : base(1)
         {
-            session = new EchoNestSession(API_KEY);
+            _session = new EchoNestSession(API_KEY, true);
+            _manager.TileSize = 256;
         }
 
         protected override void ProcessItem(Artist artist)
         {
 
             if(Options.Instance.Verbose)
-                Konsole.WriteLine("Artist: {0}",  ConsoleColor.Yellow, artist.Name);
-            return;
+                Out.WriteLine("Artist: {0}", artist.Name);
 
-            var profile = session.Query<Profile>().Execute(artist.Name, AllBuckets);
+            var profile = _session.Query<Profile>().Execute(artist.Name, AllBuckets);
             if (profile.Status.Code == ResponseCode.Success)
             {
                 // All right, we found something!
@@ -53,36 +55,64 @@ namespace IMVR.Indexer
                     artist.StartYear = yearsActive.Start;
                     artist.EndYear = yearsActive.End;
                 }
+
+                foreach (var image in profile.Artist.Images.Take(5))
+                {
+                    artist.Pictures.Add(_manager.GetTicket(image.Url));
+                }
+
                 //profile.Artist.Images.FirstOrDefault().Url
                 // /----------------------------------------
-
-
+                
                 // ----- Collect song meta data ----
-                var songs = session.Query<EchoNest.Song.Search>().Execute(GetSearchArgument(artist.Name));
-
-                if (songs.Status.Code == ResponseCode.Success)
+                int offset = 0;
+                while (true)
                 {
-                    for (int i = 0; i < songs.Songs.Count; i++)
+                    var songs = _session.Query<EchoNest.Song.Search>().Execute(GetSearchArgument(artist.Name, offset));
+                    if (songs.Status.Code == ResponseCode.Success)
                     {
-                        var song = songs.Songs[i];
-
-                        if (i == 0)
+                        Out.WriteLine("Found {0} songs", songs.Songs.Count);
+                        for (int i = 0; i < songs.Songs.Count; i++)
                         {
-                            artist.Location = song.ArtistLocation.Location;
-                            artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
-                        }
+                            var song = songs.Songs[i];
 
-                        foreach (var album in artist.Albums)
-                        {
-                            foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
+                            if (i == 0)
                             {
-                                track.Danceability = (float)song.AudioSummary.Danceability;
-                                track.Energy = (float)song.AudioSummary.Energy;
-                                track.Tempo = (float)song.AudioSummary.Tempo;
+                                artist.Location = song.ArtistLocation.Location;
+                                artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
+                            }
+                            //Out.WriteLine("SONG: {0} {1}", song.Title, song.AudioSummary.Danceability);
+
+                            foreach (var album in artist.Albums)
+                            {
+                                foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
+                                {
+                                    Out.WriteLine("TRACK: {0} {1}", song.Title, song.AudioSummary.Danceability);
+
+                                    track.Danceability = (float)song.AudioSummary.Danceability;
+                                    track.Energy = (float)song.AudioSummary.Energy;
+                                    track.Tempo = (float)song.AudioSummary.Tempo;
+                                }
                             }
                         }
+
+                        if (songs.Songs.Count < RESULT_COUNT)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Out.WriteLine("There's more...");
+                            offset += RESULT_COUNT;
+                        }
+                    }
+                    else
+                    {
+                        Konsole.WriteLine(songs.Status.Message, ConsoleColor.Red);
+                        break;
                     }
                 }
+               
                 
             }
             //else if (profile.Status.Code == ResponseCode.RateLimitExceeded)
@@ -94,13 +124,18 @@ namespace IMVR.Indexer
             //    ProcessItem(artist);
             //}
         }
+        protected override void CleanUp()
+        {
+            base.CleanUp();
+            _manager.Save();
+        }
 
         private EchoNest.Song.SearchArgument GetSearchArgument(string artistName, int? offset = null)
         {
             var argument = new EchoNest.Song.SearchArgument();
             argument.Bucket = AllSongBuckets;
             argument.Artist = artistName;
-            argument.Results = 100;
+            argument.Results = RESULT_COUNT;
             argument.Start = offset;
             return argument;
         }

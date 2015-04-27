@@ -20,6 +20,9 @@ namespace IMVR.Indexer
         private static List<Task> Tasks = new List<Task>();
         private List<AbstractWorker> _sequentialWorkers = new List<AbstractWorker>();
 
+        protected Konsole.NamedConsole Out;
+        private static int ColorIndex = 0;
+        private static int ColorCount = Enum.GetNames(typeof(ConsoleColor)).Count() - 1;
         public Task Task
         {
             get;
@@ -41,6 +44,7 @@ namespace IMVR.Indexer
         {
             cts = new CancellationTokenSource();
             this.threadCount = threadCount;
+            this.Out = new Konsole.NamedConsole(this.GetType().Name, (ConsoleColor)((ColorIndex++ % ColorCount) + 1));
         }
 
         public Task Start()

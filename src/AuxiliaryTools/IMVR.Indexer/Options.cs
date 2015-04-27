@@ -15,7 +15,7 @@ namespace IMVR.Indexer
         private Options() { }
 
         [Option("d", Required=true, HelpText="Path to the SQLite DB")]
-        public string DbPath { get; set; }
+        public string DBPath { get; set; }
 
         [Option("c", Required=false, DefaultValue=null, HelpText="Path to the cache directory")]
         public string CachePath { get; set; }
@@ -40,7 +40,7 @@ namespace IMVR.Indexer
             {
                 if (_db == null)
                 {
-                    _db = IMDB.FromFile(DbPath);
+                    _db = IMDB.FromFile(DBPath);
                 }
                 return _db;
             }

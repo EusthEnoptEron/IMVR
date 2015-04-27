@@ -45,7 +45,7 @@ namespace IMVR.Indexer
 
             try
             {
-                db.Save(Options.Instance.DbPath);
+                db.Save(Options.Instance.DBPath);
                 Log("Finished committing!", ConsoleColor.Green);
             }
             catch (Exception e)

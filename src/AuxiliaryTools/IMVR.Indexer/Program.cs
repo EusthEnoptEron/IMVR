@@ -35,6 +35,7 @@ namespace IMVR.Indexer
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
+                System.IO.File.Delete(Options.Instance.DBPath);
                 IMDB db = Options.Instance.DB;
 
                 // -----DEBUG--------
@@ -43,7 +44,7 @@ namespace IMVR.Indexer
                 //db.Folders.Add(@"C:\Users\Simon\Music");
                 db.Folders.Add(@"C:\Users\meers1\Music\NoisyCell");
                 db.Folders.Add(@"C:\Users\meers1\Music\Music\anime");
-                db.Folders.Add(@"C:\Users\meers1\Pictures");
+                //db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
                 // Clean db
@@ -63,7 +64,7 @@ namespace IMVR.Indexer
 
                 var musicAnalyzer = new MusicIndexer();
                 {
-                    musicAnalyzer.Pipe(new LastFmNode());
+                    //musicAnalyzer.Pipe(new LastFmNode());
                     musicAnalyzer.Pipe(new EchoNestNode());
                 }
               
