@@ -79,6 +79,12 @@ namespace IMVR.Commons
         /// </summary>
         [ProtoMember(11)]
         public List<AtlasTicket> Pictures { get; private set; }
+
+        /// <summary>
+        /// Gets or sets this artist's ID on Echo Nest.
+        /// </summary>
+        [ProtoMember(12)]
+        public string EchoNestID { get; set; }
     }
 
     [ProtoContract]

@@ -52,7 +52,7 @@ namespace IMVR.Indexer
 
         public class NamedConsole {
             public string Name { get; private set; }
-            public ConsoleColor Color { get; private set; }
+            public ConsoleColor Color { get; set; }
 
             public NamedConsole(string name, ConsoleColor color)
             {

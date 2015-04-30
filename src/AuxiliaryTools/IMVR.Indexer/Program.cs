@@ -21,6 +21,7 @@ namespace IMVR.Indexer
         
         static void Main(string[] args)
         {
+            var startTime = DateTime.Now;
             //var client = new GracenoteClient("13232384-4CA925FFEF026C96B030F81372DB39CA");
             //var albumSearcher = new AlbumSearcher(client);
             //var searchResult  = albumSearcher.Search(new SearchCriteria
@@ -42,8 +43,12 @@ namespace IMVR.Indexer
                 db.Folders.Clear();
                 //db.Folders.Add(@"C:\Users\Simon\Pictures");
                 //db.Folders.Add(@"C:\Users\Simon\Music");
-                db.Folders.Add(@"C:\Users\meers1\Music\NoisyCell");
-                db.Folders.Add(@"C:\Users\meers1\Music\Music\anime");
+                //db.Folders.Add(@"C:\Users\meers1\Music\Music\August Burns Red");
+                db.Folders.Add(@"C:\Users\meers1\Music\Music");
+                //db.Folders.Add(@"C:\Users\meers1\Music\Music\Comeback Kid");
+                //db.Folders.Add(@"C:\Users\meers1\Music\Music\Cyua");
+                //db.Folders.Add(@"C:\Users\meers1\Music\Music\Dantalian");
+                //db.Folders.Add(@"C:\Users\meers1\Music\Music\anime");
                 //db.Folders.Add(@"C:\Users\meers1\Pictures");
                 // -----/DEBUG--------
 
@@ -64,11 +69,10 @@ namespace IMVR.Indexer
 
                 var musicAnalyzer = new MusicIndexer();
                 {
-                    //musicAnalyzer.Pipe(new LastFmNode());
+                    musicAnalyzer.Pipe(new LastFmNode());
                     musicAnalyzer.Pipe(new EchoNestNode());
                 }
               
-
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
@@ -90,6 +94,18 @@ namespace IMVR.Indexer
                 musicAnalyzer.Start();
 
                 AbstractWorker.Wait();
+                db.Save(Options.Instance.DBPath);
+                Console.WriteLine("");
+                Console.WriteLine("-----------------------------------------");
+                Console.WriteLine("            DONE [{0:c}]            ", DateTime.Now - startTime);
+                Console.WriteLine("-----------------------------------------");
+                Console.WriteLine(" Indexed Artists       : {0}", db.Artists.Count);
+                Console.WriteLine(" Indexed Songs         : {0}", db.Songs.Count);
+                Console.WriteLine(" Echo Nest success rate: {0:P}", db.Songs.Where(song => song.Danceability != null).Count() / (double)db.Songs.Count);
+                Console.WriteLine(" Indexed Images        : {0}", db.Images.Count);
+                Console.WriteLine(" DB size               : {0:0.00}MB", new FileInfo(Options.Instance.DBPath).Length / 1024d / 1024d);
+                Console.WriteLine("-----------------------------------------");
+
 
                 Console.ReadLine();
             }

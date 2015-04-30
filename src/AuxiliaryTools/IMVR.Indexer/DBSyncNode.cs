@@ -30,7 +30,7 @@ namespace IMVR.Indexer
         {
             if (actions.Count == 0) return;
 
-            Log(String.Format("Committing {0} changes...", actions.Count), ConsoleColor.Green);
+            Konsole.Log(String.Format("Committing {0} changes...", actions.Count), ConsoleColor.Green);
 
             try
             {
@@ -46,11 +46,11 @@ namespace IMVR.Indexer
                         transaction.Commit();
                     }
                 }
-                Log("Finished committing!", ConsoleColor.Green);
+                Konsole.Log("Finished committing!", ConsoleColor.Green);
             }
             catch (Exception e)
             {
-                Log(e, ConsoleColor.Red);
+                Konsole.Log(e, ConsoleColor.Red);
             }
 
 
@@ -65,16 +65,6 @@ namespace IMVR.Indexer
         protected override void CleanUp()
         {
             Commit();
-        }
-
-        protected void Log(object text, ConsoleColor color = ConsoleColor.Gray)
-        {
-            var oldColor = Console.ForegroundColor;
-            {
-                Console.ForegroundColor = color;
-                Console.WriteLine(text);
-                Console.ForegroundColor = oldColor;
-            }
         }
     }
 }
