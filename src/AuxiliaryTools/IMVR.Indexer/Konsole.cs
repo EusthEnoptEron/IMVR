@@ -32,6 +32,11 @@ namespace IMVR.Indexer
             WriteLine(String.Format(format, args), color);
         }
 
+        public static void WriteLine(string format, params object[] args)
+        {
+            WriteLine(String.Format(format, args), ConsoleColor.Gray);
+        }
+
 
         public static void Log(object text, ConsoleColor color = ConsoleColor.Gray)
         {

@@ -21,6 +21,7 @@ namespace IMVR.Indexer
         private IConsumer<Artist> artistAnalyzer;
 
         private Dictionary<string, Artist> artistList = new Dictionary<string,Artist>();
+        private AtlasManager _manager = new AtlasManager();
 
         // Only make one of these
         public MusicIndexer() : base(1) { }
@@ -28,6 +29,8 @@ namespace IMVR.Indexer
         protected override void CleanUp()
         {
             base.CleanUp();
+
+            _manager.Save();
 
             foreach (var artist in artistList.Values)
                 Publish(artist);
@@ -61,6 +64,8 @@ namespace IMVR.Indexer
 
                 // Determine album
                 var album = artist.Albums.FirstOrDefault(a => a.Name == albumName);
+                var cover = file.Tag.Pictures.FirstOrDefault(/*picture => picture.Type == PictureType.FrontCover*/);
+
                 if (album == null)
                 {
                     album = new Album()
@@ -69,6 +74,12 @@ namespace IMVR.Indexer
                     };
 
                     artist.Albums.Add(album);
+                }
+
+                if (cover != null && album.Atlas == null)
+                {
+                    // Found a cover! 
+                    album.Atlas = _manager.GetTicket(cover.Data.ToArray());
                 }
                 
                 // Determine song
@@ -93,10 +104,8 @@ namespace IMVR.Indexer
             }
             else
             {
-                Konsole.Log("Dropping: {0}", ConsoleColor.Red, item.Name);
-
+                Konsole.Log("Dropping: {0}", ConsoleColor.DarkGray, item.Name);
             }
-           
         }
     }
 }

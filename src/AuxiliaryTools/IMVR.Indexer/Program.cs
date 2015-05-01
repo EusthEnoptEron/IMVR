@@ -70,17 +70,17 @@ namespace IMVR.Indexer
                 var musicAnalyzer = new MusicIndexer();
                 {
                     musicAnalyzer.Pipe(new LastFmNode());
-                    musicAnalyzer.Pipe(new EchoNestNode());
+                    //musicAnalyzer.Pipe(new EchoNestNode());
                 }
               
                 // Create producers
                 foreach (var library in db.Folders.Distinct())
                 {
-                    new FileWalker(library)
-                    {
-                        Filter = IO.IsImage,
-                        Target = imageAnalyzer
-                    }.Start();
+                    //new FileWalker(library)
+                    //{
+                    //    Filter = IO.IsImage,
+                    //    Target = imageAnalyzer
+                    //}.Start();
 
                     new FileWalker(library)
                     {
@@ -95,16 +95,20 @@ namespace IMVR.Indexer
 
                 AbstractWorker.Wait();
                 db.Save(Options.Instance.DBPath);
-                Console.WriteLine("");
-                Console.WriteLine("-----------------------------------------");
-                Console.WriteLine("            DONE [{0:c}]            ", DateTime.Now - startTime);
-                Console.WriteLine("-----------------------------------------");
-                Console.WriteLine(" Indexed Artists       : {0}", db.Artists.Count);
-                Console.WriteLine(" Indexed Songs         : {0}", db.Songs.Count);
-                Console.WriteLine(" Echo Nest success rate: {0:P}", db.Songs.Where(song => song.Danceability != null).Count() / (double)db.Songs.Count);
-                Console.WriteLine(" Indexed Images        : {0}", db.Images.Count);
-                Console.WriteLine(" DB size               : {0:0.00}MB", new FileInfo(Options.Instance.DBPath).Length / 1024d / 1024d);
-                Console.WriteLine("-----------------------------------------");
+
+
+                var albums = db.Artists.SelectMany(artist => artist.Albums);
+                Konsole.WriteLine("");
+                Konsole.WriteLine("-----------------------------------------");
+                Konsole.WriteLine("            DONE [{0:c}]            ", DateTime.Now - startTime);
+                Konsole.WriteLine("-----------------------------------------");
+                Konsole.WriteLine(" Indexed Artists       : {0}", db.Artists.Count);
+                Konsole.WriteLine(" Indexed Songs         : {0}", db.Songs.Count);
+                Konsole.WriteLine(" Album Cover Coverage  : {0:P}", albums.Count(album => album.Atlas != null) / (double)albums.Count());
+                Konsole.WriteLine(" Echo Nest success rate: {0:P}", db.Songs.Where(song => song.Danceability != null).Count() / (double)db.Songs.Count);
+                Konsole.WriteLine(" Indexed Images        : {0}", db.Images.Count);
+                Konsole.WriteLine(" DB size               : {0:0.00}MB", new FileInfo(Options.Instance.DBPath).Length / 1024d / 1024d);
+                Konsole.WriteLine("-----------------------------------------");
 
 
                 Console.ReadLine();

@@ -10,7 +10,7 @@ using System.Net;
 
 namespace IMVR.Indexer
 {
-    public class TextureAtlas
+    public class TextureAtlas : IDisposable
     {
 
         public readonly int TileSize;
@@ -20,7 +20,7 @@ namespace IMVR.Indexer
 
         private IEnumerator<Rectangle> tiles;
         private int tilesNo = 0;
-
+        private List<string> tempFiles = new List<string>();
         
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -69,34 +69,43 @@ namespace IMVR.Indexer
                 {
                     enumerator.MoveNext();
 
-                    using (Stream stream = entry.StartsWith("http") 
-                            ? WebRequest.Create(new Uri(entry).AbsoluteUri).GetResponse().GetResponseStream()
-                            : File.OpenRead(entry))
-                    using (var img = Image.FromStream(stream))
+                    try
                     {
-                        int size;
-                        if(img.Width > img.Height)
-                            size = img.Height;
-                        else 
-                            size = img.Width;
+                        using (Stream stream = entry.StartsWith("http")
+                                ? WebRequest.Create(new Uri(entry).AbsoluteUri).GetResponse().GetResponseStream()
+                                : File.OpenRead(entry))
+                        using (var img = Image.FromStream(stream))
+                        {
+                            int size;
+                            if (img.Width > img.Height)
+                                size = img.Height;
+                            else
+                                size = img.Width;
 
-                        var srcRect = new Rectangle( 
-                            (img.Width - size) / 2,
-                            (img.Height - size) / 2,
-                            size, size
-                        );
+                            var srcRect = new Rectangle(
+                                (img.Width - size) / 2,
+                                (img.Height - size) / 2,
+                                size, size
+                            );
 
-                        g.DrawImage(img, enumerator.Current, srcRect, GraphicsUnit.Pixel);
+                            g.DrawImage(img, enumerator.Current, srcRect, GraphicsUnit.Pixel);
+                        }
+                        //using (var img = new MagickImage(entry))
+                        //using (var cropped = GetCroppedImage(img)) {
+                        //    g.DrawImageUnscaled(cropped, enumerator.Current);
+                        //}
+
                     }
-                    //using (var img = new MagickImage(entry))
-                    //using (var cropped = GetCroppedImage(img)) {
-                    //    g.DrawImageUnscaled(cropped, enumerator.Current);
-                    //}
+                    catch (ArgumentException e)
+                    {
+                        Konsole.Log("Invalid format! {0}", ConsoleColor.Red, entry);
+                    }
                 }
                 bitmap.Save(path);
                 Konsole.Log("Wrote atlas to {0}", ConsoleColor.Gray, path);
             }
         }
+
 
         public IMVR.Commons.AtlasTicket Add(string file)
         {
@@ -111,6 +120,18 @@ namespace IMVR.Indexer
                 Atlas = Atlas,
                 Position = tilesNo++
             };
+        }
+
+        public IMVR.Commons.AtlasTicket Add(byte[] contents)
+        {
+            // Create and write to temp file...
+            var filename = Path.GetTempFileName();
+            tempFiles.Add(filename);
+
+            File.WriteAllBytes(filename, contents);
+
+
+            return Add(filename);
         }
 
 
@@ -167,5 +188,17 @@ namespace IMVR.Indexer
 
 
         public Commons.Atlas Atlas { get; set; }
+
+        public void Dispose()
+        {
+            foreach (var path in tempFiles)
+            {
+                try
+                {
+                    File.Delete(path);
+                }
+                catch (UnauthorizedAccessException) { }
+            }
+        }
     }
 }
