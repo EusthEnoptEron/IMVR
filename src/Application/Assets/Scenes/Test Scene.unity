@@ -9849,6 +9849,7 @@ GameObject:
   - 4: {fileID: 1606566035}
   - 33: {fileID: 1606566034}
   - 23: {fileID: 1606566033}
+  - 215: {fileID: 1606566036}
   m_Layer: 0
   m_Name: Cylinder.013_MeshPart0
   m_TagString: Untagged
@@ -9901,6 +9902,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1421321375}
   m_RootOrder: 0
+--- !u!215 &1606566036
+ReflectionProbe:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1606566032}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Type: 0
+  m_Mode: 0
+  m_RefreshMode: 0
+  m_TimeSlicingMode: 0
+  m_Resolution: 128
+  m_UpdateFrequency: 0
+  m_Importance: 1
+  m_BoxSize: {x: 10, y: 10, z: 10}
+  m_BoxOffset: {x: 0, y: 0, z: 0}
+  m_NearClip: .300000012
+  m_FarClip: 1000
+  m_ShadowDistance: 100
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: 0}
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IntensityMultiplier: 1
+  m_HDR: 1
+  m_BoxProjection: 0
+  m_RenderDynamicObjects: 0
+  m_UseOcclusionCulling: 1
+  m_CustomBakedTexture: {fileID: 0}
 --- !u!1 &1607531315
 GameObject:
   m_ObjectHideFlags: 0

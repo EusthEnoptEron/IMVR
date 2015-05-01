@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Material.027
+  m_Name: Simple Floor
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _ALPHABLEND_ON
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 5
   m_CustomRenderQueue: 3000
   m_SavedProperties:
@@ -77,13 +77,6 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SpecGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -92,7 +85,7 @@ Material:
       data:
         first:
           name: _SrcBlend
-        second: 5
+        second: 1
       data:
         first:
           name: _DstBlend
@@ -108,7 +101,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: .810000002
+        second: .948000014
       data:
         first:
           name: _BumpScale
@@ -132,15 +125,15 @@ Material:
       data:
         first:
           name: _Mode
-        second: 2
+        second: 3
       data:
         first:
           name: _Metallic
-        second: .992999971
+        second: 0
       data:
         first:
           name: _BumpAmt
-        second: 18.2999992
+        second: 10
     m_Colors:
       data:
         first:
@@ -149,11 +142,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: .192156866}
-      data:
-        first:
-          name: _SpecColor
-        second: {r: .838235259, g: .838235259, b: .838235259, a: .635294139}
+        second: {r: 1, g: 1, b: 1, a: .0352941193}
       data:
         first:
           name: _EmissionColorUI
