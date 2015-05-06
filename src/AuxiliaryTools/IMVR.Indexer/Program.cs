@@ -70,7 +70,7 @@ namespace IMVR.Indexer
                 var musicAnalyzer = new MusicIndexer();
                 {
                     musicAnalyzer.Pipe(new LastFmNode());
-                    //musicAnalyzer.Pipe(new EchoNestNode());
+                    musicAnalyzer.Pipe(new EchoNestNode());
                 }
               
                 // Create producers

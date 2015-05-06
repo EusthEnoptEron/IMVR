@@ -92,8 +92,8 @@ namespace IMVR.Indexer
             {
                 if (--remainingThreads == 0)
                 {
-                    _done = true;
                     CleanUp();
+                    _done = true;
 
                     foreach (var worker in _sequentialWorkers)
                     {

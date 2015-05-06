@@ -84,50 +84,51 @@ namespace IMVR.Indexer
                     break;
                 }
 
+            }
 
-                // Search for profile. Use the ID if we have one.
-                ProfileResponse profile;
-                if(artistID == null)
-                    profile = _session.Query<Profile>().Execute(artist.Name, AllBuckets);
-                else
-                    profile = _session.Query<Profile>().Execute(new IdSpace(artistID), AllBuckets);
+            // Search for profile. Use the ID if we have one.
+            ProfileResponse profile;
+            if(artistID == null)
+                profile = _session.Query<Profile>().Execute(artist.Name, AllBuckets);
+            else
+                profile = _session.Query<Profile>().Execute(new IdSpace(artistID), AllBuckets);
 
-                if (profile.Status.Code == ResponseCode.Success)
+            if (profile.Status.Code == ResponseCode.Success)
+            {
+                Out.Log("Found record for artist!");
+                // All right, we found something!
+
+                // ---- Collect artist meta information ----
+                artist.EchoNestID = profile.Artist.ID;
+                artist.Biography = profile.Artist.Biographies.Count > 0
+                                    ? profile.Artist.Biographies.First().Text
+                                    : "";
+                artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
+                artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
+                artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
                 {
-                    Out.Log("Found record for artist!");
-                    // All right, we found something!
+                    Frequency = (float)item.Frequency,
+                    Name = item.Name,
+                    Weight = (float)item.Weight
+                }));
 
-                    // ---- Collect artist meta information ----
-                    artist.EchoNestID = profile.Artist.ID;
-                    artist.Biography = profile.Artist.Biographies.Count > 0
-                                        ? profile.Artist.Biographies.First().Text
-                                        : "";
-                    artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
-                    artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
-                    artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
-                    {
-                        Frequency = (float)item.Frequency,
-                        Name = item.Name,
-                        Weight = (float)item.Weight
-                    }));
-
-                    var yearsActive = profile.Artist.YearsActive.LastOrDefault();
-                    if (yearsActive != null)
-                    {
-                        artist.StartYear = yearsActive.Start;
-                        artist.EndYear = yearsActive.End;
-                    }
-
-                    foreach (var image in profile.Artist.Images.Take(4))
-                    {
-                        artist.Pictures.Add(_manager.GetTicket(image.Url));
-                    }
-
-                    //profile.Artist.Images.FirstOrDefault().Url
-                    // /----------------------------------------
+                var yearsActive = profile.Artist.YearsActive.LastOrDefault();
+                if (yearsActive != null)
+                {
+                    artist.StartYear = yearsActive.Start;
+                    artist.EndYear = yearsActive.End;
                 }
 
+                foreach (var image in profile.Artist.Images.Take(4))
+                {
+                    artist.Pictures.Add(_manager.GetTicket(image.Url));
+                }
+
+                //profile.Artist.Images.FirstOrDefault().Url
+                // /----------------------------------------
             }
+
+            
             //else if (profile.Status.Code == ResponseCode.RateLimitExceeded)
             //{
             //    // Wait half a minute
