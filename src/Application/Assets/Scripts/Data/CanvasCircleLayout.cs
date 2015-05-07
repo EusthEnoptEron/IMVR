@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Canvas))]
 public class CanvasCircleLayout : CircleLayout
 {
     protected override void Start()

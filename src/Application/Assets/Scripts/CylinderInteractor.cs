@@ -7,19 +7,28 @@ using UnityEngine.EventSystems;
 
 
 [RequireComponent(typeof(CircleLayout))]
-public class CylinderInteractor : MonoBehaviour, IDragHandler {
+public class CylinderInteractor : MonoBehaviour {
+    internal enum Direction
+    {
+        Unknown,
+        Vertical,
+        Horizontal
+    }
 
-    private const float LOW_SPEED_THRESHOLD = 0.05f;
+
+    private const float LOW_SPEED_THRESHOLD = 0.2f;
 
     private HandProvider handInput;
     private VelocityMeasurer measurer = new VelocityMeasurer();
     private CircleLayout layout;
+    private Direction _direction = Direction.Unknown;
+    
 
     private bool rotating = false;
     /// <summary>
     /// The maximum speed the head may rotate before ignoring all input.
     /// </summary>
-    public float ovrSpeedThreshold = 0.2f;
+    public float ovrSpeedThreshold = 0.1f;
 
     private bool interacting = false;
 
@@ -58,6 +67,7 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         }
         else if(interacting)
         {
+            _direction = Direction.Unknown;
             interacting = false;
             GetComponentInParent<View>().SetInteraction(true);
         }
@@ -98,21 +108,58 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         measurer.AddPosition(hand.GetFinger(FingerType.Pinky).TipPosition);
         var velocity = measurer.GetVelocity();
 
-        if(hand.Fingers
+        int validFingers = hand.Fingers
             .Where(f => f.Type != FingerType.Thumb)
-            .All(f => ( Vector3.ProjectOnPlane(f.TipPosition - transform.position, transform.up).magnitude > layout.radius)))
+            .Count(f => (Vector3.ProjectOnPlane(f.TipPosition - transform.position, transform.up).magnitude > layout.radius));
+
+        if ((!interacting && validFingers == 4) || (interacting && validFingers > 0))
         {
+
             //Debug.LogFormat("{0}: {1} ({2})", name,, layout.radius );
             var horizontalVelocity = Vector3.Dot(velocity, Camera.main.transform.right);
+            var verticalVelocity = Vector3.Dot(velocity, Camera.main.transform.up);
+            float absHorizontalVelocity = Mathf.Abs(horizontalVelocity);
+            float absVerticalVelocity = Mathf.Abs(verticalVelocity);
 
-            if (horizontalVelocity > LOW_SPEED_THRESHOLD || interacting)
+
+            if ((_direction == Direction.Unknown && absHorizontalVelocity > LOW_SPEED_THRESHOLD && absVerticalVelocity < absHorizontalVelocity) 
+                || _direction == Direction.Horizontal)
             {
                 if (!interacting)
                     GetComponentInParent<View>().SetInteraction(false);
                 interacting = true;
+                _direction = Direction.Horizontal;
 
                 float factor = horizontalVelocity > 0.5 ? 20 : 10;
                 layout.AddTorque(horizontalVelocity * factor);
+            }
+            else if ((_direction == Direction.Unknown && absVerticalVelocity > LOW_SPEED_THRESHOLD && absHorizontalVelocity < absVerticalVelocity) 
+                || _direction == Direction.Vertical)
+            {
+                if (!interacting)
+                    GetComponentInParent<View>().SetInteraction(false);
+                interacting = true;
+                _direction = Direction.Vertical;
+
+
+                float factor = 20;
+                var avgPos = hand.Fingers.Where(f => f.Type != FingerType.Thumb)
+                                         .Select(f => f.TipPosition)
+                                         .Aggregate((v1, v2) => v1 + v2)
+                                         + hand.GetFinger(FingerType.Index).TipPosition
+                                         / 5f;
+
+
+                var groupGO = layout.GetTileAtPosition(avgPos);
+                if (groupGO)
+                {
+                    var group = groupGO.GetComponent<LayoutGroup>();
+                    if (group)
+                    {
+                        group.scrollSpeed += verticalVelocity * factor;
+                    }
+                }
+                //layout.AddTorque(horizontalVelocity * factor);
             }
         }
         else
@@ -120,8 +167,9 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
             if(interacting)
                 GetComponentInParent<View>().SetInteraction(true);
             interacting = false;
+            _direction = Direction.Unknown;
         }
-            return;
+        return;
 
         //if (Vector3.Dot(velocity.normalized, hand.PalmNormal) < 0.2f) return;
         //if (!hand.Fingers.All(f => f.Extended)) return;
@@ -135,9 +183,4 @@ public class CylinderInteractor : MonoBehaviour, IDragHandler {
         }
     }
 
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        Debug.Log("DRAG");
-    }
 }

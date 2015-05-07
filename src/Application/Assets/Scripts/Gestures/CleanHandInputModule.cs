@@ -118,7 +118,7 @@ namespace Gestures
                     useDragThreshold = true,
                 };
                 m_PointerData.Add(id, data);
-                eventSystem.pixelDragThreshold = 50;
+                eventSystem.pixelDragThreshold = 10;
 
                 return true;
             }

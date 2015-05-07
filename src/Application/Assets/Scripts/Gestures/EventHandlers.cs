@@ -8,7 +8,7 @@ public class FingerEventData : PointerEventData
 {
     public GenericFinger finger;
     public GameObject fingerDown;
-
+    public bool occupied = false;
     public FingerEventData(EventSystem eventSystem) : base(eventSystem)
     {
     }

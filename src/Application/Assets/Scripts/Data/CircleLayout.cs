@@ -47,6 +47,9 @@ public class CircleLayout : MonoBehaviour {
         //world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
         world = GameObject.Find("World").transform;
 
+        xSegments = Mathf.Max(1, xSegments);
+        ySegments = Mathf.Max(1, ySegments);
+
         if(tileMat == null)
             tileMat = new GameObject[ySegments, xSegments];
     }
@@ -76,7 +79,7 @@ public class CircleLayout : MonoBehaviour {
         
         int y = Mathf.RoundToInt((locP.y + height / 2) / tileScale);
         int x = Mathf.RoundToInt(
-            Mathf.Atan2(locP.z, locP.x) / (2 * Mathf.PI) * xSegments
+            (Mathf.Atan2(locP.z, -locP.x) - Mathf.PI / 2)  / (2 * Mathf.PI) * xSegments
         );
 
         x = (x + xSegments) % xSegments;
@@ -116,7 +119,7 @@ public class CircleLayout : MonoBehaviour {
                 var tile = tileMat[y, x];
                 if (tile == null) continue;
 
-                float latitude = x * indexToLatitude;
+                float latitude = (x * indexToLatitude) - Mathf.PI / 2;
                 float verticalProgress = y / ySegmentsF;
                 if (y == 0 && ySegments == 1) verticalProgress = 0.5f;
 
@@ -132,7 +135,7 @@ public class CircleLayout : MonoBehaviour {
 
                     var endPosition = new Vector3(Mathf.Cos(latitude) * radius,
                                                   verticalProgress * height - height / 2,
-                                                  Mathf.Sin(latitude) * radius);
+                                                  -Mathf.Sin(latitude) * radius);
                     var endRotation = Quaternion.LookRotation(-Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
 
                     //tileMat[y, x].targetPosition = endPosition;

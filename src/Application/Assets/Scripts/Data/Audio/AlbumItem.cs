@@ -5,28 +5,23 @@ using UnityEngine.EventSystems;
 using System;
 
 
-[RequireComponent(typeof(Text))]
-public class SongItem : MonoBehaviour, IPointerDownHandler {
-    public Song song;
+public class AlbumItem : MonoBehaviour, IPointerDownHandler
+{
+    public Album album;
     private ArtistView _artistView;
 
-	// Use this for initialization
-	void Start () {
-        GetComponent<Text>().text = String.Format("{0:00}. {1}", song.TrackNo, song.Title);
-        _artistView = GetComponentInParent<ArtistView>();
-	}
-
-    public void OnPointerClick(PointerEventData eventData)
+    void Start()
     {
-      
+        _artistView = GetComponentInParent<ArtistView>();
     }
+
 
     public void OnPointerDown(PointerEventData eventData)
     {
         _artistView.selector.transform.SetParent(transform, false);
 
         _artistView.selector.songs.Clear();
-        _artistView.selector.songs.Add(song);
+        _artistView.selector.songs.AddRange(album.Tracks);
 
         _artistView.selector.gameObject.SetActive(true);
         //Jukebox.Instance.Play(song);

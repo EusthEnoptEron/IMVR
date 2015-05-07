@@ -11,6 +11,7 @@ public abstract class View : MonoBehaviour {
     {
         name = this.GetType().FullName;
         transform.position = World.CameraRig.transform.position;
+        transform.rotation = World.WorldNode.transform.rotation;
     }
 
     protected void FadeIn(CanvasGroup group)

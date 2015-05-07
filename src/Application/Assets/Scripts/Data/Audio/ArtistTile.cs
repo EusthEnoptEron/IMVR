@@ -34,11 +34,13 @@ public class ArtistTile : Tile, IPointerClickHandler {
 
     public void SetArtist(Artist artist)
     {
-        var firstAlbum = artist.Albums.FirstOrDefault(album => album.Atlas != null);
-        if (firstAlbum != null)
+        var ticket = artist.Pictures.FirstOrDefault()
+                    ?? artist.Albums.Select(album => album.Atlas).FirstOrDefault();
+
+        if (ticket != null)
         {
             //Debug.LogFormat("{0}: ({1}) {2}", artist.Name, firstAlbum.Atlas.Position, firstAlbum.Atlas.Atlas.Path);
-            m_image.sprite = ImageAtlas.LoadSprite(firstAlbum.Atlas);
+            m_image.sprite = ImageAtlas.LoadSprite(ticket);
         }
 
         //m_image = ImageAtlas.LoadSprite(artist.)
@@ -55,7 +57,7 @@ public class ArtistTile : Tile, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        var artistView = FlowManager.Instance.PushView<ArtistView>();
+        var artistView = FlowManager.Instance.Navigate<ArtistView>();
         artistView.artist = m_artist;
 
         //Jukebox.Instance.Playlist.Add(m_artist.Albums.SelectMany(a => a.Tracks));

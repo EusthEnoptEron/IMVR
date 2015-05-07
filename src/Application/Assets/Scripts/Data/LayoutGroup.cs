@@ -8,13 +8,13 @@ using DG.Tweening;
 using Gestures;
 
 [RequireComponent(typeof(Canvas), typeof(GraphicRaycaster))]
-public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler, IFingerDownHandler, IFingerUpHandler {
+public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
 
     private int m_fingers = 0;
     public float heightPerElement = 50;
-    private float scrollSpeed = 0;
+    public float scrollSpeed = 0;
     private Text text;
     private float currentAngle = 0;
     private float m_alpha = 0.05f;
@@ -28,6 +28,10 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
             return Mathf.Clamp(factor * step, layout.minAngle, layout.maxAngle);
         }
     }
+
+    private bool _dragging = false;
+    private Vector3 _lastPosition;
+
 
 	// Use this for initialization
 	void Awake () {
@@ -117,9 +121,11 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
 
     private float delta;
     private float deadZone = 0;
-    public void OnDrag(PointerEventData eventData)
+    public void OnDrag()
     {
-        float angleDelta = eventData.delta.y * .05f;
+        var pos = HandProvider.Instance.GetHand(HandType.Right, NoHandStrategy.Keep).PalmPosition;
+
+        float angleDelta = Vector3.Dot(pos - _lastPosition, Camera.main.transform.up) * 100;
         scrollSpeed = 0;
 
         if (dragging)
@@ -141,6 +147,8 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
         //scrollSpeed += eventData.delta.y;
         //layout.transform.localPosition += Vector3.up * eventData.delta.y;
         delta += angleDelta;
+
+        _lastPosition = pos;
     }
 
 
@@ -160,7 +168,10 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
                 currentAngle = Mathf.Lerp(currentAngle, TargetAngle, Time.deltaTime * 5);
                 ApplyRotations();
             }
-
+        }
+        else
+        {
+            OnDrag();
         }
 
 
@@ -188,6 +199,7 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
         ApplyConstraints();
     }
 
+
     void ApplyRotations()
     {
         layout.transform.localRotation = Quaternion.Euler(currentAngle, 0, 0);
@@ -210,28 +222,34 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
     }
 
 
-    public void OnBeginDrag(PointerEventData eventData)
+    public void BeginDrag()
     {
+        //GetComponent<BaseRaycaster>().enabled = false;
         //dragging = true;
-        accumulator.Clear();
-        delta = 0;
+        //_lastPosition = HandProvider.Instance.GetHand(HandType.Right, NoHandStrategy.Keep).PalmPosition;
 
-        var image = mask.GetComponent<Image>();
-        image.DOKill();
-        image.DOColor(new Color(0.8f, 1, 0.8f, m_alpha), 0.5f);
+        ////dragging = true;
+        //accumulator.Clear();
+        //delta = 0;
+
+        //var image = mask.GetComponent<Image>();
+        //image.DOKill();
+        //image.DOColor(new Color(0.8f, 1, 0.8f, m_alpha), 0.5f);
         
 
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public void EndDrag()
     {
-        scrollSpeed = accumulator.Values.Sum();
-        dragging = false;
+        //GetComponent<BaseRaycaster>().enabled = true;
+
+        //scrollSpeed = accumulator.Values.Sum();
+        //dragging = false;
 
 
-        var image = mask.GetComponent<Image>();
-        image.DOKill();
-        image.DOColor(new Color(1, 1, 1, m_alpha), 0.5f);
+        //var image = mask.GetComponent<Image>();
+        //image.DOKill();
+        //image.DOColor(new Color(1, 1, 1, m_alpha), 0.5f);
     }
 
 
@@ -247,19 +265,34 @@ public class LayoutGroup : Tile, IBeginDragHandler, IEndDragHandler, IDragHandle
     }
 
 
+    private bool hasIndex = false;
     public void OnFingerUp(FingerEventData eventData, FingerEventData submitFinger)
     {
         m_fingers--;
+
+        if (hasIndex && eventData.finger.Type == FingerType.Index)
+            hasIndex = false;
+
+        if (m_fingers == 0 && dragging)
+        {
+            EndDrag();
+        }
     }
 
     public void OnFingerDown(FingerEventData eventData, FingerEventData submitFinger)
     {
-        m_fingers++;
+        m_fingers++; 
 
-        if (m_fingers == 3 && !submitFinger.dragging)
+        if (!hasIndex && eventData.finger.Type == FingerType.Index)
+            hasIndex = true;
+        
+        Debug.LogFormat("{0} ENTER -> {1}", eventData.finger.Type, m_fingers);
+        
+
+        if (m_fingers >= 3 && !submitFinger.occupied
+            && hasIndex)
         {
-            OnBeginDrag(submitFinger);
-            submitFinger.dragging = true;
+            BeginDrag();
         }
     }
 }

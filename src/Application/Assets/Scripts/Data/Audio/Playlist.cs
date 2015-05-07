@@ -15,6 +15,7 @@ public class Playlist
     /// Gets or sets whether or not the playlist should be cyclic (repeat itself)
     /// </summary>
     public bool Cyclic = false;
+    public bool Shuffle = false;
     private List<Song> playlist;
 
     /// <summary>
@@ -71,8 +72,11 @@ public class Playlist
 
     public bool Move(int steps)
     {
-        int newIndex;
-        if (Cyclic)
+        int newIndex = Index;
+        if (Shuffle)
+            // TODO: check for same index & already played indices
+            newIndex = UnityEngine.Random.Range(0, Count);
+        else if (Cyclic)
             newIndex = ((Index + steps) + Count * 5) % Count;
         else
             newIndex = Mathf.Clamp(Index + steps, 0, Count - 1);
@@ -143,4 +147,5 @@ public class Playlist
     }
 
     #endregion
+
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace IMVR.Helper
 {
@@ -10,30 +11,43 @@ namespace IMVR.Helper
     public class CanvasOpacityHelper : MonoBehaviour
     {
         private CanvasGroup[] groups;
-        private MeshRenderer renderer;
+        private Dictionary<Material, float> materials = new Dictionary<Material, float>();
         private float m_opacity = 1;
 
-        public bool useSharedMaterial = true;
+        public bool useSharedMaterial = false;
 
         // Use this for initialization
         void Start()
         {
-            groups = GetComponentsInParent<CanvasGroup>();
-            renderer = GetComponent<MeshRenderer>();
+            var renderers = GetComponentsInChildren<MeshRenderer>();
 
-            if (renderer == null) enabled = false;
+            foreach (var renderer in renderers)
+            {
+                var material = useSharedMaterial ? renderer.sharedMaterial : renderer.material;
+
+                if (!materials.ContainsKey(material))
+                {
+                    materials.Add(material, material.color.a);
+                }
+            }
+
+            if (materials.Count == 0) enabled = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-            var material = useSharedMaterial ? renderer.sharedMaterial : renderer.material;
+            groups = GetComponentsInParent<CanvasGroup>();
             float opacity = groups.Aggregate(1f, (factor, group) => group.alpha * factor);
-
             if (opacity != m_opacity)
             {
                 m_opacity = opacity;
-                material.color = new Color(material.color.r, material.color.g, material.color.b, m_opacity);
+
+                foreach (var materialEntry in materials)
+                {
+                    var mat = materialEntry.Key;
+                    mat.color = new Color(mat.color.r, mat.color.g, mat.color.b, m_opacity * materialEntry.Value);
+                }
             }
         }
     }

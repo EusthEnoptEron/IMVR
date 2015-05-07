@@ -100,7 +100,8 @@ public class RingMenu : MonoBehaviour, IRingMenu {
 
     bool ShouldShowMenu(GenericHand hand)
     {
-        return ShouldMaintainMenu(hand) && hand.Fingers.All(f => f.Extended);
+        return ShouldMaintainMenu(hand) 
+            && hand.Fingers.All(f => f.Extended);
     }
 
     bool ShouldMaintainMenu(GenericHand hand)

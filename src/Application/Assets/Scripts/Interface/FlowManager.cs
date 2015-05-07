@@ -33,6 +33,7 @@ public class FlowManager : Singleton<FlowManager>
         var db = IMDB.FromFile(Prefs.Instance.DBPath);
         Jukebox.Instance.Playlist.Add(db.Songs);
         Jukebox.Instance.Playlist.Cyclic = true;
+        Jukebox.Instance.Playlist.Shuffle = true;
         Jukebox.Instance.Play();
         yield return null;
         //yield return new WaitForSeconds(2);
@@ -53,21 +54,24 @@ public class FlowManager : Singleton<FlowManager>
     // Update is called once per frame
     void Update()
     {
+        var hand = HandProvider.Instance.GetHand(HandType.Left);
+        m_pulling = m_pulling && hand != null;
+
         if(HandProvider.Instance.GetGestureEnter("Pull")) {
-            m_pullStartPosition = HandProvider.Instance.GetHand(HandType.Left).PalmPosition;
+            m_pullStartPosition = hand.PalmPosition;
             m_pulling = true;
         }
 
         if (m_pulling)
         {
-            var pullEndPosition = HandProvider.Instance.GetHand(HandType.Left).PalmPosition;
+            var pullEndPosition = hand.PalmPosition;
             var axis = (Camera.main.transform.position - m_pullStartPosition).normalized;
             var distance = Vector3.Dot(pullEndPosition - m_pullStartPosition, axis);
 
             if (distance > 0.05f)
             {
                 if (viewStack.Count > 1) {
-                    PopView();
+                    GoBack();
                 }
                 m_pulling = false;
             }
@@ -110,7 +114,12 @@ public class FlowManager : Singleton<FlowManager>
     }
 
 
-    public T PushView<T>() where T : View
+    /// <summary>
+    /// Steps into a view.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public T Navigate<T>() where T : View
     {
         var view = new GameObject().AddComponent<T>();
         ChangeView(view, false);
@@ -118,7 +127,11 @@ public class FlowManager : Singleton<FlowManager>
         return view;
     }
 
-    public View PopView()
+    /// <summary>
+    /// Goes back a view.
+    /// </summary>
+    /// <returns></returns>
+    public View GoBack()
     {
         var view = viewStack.Pop();
         view.Disable();
@@ -138,5 +151,10 @@ public class FlowManager : Singleton<FlowManager>
     {
         foreach (var view in viewStack.ToArray())
             view.Pull();
+    }
+
+    public void NavigateToOverview()
+    {
+        Navigate<ArtistOverView>();
     }
 }

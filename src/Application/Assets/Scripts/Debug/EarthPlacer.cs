@@ -17,13 +17,29 @@ namespace GalleryVR.Dbg
 
         public float radius = 7f;
 
+        public float rotationSpeed = 10;
+
+        public GameObject markerPrefab;
+
         private GameObject point;
+
+        private float actualRadius
+        {
+            get
+            {
+                if (longitude == 0 && latitude == 0)
+                    return 0;
+                else
+                    return radius;
+            }
+        }
         // Use this for initialization
         void Start()
         {
-            point = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //point = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            point = GameObject.Instantiate<GameObject>(markerPrefab);
             point.transform.parent = transform;
-            point.transform.localScale *= 0.1f;
+            point.transform.localScale = Vector3.one;
         }
 
         // Update is called once per frame
@@ -36,7 +52,9 @@ namespace GalleryVR.Dbg
                 Mathf.Cos(lat) * Mathf.Sin(-lon),
                 Mathf.Sin(lat),
                 Mathf.Cos(lat) * Mathf.Cos(-lon)
-            ) * radius;
+            ) * actualRadius;
+
+            transform.localRotation *= Quaternion.Euler(0, rotationSpeed * Time.deltaTime, 0);
         }
     }
 

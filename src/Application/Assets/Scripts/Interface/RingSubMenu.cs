@@ -6,6 +6,7 @@ using Gestures;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Canvas))]
 public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
 
     private Transform submenuNode;
@@ -36,7 +37,6 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         Level = transform.Ancestors().Count(parent => parent.GetComponent<RingSubMenu>() != null) + 1;
 
         var canvas = GetComponent<Canvas>();
-        if(canvas == null) canvas = gameObject.AddComponent<Canvas>();
         canvas.overrideSorting = true;
         canvas.sortingOrder = Level + 1;
     }
