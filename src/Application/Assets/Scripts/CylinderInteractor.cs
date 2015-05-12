@@ -112,7 +112,7 @@ public class CylinderInteractor : MonoBehaviour {
             .Where(f => f.Type != FingerType.Thumb)
             .Count(f => (Vector3.ProjectOnPlane(f.TipPosition - transform.position, transform.up).magnitude > layout.radius));
 
-        if ((!interacting && validFingers == 4) || (interacting && validFingers > 0))
+        if ((!interacting && validFingers >= 4) || (interacting && validFingers > 0))
         {
 
             //Debug.LogFormat("{0}: {1} ({2})", name,, layout.radius );
@@ -121,7 +121,9 @@ public class CylinderInteractor : MonoBehaviour {
             float absHorizontalVelocity = Mathf.Abs(horizontalVelocity);
             float absVerticalVelocity = Mathf.Abs(verticalVelocity);
 
-
+            if (!interacting)
+                GetComponentInParent<View>().SetInteraction(false);
+            interacting = true;
             if ((_direction == Direction.Unknown && absHorizontalVelocity > LOW_SPEED_THRESHOLD && absVerticalVelocity < absHorizontalVelocity) 
                 || _direction == Direction.Horizontal)
             {
@@ -136,9 +138,7 @@ public class CylinderInteractor : MonoBehaviour {
             else if ((_direction == Direction.Unknown && absVerticalVelocity > LOW_SPEED_THRESHOLD && absHorizontalVelocity < absVerticalVelocity) 
                 || _direction == Direction.Vertical)
             {
-                if (!interacting)
-                    GetComponentInParent<View>().SetInteraction(false);
-                interacting = true;
+               
                 _direction = Direction.Vertical;
 
 

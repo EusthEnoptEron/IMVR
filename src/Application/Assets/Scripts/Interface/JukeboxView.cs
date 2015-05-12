@@ -16,6 +16,8 @@ public class JukeboxView : MonoBehaviour {
     private Text m_title;
     private bool m_updating = false;
     private CanvasGroup m_group;
+    private UnityEngine.UI.Image m_coverImage;
+
 
     private bool visible = false;
 
@@ -26,7 +28,7 @@ public class JukeboxView : MonoBehaviour {
         m_sliderText = transform.Find("SliderText").GetComponent<Text>();
         m_title = transform.Find("Title").GetComponent<Text>();
         m_group = GetComponent<CanvasGroup>();
-
+        m_coverImage = transform.FindChild("Cover").GetComponent<UnityEngine.UI.Image>();
         if (m_group != null) m_group.alpha = 0;
         //m_jukebox.Playlist.Change += (sender, evt) => Rebuild();
         //m_jukebox.Playlist.IndexChange += (sender, evt) => Rebuild();
@@ -114,7 +116,8 @@ public class JukeboxView : MonoBehaviour {
                 m_sliderText.text = String.Format("{0:00}:{1:00} / {2:00}:{3:00}",
                                     currentTime.Minutes, currentTime.Seconds,
                                     totalTime.Minutes, totalTime.Seconds);
-                m_title.text = song.Title;
+                m_title.text = String.Format("{0} - {1}", song.Artist.Name, song.Title);
+                m_coverImage.sprite = ImageAtlas.LoadSprite(song.Album.Atlas);
             }
             else
             {
@@ -125,6 +128,18 @@ public class JukeboxView : MonoBehaviour {
         }
         m_updating = false;
     }
+
+    public void Next()
+    {
+        Jukebox.Instance.Playlist.MoveForward();
+
+    }
+
+    public void Prev()
+    {
+        Jukebox.Instance.Playlist.MoveBackward();
+    }
+
 
     private void SplitTime(float time, out int minutes, out int seconds)
     {
