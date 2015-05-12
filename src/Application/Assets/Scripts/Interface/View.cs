@@ -33,7 +33,7 @@ public abstract class View : MonoBehaviour {
 
     protected IEnumerable<CanvasGroup> GetCanvasGroups()
     {
-        return GetComponentsInChildren<Canvas>().Select(canvas =>
+        return GetComponentsInChildren<Canvas>(true).Select(canvas =>
         {
             var group = canvas.GetComponent<CanvasGroup>();
             if (!group) group = canvas.gameObject.AddComponent<CanvasGroup>();
@@ -50,7 +50,7 @@ public abstract class View : MonoBehaviour {
 
     public void Enable()
     {
-        SetInteraction(true);
+        SetInteraction(level == 0);
         OnViewEnable();
     }
 

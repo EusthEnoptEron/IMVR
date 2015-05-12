@@ -58,28 +58,87 @@ public class FlowManager : Singleton<FlowManager>
         m_pulling = m_pulling && hand != null;
 
         if(HandProvider.Instance.GetGestureEnter("Pull")) {
-            m_pullStartPosition = hand.PalmPosition;
-            m_pulling = true;
+            StartCoroutine(HandlePull(0.05f));
         }
 
-        if (m_pulling)
+        if (HandProvider.Instance.GetGestureEnter("Push Down"))
         {
-            var pullEndPosition = hand.PalmPosition;
-            var axis = (Camera.main.transform.position - m_pullStartPosition).normalized;
-            var distance = Vector3.Dot(pullEndPosition - m_pullStartPosition, axis);
+            Debug.Log("PUSH DOWN");
+            StartCoroutine(HandlePushDown(0.05f));
+        }
 
-            if (distance > 0.05f)
+        if (HandProvider.Instance.GetGesture("Pull Up"))
+        {
+            Debug.Log("SHOW");
+            foreach (var view in viewStack)
             {
-                if (viewStack.Count > 1) {
-                    GoBack();
-                }
-                m_pulling = false;
+                view.Enable();
             }
         }
+    }
 
-        if (HandProvider.Instance.GetGestureExit("Pull"))
+
+    private IEnumerator HandlePull(float requiredDistance)
+    {
+        m_pulling = true;
+
+        var hand = HandProvider.Instance.GetHand(HandType.Left);
+        var startPosition = hand.PalmPosition;
+
+        while (HandProvider.Instance.GetGesture("Pull"))
         {
-            m_pulling = false;
+            hand = HandProvider.Instance.GetHand(HandType.Left);
+            if (hand != null)
+            {
+                var pullEndPosition = hand.PalmPosition;
+                var axis = (Camera.main.transform.position - startPosition).normalized;
+                var distance = Vector3.Dot(pullEndPosition - startPosition, axis);
+
+                if (distance > requiredDistance)
+                {
+                    if (viewStack.Count > 1)
+                    {
+                        GoBack();
+                        break;
+                    }
+                }
+            }
+            else break;
+
+            yield return null;
+        }
+
+        m_pulling = false;
+    }
+
+    private IEnumerator HandlePushDown(float requiredDistance)
+    {
+        var hand = HandProvider.Instance.GetHand(HandType.Left);
+        var startPosition = hand.PalmPosition;
+
+        while (HandProvider.Instance.GetGesture("Push Down"))
+        {
+            hand = HandProvider.Instance.GetHand(HandType.Left);
+            if (hand != null)
+            {
+                var pullEndPosition = hand.PalmPosition;
+                var axis = -Camera.main.transform.up;
+                var distance = Vector3.Dot(pullEndPosition - startPosition, axis);
+
+                if (distance > requiredDistance)
+                {
+                    Debug.Log("YAY");
+                    foreach (var view in viewStack)
+                        view.Disable();
+                }
+            }
+            else
+            {
+                Debug.Log("LEAVE");
+                break;
+            }
+
+            yield return null;
         }
     }
 

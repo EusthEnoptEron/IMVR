@@ -38,7 +38,7 @@ public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, 
         mask = new GameObject().AddComponent<Image>().gameObject.AddComponent<LooseGroup>().gameObject.AddComponent<Mask>();
         layout = new GameObject().AddComponent<DialLayout>();
         text = new GameObject().AddComponent<Text>();
-        text.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
+        text.font = ResourceManager.Arial;
         text.alignment = TextAnchor.MiddleCenter;
 
         mask.transform.SetParent(transform);

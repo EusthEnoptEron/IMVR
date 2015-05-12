@@ -4,6 +4,8 @@ using System.Collections;
 public static class ResourceManager {
 
     private static Font _arial;
+    private static Font _roboto;
+
     public static Font Arial
     {
         get
@@ -13,6 +15,17 @@ public static class ResourceManager {
             return _arial;
         }
     }
+
+    public static Font Roboto
+    {
+        get
+        {
+            if (_arial == null)
+                _arial = Resources.Load<Font>("Fonts/Roboto-Regular.ttf");
+            return _arial;
+        }
+    }
+
 }
 
 public static class World
