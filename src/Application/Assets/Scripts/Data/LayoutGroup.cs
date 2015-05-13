@@ -7,15 +7,13 @@ using System.Linq;
 using DG.Tweening;
 using Gestures;
 
-[RequireComponent(typeof(Canvas), typeof(GraphicRaycaster))]
-public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, IFingerDownHandler, IFingerUpHandler {
+public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler {//, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
 
     private int m_fingers = 0;
     public float heightPerElement = 50;
     public float scrollSpeed = 0;
-    private Text text;
     private float currentAngle = 0;
     private float m_alpha = 0.05f;
     private float TargetAngle
@@ -35,31 +33,25 @@ public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, 
 
 	// Use this for initialization
 	void Awake () {
+        base.Awake();
+
         mask = new GameObject().AddComponent<Image>().gameObject.AddComponent<LooseGroup>().gameObject.AddComponent<Mask>();
         layout = new GameObject().AddComponent<DialLayout>();
-        text = new GameObject().AddComponent<Text>();
-        text.font = ResourceManager.Arial;
-        text.alignment = TextAnchor.MiddleCenter;
 
         mask.transform.SetParent(transform);
-        text.transform.SetParent(transform);
         layout.transform.SetParent(mask.transform);
-
-
-        // Configure text
-        text.transform.localPosition = new Vector3(0, -300, 0);
-        text.transform.localRotation = Quaternion.Euler(60, 0, 0);
-        text.fontSize = 25;
-
 
         // Configure mask
         mask.transform.localPosition = Vector3.zero;
         mask.GetComponent<RectTransform>().sizeDelta = new Vector2(Tile.PIXELS_PER_UNIT * 0.8f, Tile.PIXELS_PER_UNIT * 5);
+        
         var outline = mask.gameObject.AddComponent<Outline>();
         outline.useGraphicAlpha = false;
         mask.showMaskGraphic = true;
         mask.GetComponent<Image>().color = new Color(1, 1, 1, m_alpha);
        
+        text.transform.localPosition = new Vector3(0, -Tile.PIXELS_PER_UNIT * 3, 0);
+
         // Configure layout
         var layoutRect = layout.GetComponent<RectTransform>();
         layoutRect.anchorMin = new Vector2(0, 0);
@@ -67,15 +59,11 @@ public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, 
         layoutRect.sizeDelta = new Vector2(0, 0);
         layout.childAlignment = TextAnchor.MiddleCenter;
 
-        SetRaycaster(false);
 	}
 
-    public void SetRaycaster(bool active)
-    {
-        GetComponent<GraphicRaycaster>().enabled = active;
-    }
 
-    public void SetElements(IList<GameObject> gos)
+
+    public override void SetElements(List<GameObject> gos)
     {
         layout.transform.DetachChildren();
         layout.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, heightPerElement * gos.Count);
@@ -102,17 +90,6 @@ public class LayoutGroup : Tile, IPointerEnterHandler, IPointerExitHandler {//, 
 
     protected override void OnDestroy()
     {
-    }
-
-    public string Label { 
-        get {
-            return text.text;
-        }
-        set
-        {
-            gameObject.name = value;
-            text.text = value;
-        }
     }
 
     private Accumulator<float> accumulator = new Accumulator<float>();

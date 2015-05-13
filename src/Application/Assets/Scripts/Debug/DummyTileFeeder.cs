@@ -16,7 +16,7 @@ public class DummyTileFeeder : MonoBehaviour {
 
         Dictionary<string, List<GameObject>> groups = new Dictionary<string, List<GameObject>>();
 
-        GroupedCircleLayout layout = GetComponent<GroupedCircleLayout>();
+        ListGroupedCircleLayout layout = GetComponent<ListGroupedCircleLayout>();
 
         var db = IMDB.FromFile(
             Path.Combine(Application.dataPath, PlayerPrefs.GetString("DBPath"))

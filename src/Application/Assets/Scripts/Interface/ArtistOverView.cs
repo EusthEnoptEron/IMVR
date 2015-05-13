@@ -6,13 +6,13 @@ using Foundation;
 using System.Linq;
 
 public class ArtistOverView : View {
-    private GroupedCircleLayout layout;
+    private ListGroupedCircleLayout layout;
     private CylinderInteractor interactor;
     protected override void Awake()
     {
         base.Awake();
 
-        layout = gameObject.AddComponent<GroupedCircleLayout>();
+        layout = gameObject.AddComponent<ListGroupedCircleLayout>();
         interactor = layout.gameObject.AddComponent<CylinderRaycaster>()
                            .gameObject.AddComponent<CylinderInteractor>();
 
@@ -22,17 +22,10 @@ public class ArtistOverView : View {
 
     IEnumerator Start()
     {
-        IMDB db = null;
-        var path = Prefs.Instance.DBPath;
-        var task = Task.Run(delegate
-        {
-            db = IMDB.FromFile(path);
-        });
-
-        yield return StartCoroutine(task.WaitRoutine());
+        //yield return null;
 
         //Debug.Log(db.Artists.Count);
-        var groups = db.Artists.GroupBy(o =>
+        var groups = ResourceManager.DB.Artists.GroupBy(o =>
         {
             string firstLetter = o.Name.Substring(0, 1).ToUpper();
             if (firstLetter[0] > 1000) firstLetter = "#";
@@ -51,6 +44,8 @@ public class ArtistOverView : View {
         }
 
         layout.Items = groups;
+        yield return null;
+
     }
 
 }

@@ -216,4 +216,14 @@ public class FlowManager : Singleton<FlowManager>
     {
         Navigate<ArtistOverView>();
     }
+
+    public void NavigateToMetaGroup(MetaGroup group)
+    {
+        var view = Navigate<MetaGroupView>();
+        view.group = group;
+    }
+    public void NavigateToMetaGroup(string group) {
+        NavigateToMetaGroup((MetaGroup)System.Enum.Parse(typeof(MetaGroup), group, false));
+    }
+
 }

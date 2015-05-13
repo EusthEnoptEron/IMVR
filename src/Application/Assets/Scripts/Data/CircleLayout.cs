@@ -42,7 +42,7 @@ public class CircleLayout : MonoBehaviour {
 
     private Transform world;
     protected virtual void Start() {
-        tileScale = 1;
+        tileScale = tileScale == 0 ? 1 : tileScale;
         blanket = GetComponent<TileBlanket>();
         //world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
         world = GameObject.Find("World").transform;

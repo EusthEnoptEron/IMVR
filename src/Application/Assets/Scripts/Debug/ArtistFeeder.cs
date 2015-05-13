@@ -6,12 +6,12 @@ using Foundation;
 using System.Collections.Generic;
 
 
-[RequireComponent(typeof(GroupedCircleLayout))]
+[RequireComponent(typeof(ListGroupedCircleLayout))]
 public class ArtistFeeder : MonoBehaviour {
 
 	// Use this for initialization
 	IEnumerator Start () {
-        var layout = GetComponent<GroupedCircleLayout>();
+        var layout = GetComponent < ListGroupedCircleLayout>();
         IMDB db = null;
         var path = Prefs.Instance.DBPath;
         var task = Task.Run(delegate

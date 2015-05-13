@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
-
-public class GroupedCircleLayout : CircleLayout {
+public class GroupedCircleLayout<T> : CircleLayout where T : TileGroup {
     private List<Tile> _tiles;
-
+    
     [HideInInspector]
     public override List<Tile> tiles
     {
@@ -61,9 +60,8 @@ public class GroupedCircleLayout : CircleLayout {
         var groups = new List<Tile>();
         foreach(var pair in Items.OrderBy(kv => kv.Key))
         {
-            var group = new GameObject().AddComponent<LayoutGroup>();
+            var group = new GameObject().AddComponent<T>();
             groups.Add(group);
-
             group.Label = pair.Key;
             group.SetElements(pair.Value);
         }
@@ -79,5 +77,16 @@ public class GroupedCircleLayout : CircleLayout {
         return group;
     }
 
+
+}
+
+
+public class SimpleGroupedCircleLayout : GroupedCircleLayout<TileGroup>
+{
+
+}
+
+public class ListGroupedCircleLayout : GroupedCircleLayout<LayoutGroup>
+{
 
 }
