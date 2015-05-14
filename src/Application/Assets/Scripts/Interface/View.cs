@@ -101,7 +101,7 @@ public abstract class View : MonoBehaviour {
 
     protected virtual void OnPush()
     {
-        var circle = GetComponent<CircleLayout>();
+        var circle = GetComponentInChildren<CircleLayout>();
         if (circle != null)
         {
             // Increase radius
@@ -110,13 +110,12 @@ public abstract class View : MonoBehaviour {
                 val => circle.radius = val,
                 circle.radius + 1,
             1).Play();
-
         }
     }
 
     protected virtual void OnPull()
     {
-        var circle = GetComponent<CircleLayout>();
+        var circle = GetComponentInChildren<CircleLayout>();
         if (circle != null)
         {
             // Increase radius

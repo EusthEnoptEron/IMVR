@@ -10,36 +10,37 @@ public enum MetaGroup
     Speechiness,
     Liveness,
     Energy,
-    Instrumentalness
+    Instrumentalness,
+    Tempo
 }
-public class MetaGroupView : View {
+public class MetaGroupView : FlatGroupView {
     public MetaGroup group = MetaGroup.Danceability;
 
-    private SimpleGroupedCircleLayout layout;
-    private CylinderInteractor interactor;
+    protected override void Awake()
+    {
+        distance = 0.5f;
+        height = -.3f;
 
+        gameObject.AddComponent<CanvasGroup>();
 
+        base.Awake();
+    }
     // Use this for initialization
-	void Start () {
+	protected override void Start () {
 
-        layout = gameObject.AddComponent<SimpleGroupedCircleLayout>();
-        interactor = layout.gameObject.AddComponent<CylinderRaycaster>()
-                           .gameObject.AddComponent<CylinderInteractor>();
-
-        layout.height = 1;
-        layout.radius = 0.5f;
+        titleElement.text = group.ToString();
 
         var itemList = ResourceManager.DB.Songs
                     .Where(HasNeededGroup);
         
         int total = itemList.Count();
 
-        var items = itemList
+        var groupedItems = itemList
                     .GroupBy(song => (int)(Mathf.Floor(GetNeededValue(song).Value * 10) * 10))
                     .ToDictionary(grouping => grouping.Key, grouping => grouping);
 
 
-        Debug.Log(string.Join(", ", items.Keys.Select(k => k.ToString()).ToArray()));
+        Debug.Log(string.Join(", ", groupedItems.Keys.Select(k => k.ToString()).ToArray()));
         var dictionary = new Dictionary<string, List<GameObject>>();
 
         for (int i = 0; i < 100; i+= 10)
@@ -51,11 +52,14 @@ public class MetaGroupView : View {
                 };
 
             var tile = go.AddComponent<MetaGroupTile>();
-            tile.items = items.ContainsKey(i) ? items[i].AsEnumerable() : new Song[0];
+            tile.items = groupedItems.ContainsKey(i) ? groupedItems[i].AsEnumerable() : new Song[0];
             tile.totalCount = total;
         }
 
-        layout.Items = dictionary;
+        items = dictionary;
+
+        base.Start();
+
 	}
 
     private bool HasNeededGroup(Song song)
@@ -77,6 +81,8 @@ public class MetaGroupView : View {
                 return song.Liveness;
             case MetaGroup.Speechiness:
                 return song.Speechiness;
+            case MetaGroup.Tempo:
+                return song.Tempo;
         }
         return null;
     }
