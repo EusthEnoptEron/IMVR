@@ -10,7 +10,30 @@ public class PointChart : MonoBehaviour {
     public string xAxisLabel = "";
     public string yAxisLabel = "";
     public string zAxisLabel = "";
+
+
+    public Vector3 pivotOffset = new Vector3(-0.5f, -0.5f, -0.5f);
+    //public Transform xLabel;
+    //public Transform yLabel;
+    //public Transform zLabel;
+
+
     public Vector3[] points = new Vector3[0];
+
+    void Awake()
+    {
+        //xLabel = new GameObject().transform;
+        //yLabel = new GameObject().transform;
+        //zLabel = new GameObject().transform;
+
+        //xLabel.SetParent(transform, false);
+        //yLabel.SetParent(transform, false);
+        //zLabel.SetParent(transform, false);
+
+        //xLabel.localPosition = Vector3.right;
+        //yLabel.localPosition = Vector3.up;
+        //zLabel.localPosition = Vector3.forward;
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +43,7 @@ public class PointChart : MonoBehaviour {
         meshFilter = GetComponent<MeshFilter>();
         particleSystem = GetComponent<ParticleSystem>();
 
-        BuildMesh();
+        RebuildMesh();
 	}
 	
 	// Update is called once per frame
@@ -28,14 +51,15 @@ public class PointChart : MonoBehaviour {
 	
 	}
 
-    public void OnGUI()
-    {
-        if (GUI.Button(new Rect(10, 10, 200, 100), "Rebuild"))
-        {
-            Randomize();
-            BuildMesh();
-        }
-    }
+    //public void OnGUI()
+    //{
+    //    if (GUI.Button(new Rect(10, 10, 200, 100), "Rebuild"))
+    //    {
+    //        Randomize();
+    //        BuildMesh();
+    //    }
+    //}
+
     void Randomize()
     {
         for (int i = 0; i < points.Length; i++)
@@ -45,7 +69,7 @@ public class PointChart : MonoBehaviour {
     }
 
 
-    void BuildMesh()
+    public void RebuildMesh()
     {
         var axisMesh = new Mesh();
         var axisVertices = new List<Vector3>();
@@ -55,10 +79,10 @@ public class PointChart : MonoBehaviour {
         var zAxis = Vector3.forward;
         var yAxis = Vector3.up;
         var xAxis = Vector3.right;
-        
-        BuildLine(Vector3.zero, zAxis, 0.02f, axisVertices, axisTris);
-        BuildLine(Vector3.zero, yAxis, 0.02f, axisVertices, axisTris);
-        BuildLine(Vector3.zero, xAxis, 0.02f, axisVertices, axisTris);
+
+        BuildLine(pivotOffset, zAxis + pivotOffset, 0.02f, axisVertices, axisTris);
+        BuildLine(pivotOffset, yAxis + pivotOffset, 0.02f, axisVertices, axisTris);
+        BuildLine(pivotOffset, xAxis + pivotOffset, 0.02f, axisVertices, axisTris);
 
         // Build grid
         var helperMesh = new Mesh();
@@ -70,31 +94,10 @@ public class PointChart : MonoBehaviour {
         BuildHelperLines(zAxis, xAxis, yAxis, helperVertices, helperTris);
 
 
-        // Build points
-        var particles = new ParticleSystem.Particle[points.Length];
-        particleSystem.Emit(points.Length);
-        particleSystem.GetParticles(particles);
-        float scale = transform.lossyScale.x;
-
-        for (int i = 0; i < points.Length; i++)
-        {
-            particles[i].size = Mathf.Lerp(0.3f, 0.05f, points.Length / 5000) * scale;
-            particles[i].lifetime = particles[i].startLifetime = 100000f;
-            particles[i].velocity = Vector3.zero;
-            particles[i].position = transform.TransformVector(points[i]);
-            particles[i].color = new Color(points[i].x, points[i].y, points[i].z);
-            particles[i].angularVelocity = Random.RandomRange(-45f, 45f);
-
-            //particleSystem.Emit(particle);
-
-        }
-        particleSystem.SetParticles(particles, particles.Length);
-
         axisMesh.vertices = axisVertices.ToArray();
         axisMesh.triangles = axisTris.ToArray();
 
         helperMesh.vertices = helperVertices.ToArray();
-
 
         meshFilter.mesh = new Mesh();
         meshFilter.mesh.CombineMeshes(new CombineInstance[] {
@@ -109,8 +112,32 @@ public class PointChart : MonoBehaviour {
         meshFilter.mesh.SetIndices(helperTris.ToArray(), MeshTopology.Lines, 1);
 
 
+
+        UpdatePoints();
+
     }
 
+    public void UpdatePoints()
+    {
+        var particles = new ParticleSystem.Particle[points.Length];
+        particleSystem.Emit(points.Length);
+        particleSystem.GetParticles(particles);
+        float scale = transform.lossyScale.x;
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            particles[i].size = Mathf.Lerp(0.3f, 0.05f, points.Length / 5000) * scale;
+            particles[i].lifetime = particles[i].startLifetime = 100000f;
+            particles[i].velocity = Vector3.zero;
+            particles[i].position = transform.TransformVector(points[i] + pivotOffset);
+            particles[i].color = new Color(points[i].x, points[i].y, points[i].z);
+            particles[i].angularVelocity = Random.RandomRange(-45f, 45f);
+
+            //particleSystem.Emit(particle);
+
+        }
+        particleSystem.SetParticles(particles, particles.Length);
+    }
     
 
     void BuildHelperLines(Vector3 primaryAxis, Vector3 secondaryAxis, Vector3 thirdAxis, List<Vector3> vertices, List<int> tris)
@@ -124,8 +151,8 @@ public class PointChart : MonoBehaviour {
 
                 int offset = vertices.Count;
                 vertices.AddRange(new Vector3[]{
-                    pX * primaryAxis + pY * secondaryAxis,
-                    pX * primaryAxis + pY * secondaryAxis + thirdAxis
+                    pX * primaryAxis + pY * secondaryAxis + pivotOffset,
+                    pX * primaryAxis + pY * secondaryAxis + thirdAxis + pivotOffset
                 });
                 
                 tris.AddRange(new int[] {

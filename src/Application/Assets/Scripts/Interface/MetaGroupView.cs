@@ -6,13 +6,41 @@ using System.Collections.Generic;
 
 public enum MetaGroup
 {
-    Danceability,
-    Speechiness,
-    Liveness,
-    Energy,
-    Instrumentalness,
-    Tempo
+    Danceability = 0,
+    Speechiness = 1,
+    Liveness = 2,
+    Energy = 3,
+    Instrumentalness = 4,
+    Tempo = 5
 }
+public static class MetaGroupExtensions
+{
+    public static float? GetValue(this MetaGroup group, Song song)
+    {
+        switch (group)
+        {
+            case MetaGroup.Danceability:
+                return song.Danceability;
+            case MetaGroup.Energy:
+                return song.Energy;
+            case MetaGroup.Instrumentalness:
+                return song.Instrumentalness;
+            case MetaGroup.Liveness:
+                return song.Liveness;
+            case MetaGroup.Speechiness:
+                return song.Speechiness;
+            case MetaGroup.Tempo:
+                return song.Tempo;
+        }
+        return null;
+    }
+
+    public static bool HasValue(this MetaGroup group, Song song)
+    {
+        return group.GetValue(song) != null;
+    }
+}
+
 public class MetaGroupView : FlatGroupView {
     public MetaGroup group = MetaGroup.Danceability;
 

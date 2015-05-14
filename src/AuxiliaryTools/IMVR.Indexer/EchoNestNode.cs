@@ -38,50 +38,57 @@ namespace IMVR.Indexer
             int offset = 0;
             while (true)
             {
-                var songs = _session.Query<EchoNest.Song.Search>().Execute(GetSearchArgument(artist.Name, offset));
-                if (songs.Status.Code == ResponseCode.Success)
+                try
                 {
-                    for (int i = 0; i < songs.Songs.Count; i++)
+                    var songs = _session.Query<EchoNest.Song.Search>().Execute(GetSearchArgument(artist.Name, offset));
+                    if (songs.Status.Code == ResponseCode.Success)
                     {
-                        var song = songs.Songs[i];
+                        for (int i = 0; i < songs.Songs.Count; i++)
+                        {
+                            var song = songs.Songs[i];
 
-                        if (i == 0)
-                        {
-                            artist.Location = song.ArtistLocation.Location;
-                            artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
-                        }
-                        foreach (var album in artist.Albums)
-                        {
-                            foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
+                            if (i == 0)
                             {
-                                Out.Log("Found a matching song!");
-                                artistID = song.ArtistID;
-                                track.Danceability = (float)song.AudioSummary.Danceability;
-                                track.Energy = (float)song.AudioSummary.Energy;
-                                track.Tempo = (float)song.AudioSummary.Tempo;
-                                track.Valence = (float)song.AudioSummary.Valence;
-                                track.Speechiness = (float?)song.AudioSummary.Speechiness;
-                                track.Liveness = (float)song.AudioSummary.Liveness;
-                                track.Instrumentalness = (float)song.AudioSummary.Instrumentalness;
+                                artist.Location = song.ArtistLocation.Location;
+                                artist.Coordinate = new GeoCoordinate((float)song.ArtistLocation.Latitude, (float)song.ArtistLocation.Longitude);
+                            }
+                            foreach (var album in artist.Albums)
+                            {
+                                foreach (var track in album.Tracks.Where(track => track.Title == song.Title))
+                                {
+                                    Out.Log("Found a matching song!");
+                                    artistID = song.ArtistID;
+                                    track.Danceability = (float)song.AudioSummary.Danceability;
+                                    track.Energy = (float)song.AudioSummary.Energy;
+                                    track.Tempo = (float)song.AudioSummary.Tempo;
+                                    track.Valence = (float)song.AudioSummary.Valence;
+                                    track.Speechiness = (float?)song.AudioSummary.Speechiness;
+                                    track.Liveness = (float)song.AudioSummary.Liveness;
+                                    track.Instrumentalness = (float)song.AudioSummary.Instrumentalness;
+                                }
                             }
                         }
-                    }
 
-                    if (songs.Songs.Count < RESULT_COUNT)
-                    {
-                        break;
+                        if (songs.Songs.Count < RESULT_COUNT)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            // There's more to fetch
+                            Out.WriteLine("...");
+                            offset += RESULT_COUNT;
+                        }
                     }
                     else
                     {
-                        // There's more to fetch
-                        Out.WriteLine("...");
-                        offset += RESULT_COUNT;
+                        Konsole.WriteLine(songs.Status.Message, ConsoleColor.Red);
+                        break;
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    Konsole.WriteLine(songs.Status.Message, ConsoleColor.Red);
-                    break;
+                    Konsole.WriteLine("Error occurred: {0}", e);
                 }
 
             }

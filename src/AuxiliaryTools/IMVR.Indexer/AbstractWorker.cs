@@ -132,6 +132,9 @@ namespace IMVR.Indexer
                 Tasks.Clear();
 
                 Task.WaitAll(tasks);
+                
+                // Quickfix to allow other threads to register themselves.
+                Thread.Sleep(100);
             }
         }
 
