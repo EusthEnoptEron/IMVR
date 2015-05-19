@@ -19,6 +19,9 @@ public class SongMetaChart : MonoBehaviour {
     public GameObject comboboxPrefab;
 
     private ComboBox[] comboboxes = new ComboBox[3];
+    private bool initialized = false;
+    private bool update = false;
+
 
 	// Use this for initialization
 	void Awake () {
@@ -37,8 +40,9 @@ public class SongMetaChart : MonoBehaviour {
         InitCombobox(1);
         InitCombobox(2);
 
+        initialized = true;
         // Debug
-        SetSongs(ResourceManager.DB.Songs);
+        //SetSongs(ResourceManager.DB.Songs);
     }
 
     private void CreateCombobox(int axis)
@@ -76,7 +80,11 @@ public class SongMetaChart : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (initialized && update)
+        {
+            Refresh();
+            update = false;
+        }
 	}
 
     public void ChangeAxis(int axis, string value)
@@ -116,6 +124,6 @@ public class SongMetaChart : MonoBehaviour {
     {
         data = songs;
 
-        Refresh();
+        update = true;
     }
 }

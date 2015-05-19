@@ -9,19 +9,43 @@ public class ArtistView : View {
     private GameObject m_artistView;
     private Transform m_albumList;
 
-    private GameObject pref_albumView;
-    private GameObject pref_songItem;
-    private GameObject pref_Earth;
-    private GameObject pref_artistInfo;
-    private GameObject pref_selector;
-    private GameObject pref_biography;
-    public  MusicSelection selector;
+    public MusicSelection selector;
+
+    // UI Prefabs
+    private static GameObject pref_albumView = Resources.Load<GameObject>("Prefabs/UI/pref_AlbumView");
+    private static GameObject pref_songItem = Resources.Load<GameObject>("Prefabs/UI/pref_SongItem");
+    private static GameObject pref_artistInfo = Resources.Load<GameObject>("Prefabs/UI/pref_ArtistInfo");
+    private static GameObject pref_selector = Resources.Load<GameObject>("Prefabs/UI/pref_Selector");
+    private static GameObject pref_biography = Resources.Load<GameObject>("Prefabs/UI/pref_Biography");
+
+    // 3D prefabs
+    private static GameObject pref_Earth    = Resources.Load<GameObject>("Prefabs/Objects/pref_Earth");
+    private static GameObject pref_songChart = Resources.Load<GameObject>("Prefabs/Objects/pref_SongChart");
 
 
     private CanvasCircleLayout cylinder;
     protected override void Awake()
     {
         base.Awake();
+
+        // Move down by 50cm
+        transform.localPosition += Vector3.down * 0.5f;
+
+        var canvas = gameObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        gameObject.AddComponent<GraphicRaycaster>();
+
+
+        // BUILD CYLINDER
+        cylinder = new GameObject().AddComponent<CanvasCircleLayout>();
+        cylinder.transform.SetParent(transform, false);
+        cylinder.radius = 0.5f;
+        cylinder.height = 1;
+        cylinder.scale = 1 / 800f;
+        cylinder.Resize(10, 1);
+
+        cylinder.gameObject.AddComponent<CylinderInteractor>();
+
     }
 
     protected void Start()
@@ -32,30 +56,10 @@ public class ArtistView : View {
         }
         else
         {
-            // Move down by 50cm
-            transform.localPosition += Vector3.down * 0.5f;
-
-            var canvas = gameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-            gameObject.AddComponent<GraphicRaycaster>();
-
-
-            // BUILD CYLINDER
-            cylinder = new GameObject().AddComponent<CanvasCircleLayout>();
-            cylinder.transform.SetParent(transform, false);
-            cylinder.radius = 0.5f;
-            cylinder.height = 1;
-            cylinder.scale = 1 / 800f;
-            cylinder.Resize(10, 1);
-
-            cylinder.gameObject.AddComponent<CylinderInteractor>();
-
 
             // BUILD BIOGHRAPHY
             if (artist.Biography != null)
             {
-                pref_biography = Resources.Load<GameObject>("Prefabs/UI/pref_Biography");
-
                 var textObj = GameObject.Instantiate<GameObject>(pref_biography);
                 var text = textObj.GetComponentInChildren<Text>();
 
@@ -71,6 +75,7 @@ public class ArtistView : View {
                 //text.font = ResourceManager.Arial;
             }
 
+
             //m_artistView = GameObject.Instantiate<GameObject>(
             //    Resources.Load<GameObject>("Prefabs/UI/pref_ArtistView")
             //);
@@ -82,12 +87,6 @@ public class ArtistView : View {
 
             //m_albumList = m_artistView.transform.FindRecursively("AlbumList");
 
-            pref_albumView = Resources.Load<GameObject>("Prefabs/UI/pref_AlbumView");
-            pref_songItem = Resources.Load<GameObject>("Prefabs/UI/pref_SongItem");
-            pref_artistInfo = Resources.Load<GameObject>("Prefabs/UI/pref_ArtistInfo");
-            pref_Earth    = Resources.Load<GameObject>("Prefabs/Objects/pref_Earth");
-            pref_selector = Resources.Load<GameObject>("Prefabs/UI/pref_Selector");
-
             selector = GameObject.Instantiate<GameObject>(pref_selector).GetComponent<MusicSelection>();
             selector.gameObject.SetActive(false);
 
@@ -95,6 +94,14 @@ public class ArtistView : View {
 
             cylinder.SetTile(9, 0, InitGeneralInfo());
             cylinder.SetTile(i++, 0, InitEarth());
+
+            // Build song chart
+            var chart = GameObject.Instantiate<GameObject>(pref_songChart).GetComponent<SongMetaChart>();
+            cylinder.SetTile(8, 0, chart.gameObject);
+            chart.transform.localScale /= (cylinder.scale * 2);
+            chart.transform.localPosition += Vector3.up / (cylinder.scale * 3);
+            chart.SetSongs(artist.Albums.SelectMany(album => album.Tracks));
+
 
             foreach (var album in artist.Albums)
             {
@@ -126,7 +133,7 @@ public class ArtistView : View {
         var marker = earth.GetComponentInChildren<GalleryVR.Dbg.EarthPlacer>();
         
         marker.transform.localScale *= 15;
-        marker.transform.localPosition += Vector3.up * 300;
+        marker.transform.localPosition += Vector3.up * 3 * Tile.PIXELS_PER_UNIT;
 
         marker.latitude = artist.Coordinate.Latitude;
         marker.longitude = artist.Coordinate.Longitude;

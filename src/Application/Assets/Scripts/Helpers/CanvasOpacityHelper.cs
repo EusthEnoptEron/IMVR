@@ -23,11 +23,14 @@ namespace IMVR.Helper
 
             foreach (var renderer in renderers)
             {
-                var material = useSharedMaterial ? renderer.sharedMaterial : renderer.material;
+                var newMaterials = useSharedMaterial ? renderer.sharedMaterials : renderer.materials;
 
-                if (!materials.ContainsKey(material))
+                foreach (var material in newMaterials)
                 {
-                    materials.Add(material, material.color.a);
+                    if (!materials.ContainsKey(material))
+                    {
+                        materials.Add(material, material.color.a);
+                    }
                 }
             }
 

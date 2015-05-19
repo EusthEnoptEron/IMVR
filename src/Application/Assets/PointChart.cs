@@ -20,25 +20,25 @@ public class PointChart : MonoBehaviour {
 
     public Vector3[] points = new Vector3[0];
 
-    void Awake()
-    {
-        //xLabel = new GameObject().transform;
-        //yLabel = new GameObject().transform;
-        //zLabel = new GameObject().transform;
+    //void Awake()
+    //{
+    //    //xLabel = new GameObject().transform;
+    //    //yLabel = new GameObject().transform;
+    //    //zLabel = new GameObject().transform;
 
-        //xLabel.SetParent(transform, false);
-        //yLabel.SetParent(transform, false);
-        //zLabel.SetParent(transform, false);
+    //    //xLabel.SetParent(transform, false);
+    //    //yLabel.SetParent(transform, false);
+    //    //zLabel.SetParent(transform, false);
 
-        //xLabel.localPosition = Vector3.right;
-        //yLabel.localPosition = Vector3.up;
-        //zLabel.localPosition = Vector3.forward;
-    }
+    //    //xLabel.localPosition = Vector3.right;
+    //    //yLabel.localPosition = Vector3.up;
+    //    //zLabel.localPosition = Vector3.forward;
+    //}
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
-        Randomize();
+        //Randomize();
 
         meshFilter = GetComponent<MeshFilter>();
         particleSystem = GetComponent<ParticleSystem>();
@@ -129,7 +129,7 @@ public class PointChart : MonoBehaviour {
             particles[i].size = Mathf.Lerp(0.3f, 0.05f, points.Length / 5000) * scale;
             particles[i].lifetime = particles[i].startLifetime = 100000f;
             particles[i].velocity = Vector3.zero;
-            particles[i].position = transform.TransformVector(points[i] + pivotOffset);
+            particles[i].position = (points[i] + pivotOffset) * scale;
             particles[i].color = new Color(points[i].x, points[i].y, points[i].z);
             particles[i].angularVelocity = Random.RandomRange(-45f, 45f);
 

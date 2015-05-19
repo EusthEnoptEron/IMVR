@@ -108,6 +108,28 @@ namespace IMVR.Commons
         /// </summary>
         [ProtoMember(14)]
         public float? Valence { get; set; }
+
+        /// <summary>
+        /// Gets whether or not any meta data attributes have been filled in.
+        /// </summary>
+        public bool Annotated
+        {
+            get
+            {
+                return Liveness != null || Speechiness != null || Acousticness != null || Instrumentalness != null || Danceability != null || Energy != null || Variance != null || Valence != null;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether or not all meta data attributes have been filled in.
+        /// </summary>
+        public bool FullyAnnotated
+        {
+            get
+            {
+                return Liveness != null && Speechiness != null && Acousticness != null && Instrumentalness != null && Danceability != null && Energy != null && Variance != null && Valence != null;
+            }
+        }
     }
 
 
