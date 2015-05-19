@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using IMVR.Commons;
 using System.Collections.Generic;
+using UnityEngine.Audio;
 
 
 [RequireComponent(typeof(AudioSource))]
@@ -10,6 +11,8 @@ public class Jukebox : Singleton<Jukebox> {
     private bool playing = false;
     private bool loading = false;
     private CSCAudioClip currentClip;
+    private AudioMixerGroup audioGroup;
+
 
     /// <summary>
     /// Gets the playlist used by this jukebox.
@@ -27,7 +30,10 @@ public class Jukebox : Singleton<Jukebox> {
         Playlist = new Playlist();
         Playlist.IndexChange += OnIndexChange;
 
+        audioGroup = Resources.Load<AudioMixer>("Audio/Master Mix").FindMatchingGroups("BGM")[0];
+        
         m_audio = GetComponent<AudioSource>();
+        m_audio.outputAudioMixerGroup = audioGroup;
     }
 
     private void OnIndexChange(object sender, EventArgs e)
@@ -51,6 +57,7 @@ public class Jukebox : Singleton<Jukebox> {
 
     public void Play()
     {
+
         playing = true;
         if (!m_audio.isPlaying && !Playlist.IsEmpty) {
             if (Playlist.Current == null)
