@@ -3,8 +3,27 @@ using System.Collections;
 using IMVR.Commons;
 using System.Collections.Generic;
 using VirtualHands.Data.Image;
+using System.Linq;
 
 public class ImageAtlas {
+    public static bool IsLoading
+    {
+        get
+        {
+            return Progress != 1;
+        }
+    }
+
+    public static float Progress
+    {
+        get
+        {
+            return totalJobs == 0
+                ? 1
+                : (float)(totalJobs-runningJobs) / totalJobs;
+        }
+    }
+
     private static Dictionary<string, ImageAtlas> _atlasDictionary = new Dictionary<string,ImageAtlas>();
     
     public string Path { get; private set; }
@@ -12,6 +31,9 @@ public class ImageAtlas {
 
     private Texture2D texture;
     private int tilesPerRow;
+
+    private static int totalJobs = 0;
+    private static int runningJobs = 0;
 
     public ImageAtlas(Atlas atlas)
     {
@@ -21,8 +43,19 @@ public class ImageAtlas {
         // Load sprites
         texture = DeferredLoader.Instance.LoadTexture(
             System.IO.Path.Combine(System.IO.Path.GetTempPath(), 
-            System.IO.Path.Combine("IMVR", Path))
+            System.IO.Path.Combine("IMVR", Path)),
+            delegate {
+                runningJobs--;
+            }
         );
+
+        // Initialize if need be
+        if (runningJobs == 0)
+            totalJobs = 0;
+
+        runningJobs++;
+        totalJobs++;
+
         //Debug.Log(System.IO.Path.Combine(System.IO.Path.GetTempPath(),
         //    System.IO.Path.Combine("IMVR", Path)));
         tilesPerRow = texture.width / TileSize;

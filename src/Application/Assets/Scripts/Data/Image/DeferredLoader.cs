@@ -102,6 +102,16 @@ namespace VirtualHands.Data.Image
                 new TextureAtlas(ATLAS_SIZE, ATLAS_SIZE)
             }
         );
+
+        public bool HasWork { get; private set; }
+        public int RemainingWork
+        {
+            get
+            {
+                return jobs.Count;
+            }
+        }
+
         void Start()
         {
             StartCoroutine(DoWork());
@@ -118,6 +128,7 @@ namespace VirtualHands.Data.Image
                 }
                 if (job != null)
                 {
+                    HasWork = true;
                     var www = new WWW(new Uri(job.File).AbsoluteUri);
                     yield return www;
                     www.LoadImageIntoTexture(job.Texture);
@@ -150,6 +161,10 @@ namespace VirtualHands.Data.Image
                     //Debug.Log("DONE");
                     //job.Done();
                     //job.Texture.Apply(true);
+                }
+                else
+                {
+                    HasWork = false;
                 }
                 //yield return new WaitForSeconds(DELAY);
                 yield return 0;
