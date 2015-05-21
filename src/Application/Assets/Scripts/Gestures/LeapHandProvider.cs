@@ -197,5 +197,28 @@ namespace Gestures
 
             }
         }
+
+        protected override void OnDisable()
+        {
+            hands[HandType.Left] = null;
+            hands[HandType.Right] = null;
+
+            var handController = GetComponent<HandController>();
+            if (handController)
+            {
+                handController.DestroyAllHands();
+                handController.enabled = false;
+            }
+
+        }
+
+        protected override void OnEnable()
+        {
+            var handController = GetComponent<HandController>();
+            if (handController)
+            {
+                handController.enabled = true;
+            }
+        }
     }
 }

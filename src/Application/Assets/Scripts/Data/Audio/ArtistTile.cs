@@ -57,7 +57,7 @@ public class ArtistTile : Tile, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        var artistView = FlowManager.Instance.Navigate<ArtistView>();
+        var artistView = Navigator.Navigate<ArtistView>();
         artistView.artist = m_artist;
 
         //Jukebox.Instance.Playlist.Add(m_artist.Albums.SelectMany(a => a.Tracks));

@@ -14,7 +14,7 @@ public class SongMetaChart : MonoBehaviour {
     public MetaGroup xAxis = MetaGroup.Energy;
     public MetaGroup yAxis = MetaGroup.Danceability;
     public MetaGroup zAxis = MetaGroup.Speechiness;
-
+    public bool debug = false;
     public Canvas canvas;
     public GameObject comboboxPrefab;
 
@@ -42,7 +42,8 @@ public class SongMetaChart : MonoBehaviour {
 
         initialized = true;
         // Debug
-        //SetSongs(ResourceManager.DB.Songs);
+        if(debug)
+            SetSongs(ResourceManager.DB.Songs);
     }
 
     private void CreateCombobox(int axis)

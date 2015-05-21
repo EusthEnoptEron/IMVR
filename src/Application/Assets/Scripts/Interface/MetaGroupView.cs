@@ -4,6 +4,9 @@ using IMVR.Commons;
 using System.Linq;
 using System.Collections.Generic;
 
+/// <summary>
+/// Different groups of meta data given to a song.
+/// </summary>
 public enum MetaGroup
 {
     Danceability = 0,
@@ -11,7 +14,9 @@ public enum MetaGroup
     Liveness = 2,
     Energy = 3,
     Instrumentalness = 4,
-    Tempo = 5
+    Tempo = 5,
+    Valence = 6,
+    Acousticness = 7
 }
 public static class MetaGroupExtensions
 {
@@ -31,8 +36,13 @@ public static class MetaGroupExtensions
                 return song.Speechiness;
             case MetaGroup.Tempo:
                 return song.Tempo;
+            case MetaGroup.Valence:
+                return song.Valence;
+            case MetaGroup.Acousticness:
+                return song.Acousticness;
+            default:
+                return null;
         }
-        return null;
     }
 
     public static bool HasValue(this MetaGroup group, Song song)

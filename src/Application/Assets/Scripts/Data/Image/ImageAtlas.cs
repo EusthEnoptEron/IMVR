@@ -103,6 +103,7 @@ public class ImageAtlas {
 
     public static Sprite LoadSprite(AtlasTicket ticket)
     {
+        if (ticket == null) return null;
         if (!_atlasDictionary.ContainsKey(ticket.Atlas.Path))
         {
             _atlasDictionary.Add(ticket.Atlas.Path, new ImageAtlas(ticket.Atlas));

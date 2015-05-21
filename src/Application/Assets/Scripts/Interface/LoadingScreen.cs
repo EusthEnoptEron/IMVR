@@ -5,7 +5,7 @@ using System.Linq;
 using DG.Tweening;
 using Gestures;
 
-public class LoadingScreen : MonoBehaviour {
+public class LoadingScreen : Singleton<LoadingScreen> {
     private Image fill;
     private CanvasGroup shutter;
     private int okCount = 0;

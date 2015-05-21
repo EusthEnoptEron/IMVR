@@ -144,5 +144,16 @@ namespace Gestures {
             if(!backBuffer.ContainsKey(eventData.Gesture.Name))
                 backBuffer[eventData.Gesture.Name] = eventData;
         }
+
+        protected virtual void OnDisable()
+        {
+
+        }
+
+        protected virtual void OnEnable()
+        {
+            
+        }
+
     }
 }

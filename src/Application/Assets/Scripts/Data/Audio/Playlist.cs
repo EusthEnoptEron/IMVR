@@ -82,7 +82,7 @@ public class Playlist
             newIndex = Mathf.Clamp(Index + steps, 0, Count - 1);
 
 
-        if (newIndex != Index)
+        if (newIndex != Index || Cyclic)
         {
             Index = newIndex;
             RaiseIndexChange();
