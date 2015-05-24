@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace IMVR.Indexer
 {
+    /// <summary>
+    /// Uses last.fm to fetch covers of artists.
+    /// </summary>
     public class LastFmNode : ConsumerNode<Artist>
     {
         public int RequestInterval = 1000;
@@ -24,7 +27,12 @@ namespace IMVR.Indexer
 
         private AtlasManager _manager = new AtlasManager();
         private AtlasTicket _noCoverTicket;
-
+        private readonly string[] COMMON_ARTWORK_NAMES = { 
+            "front.jpg",
+            "cover.jpg",
+            "font.png",
+            "cover.png"         
+        };
 
         public LastFmNode()
         {
@@ -35,6 +43,8 @@ namespace IMVR.Indexer
             _manager.TileSize = 256;
 
             _noCoverTicket = _manager.GetTicket( new FileInfo("Resources/No_Cover.jpg").FullName );
+
+            Out.Color = ConsoleColor.Magenta;
         }
 
 
@@ -52,49 +62,64 @@ namespace IMVR.Indexer
 
         protected override void ProcessItem(Artist artist)
         {
-            Konsole.Log("[Last.FM] Artist: {0}", ConsoleColor.Magenta, artist.Name);
+            Out.Log("[Last.FM] Artist: {0}", artist.Name);
 
-            MakeRequest(delegate
+
+            //MakeRequest(delegate
+            //{
+            //    var artistInfo = _artistApi.GetArtistInfoAsync(artist.Name, "en", true).Result.Content;
+            //    if (artistInfo != null)
+            //    {
+            //        artist.Biography = artistInfo.Bio.Summary;
+
+            //        //if (artist.Image == null && artistInfo.MainImage.Largest != null)
+            //        //{
+            //        //    var image = artistInfo.MainImage.Largest;
+            //        //    if (image != null)
+            //        //    {
+            //        //        artist.Image = _manager.GetTicket(image.AbsoluteUri);
+            //        //    }
+            //        //}
+            //    }
+            //});
+
+            foreach (var album in artist.Albums)
             {
-                var artistInfo = _artistApi.GetArtistInfoAsync(artist.Name, "en", true).Result.Content;
-                if (artistInfo != null)
-                {
-                    artist.Biography = artistInfo.Bio.Summary;
+                if (album.Atlas != null) continue;
 
-                    if (artist.Image == null && artistInfo.MainImage.Largest != null)
-                    {
-                        var image = artistInfo.MainImage.Largest;
-                        if (image != null)
-                        {
-                            artist.Image = _manager.GetTicket(image.AbsoluteUri);
-                        }
-                    }
+
+                var firstTrack = album.Tracks.First();
+                var path = Path.GetDirectoryName(firstTrack.Path);
+                var artwork = Directory.GetFiles(path).Select(file => Path.GetFileName(file)).Intersect(COMMON_ARTWORK_NAMES).FirstOrDefault();
+                if (artwork != null)
+                {
+                    // Found some artwork, use that!
+                    Out.Log("Found artwork in folder!");
+
+                    album.Atlas = _manager.GetTicket(Path.Combine(path, artwork));
                 }
-            });
-
-            MakeRequest(delegate
-            {
-                foreach (var album in artist.Albums)
+                else
                 {
-                    if (album.Atlas == null)
+                    MakeRequest(delegate
                     {
-                        Konsole.Log("[Last.FM] Cover: {0}", ConsoleColor.Magenta, album.Name);
+                        Out.Log("Cover: {0}", album.Name);
 
                         // Find cover
                         var albumInfo = _albumApi.GetAlbumInfoAsync(artist.Name, album.Name, true).Result.Content;
                         if (albumInfo != null && albumInfo.Images.Largest != null)
                         {
                             album.Atlas = _manager.GetTicket(albumInfo.Images.Largest.AbsoluteUri);
-                            Konsole.Log("[Last.FM] Cover found!", ConsoleColor.Magenta);
+                            Out.Log("Cover found!");
                         }
                         else
                         {
                             album.Atlas = _noCoverTicket;
-                            Konsole.Log("[Last.FM] No cover found...", ConsoleColor.Magenta);
+                            Out.Log("No cover found...");
                         }
-                    }
+                    });
                 }
-            });
+            }
+           
         }
 
         protected override void CleanUp()

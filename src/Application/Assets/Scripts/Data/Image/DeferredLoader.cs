@@ -102,6 +102,16 @@ namespace VirtualHands.Data.Image
                 new TextureAtlas(ATLAS_SIZE, ATLAS_SIZE)
             }
         );
+
+        public bool HasWork { get; private set; }
+        public int RemainingWork
+        {
+            get
+            {
+                return jobs.Count;
+            }
+        }
+
         void Start()
         {
             StartCoroutine(DoWork());
@@ -118,32 +128,43 @@ namespace VirtualHands.Data.Image
                 }
                 if (job != null)
                 {
-                    // Found a job to take care of
-                    if (!System.IO.File.Exists(job.File)) continue;
-
-                    var task = Load(job.File);
-
-                    // Wait for completion
-                    yield return StartCoroutine(task.WaitRoutine());
-
-                    int done = 0;
-                    for (int x = 0; x < job.Texture.width; x++)
-                        for (int y = 0; y < job.Texture.height; y++)
-                        {
-                            //var pxl = result.GetPixel(x, y);
-
-                            job.Texture.SetPixel((int)job.Offset.x + x, (int)job.Offset.y + y, task.Result[x, y]);
-
-                            if (done++ > 50000)
-                            {
-                                done = 0;
-                                yield return 0;
-                            }
-                        }
-
-                    Debug.Log("DONE");
+                    HasWork = true;
+                    var www = new WWW(new Uri(job.File).AbsoluteUri);
+                    yield return www;
+                    www.LoadImageIntoTexture(job.Texture);
                     job.Done();
-                    job.Texture.Apply(true);
+                    
+
+                    //// Found a job to take care of
+                    //if (!System.IO.File.Exists(job.File)) continue;
+
+                    //var task = Load(job.File);
+
+                    //// Wait for completion
+                    //yield return StartCoroutine(task.WaitRoutine());
+
+                    //int done = 0;
+                    //for (int x = 0; x < job.Texture.width; x++)
+                    //    for (int y = 0; y < job.Texture.height; y++)
+                    //    {
+                    //        //var pxl = result.GetPixel(x, y);
+
+                    //        job.Texture.SetPixel((int)job.Offset.x + x, (int)job.Offset.y + y, task.Result[x, y]);
+
+                    //        if (done++ > 50000)
+                    //        {
+                    //            done = 0;
+                    //            yield return 0;
+                    //        }
+                    //    }
+
+                    //Debug.Log("DONE");
+                    //job.Done();
+                    //job.Texture.Apply(true);
+                }
+                else
+                {
+                    HasWork = false;
                 }
                 //yield return new WaitForSeconds(DELAY);
                 yield return 0;

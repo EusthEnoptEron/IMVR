@@ -1,0 +1,152 @@
+fileFormatVersion: 2
+guid: fabd98331c613e64a9738df4de88872b
+timeCreated: 1432194419
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Armature
+    100002: Armature_001
+    100004: Armature_002
+    100006: Base_Human
+    100008: Base_HumanHead
+    100010: Base_HumanLCalf
+    100012: Base_HumanLCollarbone
+    100014: Base_HumanLDigit11
+    100016: Base_HumanLDigit11 1
+    100018: Base_HumanLDigit12
+    100020: Base_HumanLDigit13
+    100022: Base_HumanLDigit21
+    100024: Base_HumanLFoot
+    100026: Base_HumanLForearm
+    100028: Base_HumanLPalm
+    100030: Base_HumanLPlatform
+    100032: Base_HumanLThigh
+    100034: Base_HumanLUpperarm
+    100036: Base_HumanNeck1
+    100038: Base_HumanNeck2
+    100040: Base_HumanPelvis
+    100042: Base_HumanRCalf
+    100044: Base_HumanRCollarbone
+    100046: Base_HumanRDigit11
+    100048: Base_HumanRDigit11 1
+    100050: Base_HumanRDigit12
+    100052: Base_HumanRDigit13
+    100054: Base_HumanRDigit21
+    100056: Base_HumanRFoot
+    100058: Base_HumanRForearm
+    100060: Base_HumanRibcage
+    100062: Base_HumanRPalm
+    100064: Base_HumanRPlatform
+    100066: Base_HumanRThigh
+    100068: Base_HumanRUpperarm
+    100070: Base_HumanSpine1
+    100072: Base_HumanSpine2
+    100074: Base_HumanSpine3
+    100076: Base_HumanSpine4
+    100078: PM3D_ZSphere_3
+    100080: //RootNode
+    400000: Armature
+    400002: Armature_001
+    400004: Armature_002
+    400006: Base_Human
+    400008: Base_HumanHead
+    400010: Base_HumanLCalf
+    400012: Base_HumanLCollarbone
+    400014: Base_HumanLDigit11
+    400016: Base_HumanLDigit11 1
+    400018: Base_HumanLDigit12
+    400020: Base_HumanLDigit13
+    400022: Base_HumanLDigit21
+    400024: Base_HumanLFoot
+    400026: Base_HumanLForearm
+    400028: Base_HumanLPalm
+    400030: Base_HumanLPlatform
+    400032: Base_HumanLThigh
+    400034: Base_HumanLUpperarm
+    400036: Base_HumanNeck1
+    400038: Base_HumanNeck2
+    400040: Base_HumanPelvis
+    400042: Base_HumanRCalf
+    400044: Base_HumanRCollarbone
+    400046: Base_HumanRDigit11
+    400048: Base_HumanRDigit11 1
+    400050: Base_HumanRDigit12
+    400052: Base_HumanRDigit13
+    400054: Base_HumanRDigit21
+    400056: Base_HumanRFoot
+    400058: Base_HumanRForearm
+    400060: Base_HumanRibcage
+    400062: Base_HumanRPalm
+    400064: Base_HumanRPlatform
+    400066: Base_HumanRThigh
+    400068: Base_HumanRUpperarm
+    400070: Base_HumanSpine1
+    400072: Base_HumanSpine2
+    400074: Base_HumanSpine3
+    400076: Base_HumanSpine4
+    400078: PM3D_ZSphere_3
+    400080: //RootNode
+    2300000: PM3D_ZSphere_3
+    3300000: PM3D_ZSphere_3
+    4300000: PM3D_ZSphere_3
+    7400000: Default Take
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

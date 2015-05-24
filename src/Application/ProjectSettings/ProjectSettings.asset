@@ -12,7 +12,7 @@ PlayerSettings:
   targetResolution: 0
   accelerometerFrequency: 60
   companyName: Simon Meer
-  productName: GalleryVR
+  productName: IMVR
   cloudProjectId: 
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -59,7 +59,7 @@ PlayerSettings:
   visibleInBackground: 1
   macFullscreenMode: 2
   d3d9FullscreenMode: 0
-  d3d11FullscreenMode: 1
+  d3d11FullscreenMode: 0
   xboxSpeechDB: 0
   xboxEnableHeadOrientation: 0
   xboxEnableGuest: 0

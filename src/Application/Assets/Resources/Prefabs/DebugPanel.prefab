@@ -127,11 +127,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 22492398}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 18.7000008, y: 0}
-  m_SizeDelta: {x: -37.4000015, y: -64.0999985}
-  m_Pivot: {x: .5, y: .5}
+  m_AnchorMin: {x: 0, y: .5}
+  m_AnchorMax: {x: 1, y: .5}
+  m_AnchoredPosition: {x: 39.5999985, y: 0}
+  m_SizeDelta: {x: -39.1999969, y: 25.8999996}
+  m_Pivot: {x: -1.90921128e-08, y: .5}
 --- !u!224 &22444254
 RectTransform:
   m_ObjectHideFlags: 1

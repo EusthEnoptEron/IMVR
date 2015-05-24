@@ -25,6 +25,15 @@ namespace IMVR.Indexer
             }
         }
 
+        public AtlasTicket GetTicket(byte[] contents)
+        {
+            lock (internalAtlasLock)
+            {
+                CheckAtlas();
+                return atlas.Add(contents);
+            }
+        }
+
 
         public void Save()
         {
@@ -36,8 +45,9 @@ namespace IMVR.Indexer
                     atlas = null;
                     AbstractWorker.StartNew(delegate
                     {
-                        Console.WriteLine("Start writing atlas");
+                        Konsole.Log("Start writing atlas");
                         privateAtlas.Generate();
+                        privateAtlas.Dispose();
                     });
 
                     lock (atlasLock)

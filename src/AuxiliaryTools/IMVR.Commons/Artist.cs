@@ -13,6 +13,7 @@ namespace IMVR.Commons
         {
             Terms = new List<TermItem>();
             Albums = new List<Album>();
+            Pictures = new List<AtlasTicket>();
         }
 
         /// <summary>
@@ -77,7 +78,13 @@ namespace IMVR.Commons
         /// Gets or sets the image of the artist.
         /// </summary>
         [ProtoMember(11)]
-        public AtlasTicket Image { get; set; }
+        public List<AtlasTicket> Pictures { get; private set; }
+
+        /// <summary>
+        /// Gets or sets this artist's ID on Echo Nest.
+        /// </summary>
+        [ProtoMember(12)]
+        public string EchoNestID { get; set; }
     }
 
     [ProtoContract]

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
 
 public static class TransformExtensions {
     public static IEnumerable<Transform> Children(this Transform parent)
@@ -28,6 +29,27 @@ public static class TransformExtensions {
         }
     }
 
+    public static IEnumerable<Transform> AncestorsAndThis(this Transform node)
+    {
+        var parent = node;
+        while (parent != null)
+        {
+            yield return parent;
+            parent = parent.parent;
+        }
+    }
+
+    public static IEnumerable<Transform> Ancestors(this Transform node)
+    {
+        return node.AncestorsAndThis().Skip(1);
+    }
+
+
+    public static string GetPath(this GameObject go)
+    {
+        return string.Join("/", go.transform.AncestorsAndThis().Select(a => a.name).Reverse().ToArray());
+    }
+
     public static void SetActiveInHierarchy(this GameObject obj, bool state)
     {
         obj.SetActive(state);
@@ -35,13 +57,20 @@ public static class TransformExtensions {
             ancestor.gameObject.SetActive(state);
     }
 
-    public static IEnumerable<Transform> Ancestors(this Transform node)
+
+    public static Transform FindRecursively(this Transform node, string name)
     {
-        var parent = node.parent;
-        while (parent != null)
-        {
-            yield return parent;
-            parent = parent.parent;
-        }
+        return node.Descendants().FirstOrDefault(transform => transform.name == name);
+    }
+
+    public static Tweener Fade(this CanvasGroup group, float alpha, float duration)
+    {
+        group.DOKill(false);
+        return group.DOFade(alpha, duration);
+    }
+
+    public static Vector3 To(this GameObject from, GameObject to)
+    {
+        return (to.transform.position - from.transform.position).normalized;
     }
 }

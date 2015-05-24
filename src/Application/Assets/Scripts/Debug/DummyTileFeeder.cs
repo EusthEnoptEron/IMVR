@@ -14,8 +14,9 @@ public class DummyTileFeeder : MonoBehaviour {
         yield return new WaitForSeconds(2);
 	    // Create tiles
 
-        List<Tile> tiles = new List<Tile>();
-        CircleLayout layout = GetComponent<CircleLayout>();
+        Dictionary<string, List<GameObject>> groups = new Dictionary<string, List<GameObject>>();
+
+        ListGroupedCircleLayout layout = GetComponent<ListGroupedCircleLayout>();
 
         var db = IMDB.FromFile(
             Path.Combine(Application.dataPath, PlayerPrefs.GetString("DBPath"))
@@ -24,28 +25,43 @@ public class DummyTileFeeder : MonoBehaviour {
 
         Debug.Log(Path.Combine(Application.dataPath, PlayerPrefs.GetString("DBPath")));
 
-        foreach (var image in db.Images)
-        {
-            var tile = new GameObject().AddComponent<ImageTile>();
-            tile.Image = image;
-            tiles.Add(tile);
-        }
-        //yield return new WaitForSeconds(6);
-
-        //foreach (var tile in tiles.Cast<ImageTile>())
+        //foreach (var image in db.Images)
         //{
-        //    tile.Image = tile.Image;
-        //}
-
-        //for (int i = 0; i < tileCount; i++)
-        //{
-        //    var tile = new GameObject().AddComponent<DummyTile>();
-        //    tile.Color = HSVToRGB( ((float)i / tileCount) * 1, 0.5f, 0.5f);
-
+        //    var tile = new GameObject().AddComponent<ImageTile>();
+        //    tile.Image = image;
         //    tiles.Add(tile);
         //}
 
-        layout.tiles = tiles;
+        for (char c = 'A'; c <= 'Z'; c++)
+        {
+            var num = Random.Range(3, 10);
+            List<GameObject> tiles = new List<GameObject>();
+            
+            for (int i = 0; i < num; i++)
+            {
+                var tile = new GameObject().AddComponent<DummyTile>();
+                tiles.Add(tile.gameObject);
+            }
+            groups.Add(c.ToString(), tiles);
+        }
+
+            //yield return new WaitForSeconds(6);
+
+            //foreach (var tile in tiles.Cast<ImageTile>())
+            //{
+            //    tile.Image = tile.Image;
+            //}
+
+            //for (int i = 0; i < tileCount; i++)
+            //{
+            //    var tile = new GameObject().AddComponent<DummyTile>();
+            //    tile.Color = HSVToRGB( ((float)i / tileCount) * 1, 0.5f, 0.5f);
+
+            //    tiles.Add(tile);
+            //}
+
+        layout.Items = groups;
+            //layout.tiles = tiles;
 	}
 	
 

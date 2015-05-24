@@ -21,6 +21,7 @@ namespace IMVR.Indexer
         private IConsumer<Artist> artistAnalyzer;
 
         private Dictionary<string, Artist> artistList = new Dictionary<string,Artist>();
+        private AtlasManager _manager = new AtlasManager();
 
         // Only make one of these
         public MusicIndexer() : base(1) { }
@@ -28,6 +29,8 @@ namespace IMVR.Indexer
         protected override void CleanUp()
         {
             base.CleanUp();
+
+            _manager.Save();
 
             foreach (var artist in artistList.Values)
                 Publish(artist);
@@ -56,10 +59,13 @@ namespace IMVR.Indexer
                     };
 
                     artistList.Add(artistName, artist);
+                    Options.Instance.DB.Artists.Add(artist);
                 }
 
                 // Determine album
                 var album = artist.Albums.FirstOrDefault(a => a.Name == albumName);
+                var cover = file.Tag.Pictures.FirstOrDefault(/*picture => picture.Type == PictureType.FrontCover*/);
+
                 if (album == null)
                 {
                     album = new Album()
@@ -69,6 +75,12 @@ namespace IMVR.Indexer
 
                     artist.Albums.Add(album);
                 }
+
+                if (cover != null && album.Atlas == null)
+                {
+                    // Found a cover! 
+                    album.Atlas = _manager.GetTicket(cover.Data.ToArray());
+                }
                 
                 // Determine song
                 Song song = new Song()
@@ -77,6 +89,7 @@ namespace IMVR.Indexer
                     Album = album,
                     Artist = artist,
                     TrackNo = file.Tag.Track,
+                    Duration = (float)file.Properties.Duration.TotalSeconds,
 
                     // File properties
                     Path = item.FullName,
@@ -85,17 +98,14 @@ namespace IMVR.Indexer
                 };
 
                 album.Tracks.Add(song);
+                Options.Instance.DB.Songs.Add(song);
 
-                if(Options.Instance.Verbose)
-                    Konsole.WriteLine("Analyzing: {0}", ConsoleColor.Green, song.Title);
+                Konsole.Log("Analyzing: {0}", ConsoleColor.Green, song.Title);
             }
             else
             {
-                if (Options.Instance.Verbose)
-                    Konsole.WriteLine("Dropping: {0}", ConsoleColor.Red, item.Name);
-
+                Konsole.Log("Dropping: {0}", ConsoleColor.DarkGray, item.Name);
             }
-           
         }
     }
 }

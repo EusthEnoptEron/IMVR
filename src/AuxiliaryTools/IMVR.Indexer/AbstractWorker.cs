@@ -20,6 +20,9 @@ namespace IMVR.Indexer
         private static List<Task> Tasks = new List<Task>();
         private List<AbstractWorker> _sequentialWorkers = new List<AbstractWorker>();
 
+        protected Konsole.NamedConsole Out;
+        private static int ColorIndex = 0;
+        private static int ColorCount = Enum.GetNames(typeof(ConsoleColor)).Count() - 1;
         public Task Task
         {
             get;
@@ -41,6 +44,7 @@ namespace IMVR.Indexer
         {
             cts = new CancellationTokenSource();
             this.threadCount = threadCount;
+            this.Out = new Konsole.NamedConsole(this.GetType().Name, (ConsoleColor)((ColorIndex++ % ColorCount) + 1));
         }
 
         public Task Start()
@@ -88,8 +92,8 @@ namespace IMVR.Indexer
             {
                 if (--remainingThreads == 0)
                 {
-                    _done = true;
                     CleanUp();
+                    _done = true;
 
                     foreach (var worker in _sequentialWorkers)
                     {
@@ -128,6 +132,9 @@ namespace IMVR.Indexer
                 Tasks.Clear();
 
                 Task.WaitAll(tasks);
+                
+                // Quickfix to allow other threads to register themselves.
+                Thread.Sleep(100);
             }
         }
 

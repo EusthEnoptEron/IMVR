@@ -11,7 +11,7 @@ namespace VirtualHands.Data
 {
     public partial class Main
     {
-        public Main(IMVR.Indexer.Options options) : base("Data Source=" + options.DbPath +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
+        public Main(IMVR.Indexer.Options options) : base("Data Source=" + options.DBPath +";DbLinqProvider=sqlite;DbLinqConnectionType=" + typeof(Mono.Data.Sqlite.SqliteConnection).AssemblyQualifiedName)
         {
         }
     }
@@ -22,7 +22,7 @@ namespace VirtualHands.Data
         {
             get
             {
-                return "URI=file:" + Options.Instance.DbPath;
+                return "URI=file:" + Options.Instance.DBPath;
             }
         }
 

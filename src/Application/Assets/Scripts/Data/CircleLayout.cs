@@ -9,52 +9,67 @@ using System;
 [RequireComponent(typeof(TileBlanket))]
 public class CircleLayout : MonoBehaviour {
     [HideInInspector]
-    public List<Tile> tiles {
+    public virtual List<Tile> tiles {
         get {
             return blanket.tiles;
         }
         set {
             blanket.SetTiles(value);
             UpdateLayout();
+
+            BuildTileMatrix();
+            UpdatePositions(1);
         }
     }
 
-    public Tile[,] tileMat;
+    public GameObject[,] tileMat;
 
-
+    public bool ignoreHeight = true;
+    public bool autoLayout = true;
     public float height = 5;
     public float radius = 5;
 
     private bool changing;
+    protected bool _dirty = false;
 
-    public int xSegments { get; private set; }
-    public int ySegments { get; private set; }
-    public float tileScale { get; private set; }
+    public int xSegments { get; protected set; }
+    public int ySegments { get; protected set; }
+    public float tileScale { get; protected set; }
+
+    public float scale = 1f / Tile.PIXELS_PER_UNIT;
 
     private TileBlanket blanket;
 
     private Transform world;
     protected virtual void Start() {
+        tileScale = tileScale == 0 ? 1 : tileScale;
         blanket = GetComponent<TileBlanket>();
         //world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
         world = GameObject.Find("World").transform;
+
+        xSegments = Mathf.Max(1, xSegments);
+        ySegments = Mathf.Max(1, ySegments);
+
+        if(tileMat == null)
+            tileMat = new GameObject[ySegments, xSegments];
     }
 
-    void Update()
+    protected virtual void Update()
     {
         // Annetuation
         //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
         v *= (1 - Time.deltaTime);
 
-        if (Mathf.Abs(v) > 0)
-            world.localRotation *= Quaternion.Euler(0, -v, 0);
+        if (Mathf.Abs(v) > 0.0001f)
+        {
+            World.WorldNode.transform.localRotation *= Quaternion.Euler(0, -v, 0);
+        }
 
-        if (changing) return;
         //Debug.Log("iüdate");
         UpdatePositions(Time.deltaTime * 5);
     }
 
-    public Tile GetTileAtPosition(Vector3 pos)
+    public virtual GameObject GetTileAtPosition(Vector3 pos)
     {
         var locP = transform.InverseTransformPoint(pos);
         //Debug.Log(locP.x);
@@ -64,23 +79,24 @@ public class CircleLayout : MonoBehaviour {
         
         int y = Mathf.RoundToInt((locP.y + height / 2) / tileScale);
         int x = Mathf.RoundToInt(
-            Mathf.Atan2(locP.z, locP.x) / (2 * Mathf.PI) * xSegments
+            (Mathf.Atan2(locP.z, -locP.x) - Mathf.PI / 2)  / (2 * Mathf.PI) * xSegments
         );
 
         x = (x + xSegments) % xSegments;
 
+        if(ignoreHeight) y = Mathf.Clamp(y, 0, tileMat.GetLength(0)-1);
+
         if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0)
-            return tileMat[y, x];
+            return tileMat[y, x].gameObject;
         else
             return null;
     }
 
     struct BestResult { public int sy; public int sx; public float scale; }
 
-    void UpdatePositions(float progress)
+    public void UpdatePositions(float progress)
     {
-        tileMat = new Tile[ySegments, xSegments];
-
+        //tileMat = new GameObject[ySegments, xSegments];
         //return;
 
         //float area = 2 * Mathf.PI * radius * height * 0.5f;
@@ -94,51 +110,65 @@ public class CircleLayout : MonoBehaviour {
         //float radius = imagesPerRevolution / (Mathf.PI * 2);
         float ySegmentsF = (float)ySegments;
         float indexToLatitude = (2f / rowsPerRevolution) * Mathf.PI;
-        float scale = tileScale / 100f;
+        float finalScale = tileScale * scale;
 
-        int i = 0;
-        for (; i < tileCount; i++)
+        for (int y = 0; y < tileMat.GetLength(0); y++)
         {
-            //tiles[i].transform.SetParent(transform);
-            int x = (i / ySegments);
-            int y = (i % ySegments);
-   
-            tileMat[y, x] = tiles[i];
-
-            float latitude = x * indexToLatitude;
-            float verticalProgress = y / ySegmentsF;
-
-            if (latitude >= 2 * Mathf.PI)
+            for (int x = 0; x < tileMat.GetLength(1); x++)
             {
-                if(tiles[i].gameObject.activeSelf)
-                    tiles[i].gameObject.SetActive(false);
-            }
-            else
-            {
-                if (!tiles[i].gameObject.activeSelf)
-                    tiles[i].gameObject.SetActive(true);
+                var tile = tileMat[y, x];
+                if (tile == null) continue;
 
-                var endPosition = new Vector3(Mathf.Cos(latitude) * radius, 
-                                              verticalProgress * height - height / 2,
-                                              Mathf.Sin(latitude) * radius);
-                var endRotation = Quaternion.LookRotation(-Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
+                float latitude = (x * indexToLatitude) - Mathf.PI / 2;
+                float verticalProgress = y / ySegmentsF;
+                if (y == 0 && ySegments == 1) verticalProgress = 0.5f;
 
-                tiles[i].targetPosition = endPosition;
-                tiles[i].targetRotation = endRotation;
-                tiles[i].targetScale = tileScale * Vector3.one;
+                if (latitude >= 2 * Mathf.PI)
+                {
+                    if (tile.gameObject.activeSelf)
+                        tile.gameObject.SetActive(false);
+                }
+                else
+                {
+                    if (!tile.gameObject.activeSelf)
+                        tile.gameObject.SetActive(true);
 
-                //tiles[i].transform.DOLocalMove(endPosition, 0.5f);
-                //tiles[i].transform.DOLocalRotate(endRotation.eulerAngles, 0.5f);
-                //tiles[i].transform.DOScale(tileScale * Vector3.one, 0.5f);
+                    var endPosition = new Vector3(Mathf.Cos(latitude) * radius,
+                                                  verticalProgress * height - height / 2,
+                                                  -Mathf.Sin(latitude) * radius);
+                    var endRotation = Quaternion.LookRotation(-Vector3.ProjectOnPlane(-endPosition, transform.up).normalized);
 
-                tiles[i].transform.localPosition = Vector3.Lerp(tiles[i].transform.localPosition, endPosition, progress);
-                tiles[i].transform.localRotation = Quaternion.Slerp(tiles[i].transform.localRotation, endRotation, progress);
-                tiles[i].transform.localScale = Vector3.one * scale;
+                    //tileMat[y, x].targetPosition = endPosition;
+                    //tileMat[y, x].targetRotation = endRotation;
+                    //tileMat[y, x].targetScale = tileScale * Vector3.one;
+                    //tiles[i].transform.DOLocalMove(endPosition, 0.5f);
+                    //tiles[i].transform.DOLocalRotate(endRotation.eulerAngles, 0.5f);
+                    //tiles[i].transform.DOScale(tileScale * Vector3.one, 0.5f);
+
+                    tile.transform.localPosition = Vector3.Lerp(tile.transform.localPosition, endPosition, progress);
+                    tile.transform.localRotation = Quaternion.Slerp(tile.transform.localRotation, endRotation, progress);
+                    tile.transform.localScale = Vector3.one * finalScale;
+                }
             }
         }
     }
 
+    protected void BuildTileMatrix()
+    {
+        tileMat = new GameObject[ySegments, xSegments];
+
+        for (int i = 0; i < tiles.Count; i++)
+        {
+            //tiles[i].transform.SetParent(transform);
+            int x = (i / ySegments);
+            int y = (i % ySegments);
+
+            tileMat[y, x] = tiles[i].gameObject;
+        }
+    }
+
     void UpdateLayout() {
+        if (!autoLayout) return;
 
         // update tile positions
         //int tileCount = Mathf.Min(1000, tiles.Count);
@@ -170,78 +200,13 @@ public class CircleLayout : MonoBehaviour {
 
         }
 
-
-
         Debug.LogFormat("count: {3}, x={0}, sy={1}, sx={2}", bestResult.scale, bestResult.sy, bestResult.sx, tileCount);
 
         ySegments = bestResult.sy;
         xSegments = bestResult.sx;
         tileScale = bestResult.scale;
 
-        UpdatePositions(1);
     }
-
-    void LateUpdate() {
-        if (changing) return;
-
-        bool transition = false;
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            if (Input.GetKey(KeyCode.LeftControl))
-            {
-                tiles.Shuffle();
-            }
-            else
-            { 
-                tiles.Reverse();
-            }
-            transition = true;
-        }
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Saturation.Value.CompareTo(y.File.ImageStatistics.First().Saturation.Value));
-            transition = true;
-        }
-        if (Input.GetKeyUp(KeyCode.H))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Hue.Value.CompareTo(y.File.ImageStatistics.First().Hue.Value));
-            transition = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.L))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Lightness.Value.CompareTo(y.File.ImageStatistics.First().Lightness.Value));
-            transition = true;
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.V))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Variance.Value.CompareTo(y.File.ImageStatistics.First().Variance.Value));
-            transition = true;
-        }
-
-        if (Input.GetKeyUp(KeyCode.M))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Mean.Value.CompareTo(y.File.ImageStatistics.First().Mean.Value));
-            transition = true;
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            tiles.Sort((x, y) => x.File.ImageStatistics.First().Entropy.Value.CompareTo(y.File.ImageStatistics.First().Entropy.Value));
-            transition = true;
-        }
-        if (transition)
-        {
-            if (!Input.GetKey(KeyCode.LeftShift))
-            {
-                StartCoroutine(SwapTiles());
-            }
-        }
-    }
-
 
     private void Rotate(float from, float to, float duration, Transform transform)
     {
@@ -287,7 +252,6 @@ public class CircleLayout : MonoBehaviour {
             {
                 tile.transform.localRotation *= halfRevolution;
                 
-
                 Rotate(0, 180, duration, tile.transform);
             }
         }
