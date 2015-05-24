@@ -221,10 +221,48 @@ Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des
 
 \section{Aufbau}
 
+Der Indexer ist als parallelisiertes, knotenbasiertes System konzipiert worden. Die Parallelität wurde deshalb gewählt, weil es beim Einholen der verschiedenen Datenquellen teils zu Wartezeiten kommt, die gut anders genutzt werden können. Dieser Faktor kam besonders ins Spiel als noch zusätzlich zu den Musikdaten auch Bilderdaten gesammelt worden sind. Ein weiterer Grund ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte.
+
+
+
 
 \section{Datenquellen}
 
+Da IMVR zum Ziel hat, die Musik des Benutzers in verschiedenen Formen und Farben darzustellen, werden Daten von diversen Quellen benötigt. Wir leben in einer wundervollen Zeit in Sachen Datenvielfalt: Es gib viele Online-Services, welche zu einem Grossteil gratis sind, von denen man diverseste Daten erhalten kann.
 
+Es folgt eine kurze Zusammenstellung von untersuchten Datenquellen.
+
+
+\begin{table}[H]
+\caption{Eine Übersicht von verfügbaren Online-Datenquellen.}
+\centering
+\label{t:datasources}
+\begin{tabular}{ l l l }
+	\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+	\textbf{Name} & \textbf{Daten} & \textbf{API-Limite} \\ \midrule
+	Last.fm & Bilder, Meta-Daten & 1 Request / Sekunde \\
+	The Echo Nest & Bilder, Meta-Daten, Analyse-Daten & 120 Requests / Minute \\
+	Spotify & Bilder, Meta-Daten, Playlisten, Streams & ? \\
+	Amazon & Bilder, Beschreibungen & 1 Request / Sekunde \\
+	Gracenote & Bilder, Fingerprinting, Meta-Daten & $\sim$1000 Requests / Tag \\
+	MusicBrainz & Bilder, Meta-Daten & $\sim$1 Request / Sekunde \\
+	\noalign{\smallskip} \hline \noalign{\smallskip}
+\end{tabular}
+\end{table}
+
+Im Falle von IMVR kommen die Daten grundsätzlich von drei verschiedenen Quellen:
+
+\begin{itemize}	
+  \item ID3 Tags der Musik-Dateien
+  \item The Echo Nest
+  \item Last.fm
+\end{itemize}
+
+Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Seiten wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die in eine zentrale Position in IMVR haben.
+
+In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Wenn möglich wird auch gleich geprüft, ob ein Album-Cover hinterlegt ist.
+
+In einem zweiten Schritt wird über eine .NET Bibliothek, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
 
 \section{Datenstruktur}
 
