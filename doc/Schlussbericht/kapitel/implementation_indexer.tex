@@ -1,0 +1,77 @@
+\chapter{Implementation des Indexers}
+
+Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des Benutzers durchläuft und - wie es der Name vermuten lässt - interessante Dateien indexiert. In diesem Kapitel soll auf den Aufbau und die Implementationsdetails eingegangen werden.
+
+\section{Aufbau}
+
+Der Indexer ist als parallelisiertes, knotenbasiertes System konzipiert worden. Die Parallelität wurde deshalb gewählt, weil es beim Einholen der verschiedenen Datenquellen teils zu Wartezeiten kommt, die gut anders genutzt werden können. Dieser Faktor kam besonders ins Spiel als noch zusätzlich zu den Musikdaten auch Bilderdaten gesammelt worden sind.
+
+Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte.
+
+
+
+
+\section{Datenquellen}
+
+Da IMVR zum Ziel hat, die Musik des Benutzers in verschiedenen Formen und Farben darzustellen, werden Daten von diversen Quellen benötigt. Wir leben in einer wundervollen Zeit in Sachen Datenvielfalt: Es gib viele Online-Services, welche zu einem Grossteil gratis sind, von denen man diverse Daten erhalten kann.
+
+Es folgt eine kurze Zusammenstellung von untersuchten Datenquellen.
+
+
+\begin{table}[H]
+\caption{Eine Übersicht von verfügbaren Online-Datenquellen.}
+\centering
+\label{t:datasources}
+\begin{tabular}{ l l l }
+	\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+	\textbf{Name} & \textbf{Daten} & \textbf{API-Limite} \\ \midrule
+	Last.fm & Bilder, Meta-Daten & 1 Request / Sekunde \\
+	The Echo Nest & Bilder, Meta-Daten, Analyse-Daten & 120 Requests / Minute \\
+	Spotify & Bilder, Meta-Daten, Playlisten, Streams & ? \\
+	Amazon & Bilder, Beschreibungen & 1 Request / Sekunde \\
+	Gracenote & Bilder, Fingerprinting, Meta-Daten & $\sim$1000 Requests / Tag \\
+	MusicBrainz & Bilder, Meta-Daten & $\sim$1 Request / Sekunde \\
+	\noalign{\smallskip} \hline \noalign{\smallskip}
+\end{tabular}
+\end{table}
+
+Im Falle von IMVR kommen die Daten grundsätzlich von drei verschiedenen Quellen:
+
+\begin{itemize}	
+  \item ID3 Tags der Musik-Dateien
+  \item The Echo Nest
+  \item Last.fm
+\end{itemize}
+
+Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Seiten wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die in eine zentrale Position in IMVR haben.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\linewidth]{bilder/Indexer-DataFlow.pdf}
+\caption{Der Datenfluss, den die Files beim Indexieren nehmen.}
+\label{fig:Indexer-DataFlow}
+\end{figure}
+
+
+In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Wenn möglich wird auch gleich geprüft, ob ein Album-Cover hinterlegt ist.
+
+In einem zweiten Schritt wird über eine .NET Bibliothek, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
+
+\section{Datenstruktur}
+
+Für die Abspeicherung der Daten wurde zuerst ein Ansatz gewählt, der auf einer SQLite Datenbank basierte. Diese wurde in einem Prototyp auch erfolgreich implementiert. Es stellte sich jedoch heraus, dass diese Abhängigkeit das Programm unnötig verkomplizieren würde und eine simple In-Memory Datenstruktur völlig ausreicht.
+
+Das finale Produkt verwendet also eine simple, objektorientiert Datenstruktur, die serialisiert und so zwischen den zwei Projekten (Indexer und IMVR) geteilt werden kann. Das Schema ist in Abbildung \ref{fig:Indexer-Commons} zu sehen. Damit beide Projekte Zugriff auf die genutzten Klassen haben, wurde das Schema in eine separate DLL ausgelagert, die ebenfalls als Abhängigkeit in beiden Projekten referenziert wird.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{bilder/Indexer-IMVR-Commons.pdf}
+	\caption{Klassendiagramm für die Klassen im IMVR.Commons Package.}
+	\label{fig:Indexer-Commons}
+\end{figure}
+
+Anzumerken ist, dass mehrere Einstiegspunkte auf die Daten existieren und so eine gewisse Redundanz geschaffen wird. Diese Redundanz ist hilfreich, weil in IMVR mehrere Modi eben diese Einstiegspunkte benötigen. Aufgrund der gewählten Serialisierungsmethode entsteht jedoch kein grosser Speicher-Overhead.
+
+Die Serialisierung wird durch sogenannte Protocol Buffers \cite{wiki:protobufs} realisiert, wofür eine Open-Source Bibliothek namens \textit{protobuf-net} \footnote{\url{https://code.google.com/p/protobuf-net/}} existiert. Protocol Buffers ist ein binäres Datenformat, welches von Google Inc. entwickelt wurde und bekannt ist für seine Kompaktheit und Simplizität. Gewählt wurde es, weil die herkömmliche Serialisierung mit .NETs \code{BinaryFormatter} zum Teil zu Problemen mit Unity führen kann.
+
+\section{Herausforderungen}
