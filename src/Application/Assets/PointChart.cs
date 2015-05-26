@@ -99,8 +99,11 @@ public class PointChart : MonoBehaviour {
 
         helperMesh.vertices = helperVertices.ToArray();
 
-        meshFilter.mesh = new Mesh();
-        meshFilter.mesh.CombineMeshes(new CombineInstance[] {
+
+        // Clean up
+        Destroy(meshFilter.sharedMesh);
+        meshFilter.sharedMesh = new Mesh();
+        meshFilter.sharedMesh.CombineMeshes(new CombineInstance[] {
             new CombineInstance() {
                  mesh = axisMesh
             },
@@ -109,7 +112,7 @@ public class PointChart : MonoBehaviour {
             }
         }, false, false);
 
-        meshFilter.mesh.SetIndices(helperTris.ToArray(), MeshTopology.Lines, 1);
+        meshFilter.sharedMesh.SetIndices(helperTris.ToArray(), MeshTopology.Lines, 1);
 
 
 

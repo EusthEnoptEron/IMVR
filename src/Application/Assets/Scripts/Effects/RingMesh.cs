@@ -91,7 +91,7 @@ public class RingMesh : MonoBehaviour {
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
-        GameObject.Destroy(meshFilter.sharedMesh);
+        DestroyImmediate(meshFilter.sharedMesh);
         meshFilter.sharedMesh = mesh;
         _dirty = false;
 
