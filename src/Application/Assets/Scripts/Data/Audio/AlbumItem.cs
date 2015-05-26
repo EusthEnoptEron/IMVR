@@ -5,10 +5,23 @@ using UnityEngine.EventSystems;
 using System;
 
 
+public class AlbumEventArgs : EventArgs
+{
+    public Album Album { get; private set; }
+    public AlbumItem Item { get; private set; }
+
+    public AlbumEventArgs(AlbumItem item)
+    {
+        Album = item.album;
+        Item = item;
+    }
+}
+
 public class AlbumItem : MonoBehaviour, IPointerDownHandler
 {
     public Album album;
     private ArtistView _artistView;
+    public event EventHandler<AlbumEventArgs> Touched = delegate { };
 
     void Start()
     {
@@ -18,12 +31,14 @@ public class AlbumItem : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        _artistView.selector.transform.SetParent(transform, false);
+        Touched(this, new AlbumEventArgs(this));
 
-        _artistView.selector.songs.Clear();
-        _artistView.selector.songs.AddRange(album.Tracks);
+        //_artistView.selector.transform.SetParent(transform, false);
 
-        _artistView.selector.gameObject.SetActive(true);
-        //Jukebox.Instance.Play(song);
+        //_artistView.selector.songs.Clear();
+        //_artistView.selector.songs.AddRange(album.Tracks);
+
+        //_artistView.selector.gameObject.SetActive(true);
+
     }
 }

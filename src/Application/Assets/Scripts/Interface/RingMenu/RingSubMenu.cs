@@ -14,36 +14,31 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
     /// <summary>
     /// Gets called immediately after initialization and makes sure ItemNode is set.
     /// </summary>
-    protected void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         Items = new Dictionary<FingerType, RingMenuItem>();
 
         ItemNode = transform.Children().FirstOrDefault(child => child.name.ToLower() == "menu");
     }
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
-        if (ItemNode != null)
-        {
-
-            // Fill list of items
-            foreach (var child in ItemNode.Children())
-            {
-                child.gameObject.SetActive(false);
-                var item = child.GetComponent<RingMenuItem>();
-                if (item != null)
-                    Items.Add(item.fingerType, item);
-            }
-        }
-
-
         menu = transform.GetComponentInParent<RingMenu>();
         Level = transform.Ancestors().Count(parent => parent.GetComponent<RingSubMenu>() != null) + 1;
 
         var canvas = GetComponent<Canvas>();
         canvas.overrideSorting = true;
         canvas.sortingOrder = Level + 1;
+
+
+        if (ItemNode != null)
+        {
+
+            // Fill list of items
+            UpdateItems();
+        }
     }
 
 
@@ -90,8 +85,31 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
     }
 
 
-    public void UpdateList()
-    {    
+    public void Clear()
+    {
+        foreach (var item in Items.Values)
+        {
+            DestroyImmediate(item.gameObject);
+        }
+        Items.Clear();
+    }
+
+
+    public void UpdateItems()
+    {
+        Items = new Dictionary<FingerType, RingMenuItem>();
+        // Fill list of items
+        foreach (var child in ItemNode.Children())
+        {
+            child.gameObject.SetActive(menu.ActiveMenu == this);
+            var item = child.GetComponent<RingMenuItem>();
+            if (item != null)
+            {
+                Items.Add(item.fingerType, item);
+
+                item.SetVisibility(menu.ActiveMenu == this);
+            }
+        }
     }
 
 

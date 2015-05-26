@@ -138,14 +138,7 @@ public abstract class View : MonoBehaviour {
         GetCanvasGroups().ToList().ForEach(FadeIn);
     }
 
-    public virtual void BuildMenu()
-    {
-        var menuNode = Instantiate<GameObject>(pref_RingMenu);
-
-        OnBuildMenu(menuNode.GetComponent<RingMenu>());
-    }
-
-    public virtual void OnBuildMenu(RingMenu menuBase) {
+    public virtual void BuildMenu(RingMenu menuBase) {
     }
 
 }

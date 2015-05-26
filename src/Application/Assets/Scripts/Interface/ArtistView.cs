@@ -9,6 +9,7 @@ public class ArtistView : View {
 
     private GameObject m_artistView;
     private Transform m_albumList;
+    private Song[] _selectedSongs = new Song[0];
 
     public MusicSelection selector;
 
@@ -23,6 +24,7 @@ public class ArtistView : View {
     private static GameObject pref_Earth    = Resources.Load<GameObject>("Prefabs/Objects/pref_Earth");
     private static GameObject pref_songChart = Resources.Load<GameObject>("Prefabs/Objects/pref_SongChart");
 
+    private IRingMenu _artistMenu;
 
     private CanvasCircleLayout cylinder;
     protected override void Awake()
@@ -151,8 +153,12 @@ public class ArtistView : View {
         // Add cover
         var cover = albumView.transform.FindChild("Cover").GetComponent<UnityEngine.UI.Image>();
         cover.sprite = ImageAtlas.LoadSprite(album.Atlas);
+
         var albumItem = cover.gameObject.AddComponent<AlbumItem>();
-        albumItem.album = album;
+        {
+            albumItem.album = album;
+            albumItem.Touched += OnSelectAlbum;
+        }
 
         var songList = albumView.transform.FindChild("Songlist");
 
@@ -163,19 +169,120 @@ public class ArtistView : View {
             
             songItem.transform.SetParent(songList, false);
             songItem.song = song;
+            songItem.Touched += OnSelectSong;
         }
 
         return albumView;
     }
-
-    public override void OnBuildMenu(RingMenu menuBase)
+    
+    /// <summary>
+    /// Deselects whatever is selected
+    /// </summary>
+    private void OnSelectionChanged()
     {
-        var artistMenu = RingMenuBuilder.CreateMenu(FingerType.Pinky, artist.Name, menuBase);
+        // Make sure the old selection is removed
+        RingMenuItem item;
+        if (_artistMenu.Items.TryGetValue(FingerType.Pinky, out item))
         {
-            RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", artistMenu);
-            RingMenuBuilder.CreateItem(FingerType.Index, "Play", artistMenu);
-            RingMenuBuilder.CreateItem(FingerType.Middle, "Enqueue", artistMenu);
+            DestroyImmediate(item.gameObject);
+        }
+
+        // Make new selection
+        var songMenu = RingMenuBuilder.CreateMenu(
+            FingerType.Pinky, 
+            _selectedSongs.Length > 1
+            ? _selectedSongs[0].Album.Name
+            : _selectedSongs[0].Title, 
+            _artistMenu
+        );
+        {
+            var cancelItem = RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", songMenu);
+            var playItem = RingMenuBuilder.CreateItem(FingerType.Index, "Play", songMenu);
+            var enqueueItem = RingMenuBuilder.CreateItem(FingerType.Middle, "Enqueue", songMenu);
+
+            // Set up actions
+            cancelItem.OnClick.AddListener(OnCancelSongs);
+            playItem.OnClick.AddListener(OnPlaySongs);
+            enqueueItem.OnClick.AddListener(OnEnqueueSongs);
+        }
+        _artistMenu.UpdateItems();
+    }
+
+    private void OnEnqueueSongs()
+    {
+        Jukebox.Instance.Playlist.Add(_selectedSongs);
+    }
+
+    private void OnPlaySongs()
+    {
+        Jukebox.Instance.Playlist.Override(_selectedSongs);
+        Jukebox.Instance.Playlist.MoveForward();
+    }
+
+    private void OnCancelSongs()
+    {
+
+    }
+
+
+    #region Event Handlers
+
+    private void OnSelectSong(object sender, SongEventArgs e)
+    {
+        _selectedSongs = new Song[] { e.Song };
+
+        OnSelectionChanged();
+    }
+
+    private void OnSelectAlbum(object sender, AlbumEventArgs e)
+    {
+        _selectedSongs = e.Album.Tracks.ToArray();
+
+        OnSelectionChanged();
+    }
+
+
+    public override void BuildMenu(RingMenu menuBase)
+    {
+        _artistMenu = RingMenuBuilder.CreateMenu(FingerType.Pinky, artist.Name, menuBase);
+        {
+            var cancelItem  = RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", _artistMenu);
+            var playItem    = RingMenuBuilder.CreateItem(FingerType.Index, "Play", _artistMenu);
+            var enqueueItem = RingMenuBuilder.CreateItem(FingerType.Middle, "Enqueue", _artistMenu);
+        
+            // Set up actions
+            cancelItem.OnClick.AddListener(OnCancel);
+            playItem.OnClick.AddListener(OnPlay);
+            enqueueItem.OnClick.AddListener(OnEnqueue);
         }
 
     }
+
+    private void OnEnqueue()
+    {
+        // Add all songs to playlist
+        Jukebox.Instance.Playlist.Add(
+            artist.Albums.SelectMany(album => album.Tracks)    
+        );
+
+    }
+
+    private void OnPlay()
+    {
+        // Override all items in playlist...
+        Jukebox.Instance.Playlist.Override(
+            artist.Albums.SelectMany(album => album.Tracks)
+        );
+
+        // Go ahead and play the new playlist!
+        Jukebox.Instance.Playlist.MoveForward();
+    }
+
+    private void OnCancel()
+    {
+        RingMenu.Instance.GoBack();
+    }
+
+    #endregion
+
 }

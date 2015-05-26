@@ -10,7 +10,8 @@ public interface IRingMenu {
     /// <summary>
     /// Updates the list of items inside this menu.
     /// </summary>
-    void UpdateList();
+    void Clear();
+    void UpdateItems();
 
     Transform Node { get; }
     Transform ItemNode { get; }

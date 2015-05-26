@@ -216,10 +216,15 @@ public abstract class ModeController : MonoBehaviour
 
     private IEnumerator BuildMenu()
     {
-        GameObject.Destroy(RingMenu.Instance.gameObject);
-        
+
         yield return null;
 
-        ActiveView.BuildMenu();
+        var menu = RingMenu.Instance;
+        menu.RemoveItem(FingerType.Pinky);
+
+        ActiveView.BuildMenu(menu);
+
+        menu.UpdateItems();
+
     }
 }

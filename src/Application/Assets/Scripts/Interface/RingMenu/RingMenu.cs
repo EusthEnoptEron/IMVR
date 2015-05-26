@@ -24,18 +24,26 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         get { return _activeMenu ?? this; }
         set
         {
+            // Active menu changed!
+            //----------------------
+
+            // Hide all items of the *currently active* menu
             foreach (var child in ActiveMenu.Items.Values)
                 child.SetVisibility(false);
 
+            // Hide the currently active menu itself
             var self = ActiveMenu.Node.GetComponent<RingMenuItem>();
             if (self != null) self.SetVisibility(false);
 
+            // Swap
             _activeMenu = value;
             ActiveMenu.Node.gameObject.SetActiveInHierarchy(true);
 
+            // Make all ancestors that must be visible visible (they will appear stacked on the palm)
             foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
                 ancestor.SetVisibility(true);
 
+            // Make direct children visible
             foreach (var child in ActiveMenu.Items.Values)
             {
                 child.SetVisibility(true);
@@ -56,14 +64,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 	void Start () {
         this.canvasGroup = GetComponent<CanvasGroup>();
 
-        Items = new Dictionary<FingerType, RingMenuItem>();
-        // Fill list of items
-        foreach (var child in transform.Children())
-        {
-            var item = child.GetComponent<RingMenuItem>();
-            if (item != null)
-                Items.Add(item.fingerType, item);
-        }
+        UpdateItems();
 
         ActiveMenu = null;
 	}
@@ -262,14 +263,58 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 
 
 
-    public void UpdateList()
+    public void Clear()
     {
+        foreach(var item in Items.Values) {
+            DestroyImmediate(item.gameObject);
+        }
+        Items.Clear();
     }
 
 
+    public void UpdateItems()
+    {
+        Items = new Dictionary<FingerType, RingMenuItem>();
+        // Fill list of items
+        foreach (var child in transform.Children())
+        {
+            child.gameObject.SetActive(ActiveMenu == this && activated);
+            var item = child.GetComponent<RingMenuItem>();
+            if (item != null)
+            {
+                Items.Add(item.fingerType, item);
+                item.SetVisibility(ActiveMenu == this && activated);
+            }
+        }
+    }
+    
     public Transform ItemNode
     {
         get { return Node; }
+    }
+
+    internal void GoBack()
+    {
+        if (ActiveMenu != null)
+        {
+            // Skip one because this will also get the current menu itself
+            ActiveMenu = ActiveMenu.Node.GetComponentsInParent<IRingMenu>().Skip(1).First();
+        }
+    }
+
+
+
+    internal void RemoveItem(FingerType fingerType)
+    {
+        RingMenuItem item;
+
+        if (Items.TryGetValue(fingerType, out item))
+        {
+            GameObject.DestroyImmediate(item);
+            UpdateItems();
+
+        }
+
     }
 }
 

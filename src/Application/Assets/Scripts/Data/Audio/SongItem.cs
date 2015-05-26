@@ -3,12 +3,26 @@ using IMVR.Commons;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using UnityEngine.Events;
 
+public class SongEventArgs : EventArgs
+{
+    public Song Song { get; private set; }
+    public SongItem Item { get; private set; }
+
+    public SongEventArgs(SongItem item)
+    {
+        Song = item.song;
+        Item = item;
+    }
+}
 
 [RequireComponent(typeof(Text))]
 public class SongItem : MonoBehaviour, IPointerDownHandler {
     public Song song;
     private ArtistView _artistView;
+
+    public event EventHandler<SongEventArgs> Touched = delegate { };
 
 	// Use this for initialization
 	void Start () {
@@ -23,12 +37,14 @@ public class SongItem : MonoBehaviour, IPointerDownHandler {
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        _artistView.selector.transform.SetParent(transform, false);
+        Touched(this, new SongEventArgs(this));
 
-        _artistView.selector.songs.Clear();
-        _artistView.selector.songs.Add(song);
+        //_artistView.selector.transform.SetParent(transform, false);
 
-        _artistView.selector.gameObject.SetActive(true);
+        //_artistView.selector.songs.Clear();
+        //_artistView.selector.songs.Add(song);
+
+        //_artistView.selector.gameObject.SetActive(true);
         //Jukebox.Instance.Play(song);
     }
 }

@@ -19,13 +19,12 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
     public class ButtonClickedEvent : UnityEvent { }
 
     // Event delegates triggered on click.
-    [SerializeField]
-    private ButtonClickedEvent m_OnClick = new ButtonClickedEvent();
+    public ButtonClickedEvent OnClick = new ButtonClickedEvent();
 
     public float Progress { get; set; }
 
 	// Use this for initialization
-	protected virtual void Start () {
+	protected virtual void Awake () {
         torus = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Torus") as GameObject);
         torus.transform.SetParent(transform, false);
 
@@ -114,7 +113,7 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
         if (!IsActive())
             return;
 
-        m_OnClick.Invoke();
+        OnClick.Invoke();
     }
 
     // Trigger all registered callbacks.
