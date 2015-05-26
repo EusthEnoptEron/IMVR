@@ -6,7 +6,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class RingMenu : MonoBehaviour, IRingMenu {
+public class RingMenu : Singleton<RingMenu>, IRingMenu {
     /// <summary>
     /// The hand to which this ring menu applies to.
     /// </summary>
@@ -31,7 +31,7 @@ public class RingMenu : MonoBehaviour, IRingMenu {
             if (self != null) self.SetVisibility(false);
 
             _activeMenu = value;
-            ActiveMenu.Node.SetActiveInHierarchy(true);
+            ActiveMenu.Node.gameObject.SetActiveInHierarchy(true);
 
             foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
                 ancestor.SetVisibility(true);
@@ -67,6 +67,7 @@ public class RingMenu : MonoBehaviour, IRingMenu {
 
         ActiveMenu = null;
 	}
+
 
     public void ChangeMenu(Transform activeMenu)
     {
@@ -253,11 +254,22 @@ public class RingMenu : MonoBehaviour, IRingMenu {
 
 
 
-    public GameObject Node
+    public Transform Node
     {
-        get { return gameObject; }
+        get { return transform; }
     }
 
 
+
+
+    public void UpdateList()
+    {
+    }
+
+
+    public Transform ItemNode
+    {
+        get { return Node; }
+    }
 }
 

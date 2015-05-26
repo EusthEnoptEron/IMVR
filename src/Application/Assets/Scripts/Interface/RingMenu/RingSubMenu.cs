@@ -9,21 +9,26 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Canvas))]
 public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
 
-    private Transform submenuNode;
     private RingMenu menu;
-   
 
-    protected override void Awake()
+    /// <summary>
+    /// Gets called immediately after initialization and makes sure ItemNode is set.
+    /// </summary>
+    protected void Awake()
     {
-        base.Awake();
         Items = new Dictionary<FingerType, RingMenuItem>();
 
-        submenuNode = transform.Children().FirstOrDefault(child => child.name.ToLower() == "menu");
-        if (submenuNode != null)
+        ItemNode = transform.Children().FirstOrDefault(child => child.name.ToLower() == "menu");
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        if (ItemNode != null)
         {
 
             // Fill list of items
-            foreach (var child in submenuNode.Children())
+            foreach (var child in ItemNode.Children())
             {
                 child.gameObject.SetActive(false);
                 var item = child.GetComponent<RingMenuItem>();
@@ -79,8 +84,20 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         private set;
     }
 
-    public GameObject Node
+    public Transform Node
     {
-        get { return gameObject; }
+        get { return transform; }
+    }
+
+
+    public void UpdateList()
+    {    
+    }
+
+
+    public Transform ItemNode
+    {
+        get;
+        private set;
     }
 }

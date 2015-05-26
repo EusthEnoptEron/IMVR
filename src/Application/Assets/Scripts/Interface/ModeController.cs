@@ -24,7 +24,6 @@ public abstract class ModeController : MonoBehaviour
     {
         viewStack = new Stack<View>();
         viewStack.Push(null);
-
     }
 
 
@@ -45,13 +44,11 @@ public abstract class ModeController : MonoBehaviour
 
         if (HandProvider.Instance.GetGestureEnter("Push Down"))
         {
-            Debug.Log("PUSH DOWN");
             StartCoroutine(HandlePushDown(0.05f));
         }
 
         if (HandProvider.Instance.GetGesture("Pull Up"))
         {
-            Debug.Log("SHOW");
             foreach (var view in viewStack)
             {
                 view.Enable();
@@ -109,14 +106,12 @@ public abstract class ModeController : MonoBehaviour
 
                 if (distance > requiredDistance)
                 {
-                    Debug.Log("YAY");
                     foreach (var view in viewStack)
                         view.Disable();
                 }
             }
             else
             {
-                Debug.Log("LEAVE");
                 break;
             }
 
@@ -144,6 +139,9 @@ public abstract class ModeController : MonoBehaviour
         viewStack.Push(activeView);
 
         activeView.Enable();
+
+        OnViewChanged();
+
     }
 
     public T ChangeView<T>() where T : View
@@ -178,6 +176,7 @@ public abstract class ModeController : MonoBehaviour
         view.Disable();
 
         PullStack();
+        OnViewChanged();
 
         return view;
     }
@@ -209,4 +208,18 @@ public abstract class ModeController : MonoBehaviour
         NavigateToMetaGroup((MetaGroup)System.Enum.Parse(typeof(MetaGroup), group, false));
     }
 
+
+    private void OnViewChanged()
+    {
+        StartCoroutine(BuildMenu());
+    }
+
+    private IEnumerator BuildMenu()
+    {
+        GameObject.Destroy(RingMenu.Instance.gameObject);
+        
+        yield return null;
+
+        ActiveView.BuildMenu();
+    }
 }

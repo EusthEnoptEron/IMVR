@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public abstract class View : MonoBehaviour {
     private int level = 0;
+    private static GameObject pref_RingMenu = Resources.Load<GameObject>("Prefabs/UI/pref_RingMenu");
 
     protected virtual void Awake()
     {
@@ -136,4 +137,15 @@ public abstract class View : MonoBehaviour {
     {
         GetCanvasGroups().ToList().ForEach(FadeIn);
     }
+
+    public virtual void BuildMenu()
+    {
+        var menuNode = Instantiate<GameObject>(pref_RingMenu);
+
+        OnBuildMenu(menuNode.GetComponent<RingMenu>());
+    }
+
+    public virtual void OnBuildMenu(RingMenu menuBase) {
+    }
+
 }

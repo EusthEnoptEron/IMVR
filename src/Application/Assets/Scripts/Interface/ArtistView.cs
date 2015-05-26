@@ -2,6 +2,7 @@
 using IMVR.Commons;
 using UnityEngine.UI;
 using System.Linq;
+using Gestures;
 
 public class ArtistView : View {
     public Artist artist;
@@ -165,5 +166,16 @@ public class ArtistView : View {
         }
 
         return albumView;
+    }
+
+    public override void OnBuildMenu(RingMenu menuBase)
+    {
+        var artistMenu = RingMenuBuilder.CreateMenu(FingerType.Pinky, artist.Name, menuBase);
+        {
+            RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", artistMenu);
+            RingMenuBuilder.CreateItem(FingerType.Index, "Play", artistMenu);
+            RingMenuBuilder.CreateItem(FingerType.Middle, "Enqueue", artistMenu);
+        }
+
     }
 }

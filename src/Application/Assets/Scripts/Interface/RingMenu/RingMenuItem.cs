@@ -25,9 +25,9 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
     public float Progress { get; set; }
 
 	// Use this for initialization
-	protected virtual void Awake () {
+	protected virtual void Start () {
         torus = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Torus") as GameObject);
-        torus.transform.SetParent(transform);
+        torus.transform.SetParent(transform, false);
 
         //torus.GetComponent<MeshRenderer>().material.SetColor("_MainColor", color);
         torus.GetComponentInChildren<Image>().color = color;
