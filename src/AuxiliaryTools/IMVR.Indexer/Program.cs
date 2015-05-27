@@ -44,7 +44,7 @@ namespace IMVR.Indexer
                 //db.Folders.Add(@"C:\Users\Simon\Pictures");
                 //db.Folders.Add(@"C:\Users\Simon\Music");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\August Burns Red");
-                db.Folders.Add(@"C:\Users\meers1\Music\Music");
+                db.Folders.Add(@"D:\Music");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Comeback Kid");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Cyua");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Dantalian");
@@ -110,6 +110,7 @@ namespace IMVR.Indexer
                 Konsole.WriteLine(" DB size               : {0:0.00}MB", new FileInfo(Options.Instance.DBPath).Length / 1024d / 1024d);
                 Konsole.WriteLine("-----------------------------------------");
 
+                Konsole.Close();
 
                 Console.ReadLine();
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,17 @@ namespace IMVR.Indexer
 {
     public static class Konsole
     {
+        private static StreamWriter _streamWriter;
+        private static StreamWriter Writer
+        {
+            get
+            {
+                if (_streamWriter == null)
+                    _streamWriter = new StreamWriter("output.log", false);
+                return _streamWriter;
+            }
+        }
+
         private static object lockObj = new object();
 
         public static void WriteLine(object text, ConsoleColor color = ConsoleColor.Gray)
@@ -24,6 +36,9 @@ namespace IMVR.Indexer
                     Console.ForegroundColor = color;
                     Console.WriteLine(text);
                     Console.ForegroundColor = oldColor;
+
+                    Writer.WriteLine("[" + DateTime.Now.ToShortTimeString() + "] " +  text);
+                    Writer.Flush();
                     //Console.Out.Flush();
                 }
             }
@@ -91,6 +106,12 @@ namespace IMVR.Indexer
                 return String.Format("[{0}] {1}", Name, text);
             }
 
+        }
+
+
+        internal static void Close()
+        {
+            Writer.Dispose();
         }
     }
 }

@@ -24,8 +24,12 @@ namespace IMVR.Indexer
             Out.Color = ConsoleColor.Blue;
             _session = new EchoNestSession(API_KEY, true);
             _manager.TileSize = 256;
-            _manager.XPowerOf2 = 9; // 512
-            _manager.YPowerOf2 = 9; // 512
+            //_manager.XPowerOf2 = 9; // 512
+            //_manager.YPowerOf2 = 9; // 512
+
+            _manager.XPowerOf2 = 12; // 4096
+            _manager.YPowerOf2 = 12; // 4096
+
         }
 
         protected override void ProcessItem(Artist artist)
@@ -58,13 +62,13 @@ namespace IMVR.Indexer
                                 {
                                     Out.Log("Found a matching song!");
                                     artistID = song.ArtistID;
-                                    track.Danceability = (float)song.AudioSummary.Danceability;
+                                    track.Danceability = (float?)song.AudioSummary.Danceability;
                                     track.Energy = (float)song.AudioSummary.Energy;
                                     track.Tempo = (float)song.AudioSummary.Tempo;
-                                    track.Valence = (float)song.AudioSummary.Valence;
+                                    track.Valence = (float?)song.AudioSummary.Valence;
                                     track.Speechiness = (float?)song.AudioSummary.Speechiness;
-                                    track.Liveness = (float)song.AudioSummary.Liveness;
-                                    track.Instrumentalness = (float)song.AudioSummary.Instrumentalness;
+                                    track.Liveness = (float?)song.AudioSummary.Liveness;
+                                    track.Instrumentalness = (float?)song.AudioSummary.Instrumentalness;
                                 }
                             }
                         }
@@ -110,6 +114,21 @@ namespace IMVR.Indexer
                 artist.Biography = profile.Artist.Biographies.Count > 0
                                     ? profile.Artist.Biographies.First().Text
                                     : "";
+
+                ForeignIdItem twitterCatalog = null;
+                ForeignIdItem mbCatalog = null;
+                if (profile.Artist.ForeignIds != null)
+                {
+                    twitterCatalog = profile.Artist.ForeignIds.FirstOrDefault(id => id.Catalog == "twitter");
+                    mbCatalog = profile.Artist.ForeignIds.FirstOrDefault(id => id.Catalog == "musicbrainz");
+                }
+
+                artist.TwitterHandle = twitterCatalog != null ? twitterCatalog.ID.Replace("twitter:artist:", "") : null;
+                artist.MusicBrainzId = mbCatalog != null ? mbCatalog.ID.Replace("musicbrainz:artist:", "") : null;
+
+                if (artist.TwitterHandle != null)
+                    Out.WriteLine("Found twitter handle: {0}", artist.TwitterHandle);
+
                 artist.Familiarity = (float)(profile.Artist.Familiarity ?? float.NaN);
                 artist.Hotttness = (float)(profile.Artist.Hotttnesss ?? float.NaN);
                 artist.Terms.AddRange(profile.Artist.Terms.Select(item => new TermItem()
@@ -185,6 +204,8 @@ namespace IMVR.Indexer
                        ArtistBucket.Images |
                        ArtistBucket.Hotttnesss | 
                        ArtistBucket.YearsActive | 
+                       ArtistBucket.IdMusicBrainz |
+                       ArtistBucket.IdTwitter |
                        ArtistBucket.ArtistLocation;
             }
         }
