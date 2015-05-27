@@ -198,6 +198,7 @@ public class ArtistView : View {
             _selectedSongs.Length > 1
             ? _selectedSongs[0].Album.Name
             : _selectedSongs[0].Title,
+            ImageAtlas.LoadSprite(_selectedSongs[0].Album.Atlas),
             _artistMenu
         );
         {
@@ -248,7 +249,7 @@ public class ArtistView : View {
 
     public override void BuildMenu(RingMenu menuBase)
     {
-        _artistMenu = RingMenuBuilder.CreateMenu(FingerType.Pinky, artist.Name, menuBase);
+        _artistMenu = RingMenuBuilder.CreateMenu(FingerType.Pinky, artist.Name, ImageAtlas.LoadSprite(artist.Pictures.Count > 0 ? artist.Pictures[0] : null), menuBase);
         {
             var cancelItem  = RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", _artistMenu);
             var playItem    = RingMenuBuilder.CreateItem(FingerType.Index, "Play", _artistMenu);

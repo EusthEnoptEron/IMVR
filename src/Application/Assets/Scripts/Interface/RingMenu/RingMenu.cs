@@ -5,6 +5,7 @@ using System.Linq;
 using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class RingMenu : Singleton<RingMenu>, IRingMenu {
     /// <summary>
@@ -18,7 +19,12 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private CanvasGroup canvasGroup;
     public IDictionary<FingerType, RingMenuItem> Items { get; private set; }
 
+    private GameObject _stack;
+
     private IRingMenu _activeMenu;
+
+    [SerializeField]
+    private Sprite _sprite;
 
     /// <summary>
     /// Gets whether or not the menu is currently opened.
@@ -56,18 +62,19 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             _activeMenu = value;
             ActiveMenu.Node.gameObject.SetActiveInHierarchy(true);
 
-            // Make all ancestors that must be visible visible (they will appear stacked on the palm)
-            foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
-                ancestor.SetVisibility(true);
+            //// Make all ancestors that must be visible visible (they will appear stacked on the palm)
+            //foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
+            //    ancestor.SetVisibility(true);
 
             // Make direct children visible
             foreach (var child in ActiveMenu.Items.Values)
             {
                 child.SetVisibility(true);
             }
+
+            OnChangeMenu();
         }
     }
-
 
 
     /// <summary>
@@ -84,20 +91,24 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private FingerType? submitCandidate;
     private float submitDelta = 0;
 
+    void Awake()
+    {
+    }
 	// Use this for initialization
 	void Start () {
+        _stack = new GameObject("Stack");
+        _stack.transform.SetParent(transform.parent);
+
         this.canvasGroup = GetComponent<CanvasGroup>();
+
+        RingMenuBuilder.CreateItem(FingerType.Middle, "Test", this);
 
         UpdateItems();
 
         ActiveMenu = null;
+
 	}
 
-
-    public void ChangeMenu(Transform activeMenu)
-    {
-
-    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -109,16 +120,16 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             if ((activated && ShouldMaintainMenu(hand)) 
                 || ShouldShowMenu(hand))
             {
-                UpdateOrders();
+            //    UpdateOrders();
                 UpdateHand(hand);
                 SetState(true);
-
-                UpdatePosition(hand);
             }
             else
             {
                 SetState(false);
             }
+            UpdatePosition(hand);
+
         }
         else
         {
@@ -187,6 +198,10 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 
     void UpdatePosition(GenericHand hand)
     {
+        _stack.transform.position = hand.PalmPosition;
+        _stack.transform.rotation = Quaternion.LookRotation(-hand.PalmNormal,
+            Vector3.Cross(-hand.PalmNormal, hand.PalmDirection).normalized);
+
         //transform.position = hand.PalmPosition + Camera.main.transform.TransformDirection(Vector3.right * 0.2f);
     }
 
@@ -248,15 +263,15 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         if (activated != enabled)
         {
             if (!enabled) ActiveMenu = null;
+            else ActiveMenu = EntryPoint;
 
             activated = enabled;
 
-            canvasGroup.DOKill();
-            var animation = canvasGroup.DOFade(activated ? 1 : 0, 0.5f);
+            Fade(activated ? 1 : 0, 0.5f);
 
             // Make all ancestors that must be visible visible (they will appear stacked on the palm)
-            foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
-                ancestor.SetVisibility(enabled);
+            //foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
+            //    ancestor.SetVisibility(enabled);
 
             foreach (var child in ActiveMenu.Items.Values)
             {
@@ -264,6 +279,19 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             }
             //if (activated) SetChildren();
             //else animation.OnComplete(SetChildren);
+        }
+    }
+
+    private void Fade(float target, float time)
+    {
+        foreach (var group in transform.GetComponentsInChildren<CanvasGroup>())
+        {
+            group.DOFade(target, time);
+        }
+
+        foreach (var sprite in _stack.GetComponentsInChildren<SpriteRenderer>())
+        {
+            sprite.DOFade(target, time);
         }
     }
 
@@ -316,6 +344,8 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
                 item.SetVisibility(ActiveMenu == this && activated);
             }
         }
+
+
     }
     
     public Transform ItemNode
@@ -357,7 +387,6 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             if (EntryPoint != null && EntryPoint.Node.IsChildOf(item.transform))
             {
                 EntryPoint = menu;
-                Debug.Log("Entrypoint -> " + menu.Node.name);
 
             }
 
@@ -387,14 +416,48 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         if (asEntryPoint)
             EntryPoint = menu;
 
-        Debug.Log("Entrypoint -> " + menu.Node.name);
     }
 
+
+    private void OnChangeMenu()
+    {
+        BuildStack();
+    }
+
+    private void BuildStack()
+    {
+        // Clean up
+        foreach (var child in _stack.transform.Children())
+            Destroy(child.gameObject);
+
+        var menus = ActiveMenu.Node.GetComponentsInParent<IRingMenu>().Reverse().ToArray();
+        for (int i = 0; i < menus.Length; i++)
+        {
+            var img = new GameObject().AddComponent<SpriteRenderer>();
+            img.transform.SetParent(_stack.transform, false);
+            img.sortingOrder = i;
+            img.sprite = menus[i].Thumbnail;
+            if (img.sprite != null)
+            {
+                img.transform.localScale =
+                    Vector3.one / (img.sprite.rect.width / img.sprite.pixelsPerUnit) * 0.1f;
+                img.transform.localPosition += Vector3.back * ((i + 1) * 0.02f);
+            }
+
+        }
+    }
 
 
     public bool Exists
     {
         get { return this != null; }
+    }
+
+
+    public Sprite Thumbnail
+    {
+        get { return _sprite; }
+        set { _sprite = value; }
     }
 }
 

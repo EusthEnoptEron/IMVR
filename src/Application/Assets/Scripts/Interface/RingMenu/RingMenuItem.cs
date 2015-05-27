@@ -6,14 +6,15 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CanvasGroup))]
-public class RingMenuItem : UIBehaviour, IPointerClickHandler {
+public class RingMenuItem : MonoBehaviour, IPointerClickHandler {
+    public Canvas ui;
+    public Text text;
+    public Image circle;
+
     public FingerType fingerType = FingerType.Index;
-    public float pixelsRatio = 1000;
+    public float width = 0.05f;
     public Color color = Color.blue;
     public float heightDifference = 0;
-
-    private GameObject torus;
 
     [System.Serializable]
     public class ButtonClickedEvent : UnityEvent { }
@@ -23,15 +24,16 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
 
     public float Progress { get; set; }
 
+    private float fullScale;
+
 	// Use this for initialization
 	protected virtual void Awake () {
-        torus = GameObject.Instantiate<GameObject>(Resources.Load("Prefabs/Torus") as GameObject);
-        torus.transform.SetParent(transform, false);
-
         //torus.GetComponent<MeshRenderer>().material.SetColor("_MainColor", color);
-        torus.GetComponentInChildren<Image>().color = color;
+        circle.color = color;
 
-        transform.localScale = Vector3.zero;
+        fullScale = width / 500f;
+
+        ui.transform.localScale = Vector3.zero;
       //  InitLineRenderer();
 	}
 
@@ -58,23 +60,23 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
             // Place myself
             Vector3 distance = new Vector3(0.1f, heightDifference, 0f);
 
-            transform.position = finger.GetBone(BoneType.Distal).Position;//hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Intermediate).Position - hand.PalmPosition, Camera.main.transform.forward) * 2f;// + Camera.main.transform.TransformDirection(distance);
-            transform.rotation = Quaternion.LookRotation((transform.position - Camera.main.transform.position).normalized);
+            ui.transform.position = finger.GetBone(BoneType.Distal).Position;//hand.PalmPosition + Vector3.ProjectOnPlane(finger.GetBone(BoneType.Intermediate).Position - hand.PalmPosition, Camera.main.transform.forward) * 2f;// + Camera.main.transform.TransformDirection(distance);
+            ui.transform.rotation = Quaternion.LookRotation((ui.transform.position - Camera.main.transform.position).normalized);
 
             // Place torus
-            torus.GetComponentInChildren<Image>().transform.localRotation *= Quaternion.Euler(0, 0, (180 + Progress * 1000) * Time.deltaTime);
+            circle.transform.localRotation *= Quaternion.Euler(0, 0, (180 + Progress * 1000) * Time.deltaTime);
 
             BoneType startBone = Progress > 0.5f ? BoneType.Intermediate : BoneType.Distal;
             BoneType endBone   = startBone - 1;
             var v1 = finger.GetBone(startBone).Position;
             var v2 = finger.GetBone(endBone).Position;
 
-            torus.transform.position = Vector3.Lerp(v1, v2, (Progress * 2) % 1 );
+            circle.transform.position = Vector3.Lerp(v1, v2, (Progress * 2) % 1);
 
-            if (Progress > 0)
-                torus.transform.rotation = Quaternion.LookRotation((v1 - v2).normalized);
-            else
-                torus.transform.rotation = Quaternion.LookRotation((torus.transform.position - Camera.main.transform.position).normalized);
+            //if (Progress > 0)
+            //    circle.transform.rotation = Quaternion.LookRotation((v1 - v2).normalized);
+            //else
+            //    circle.transform.rotation = Quaternion.LookRotation((circle.transform.position - Camera.main.transform.position).normalized);
             //torus.transform.localScale = Vector3.one * 0.02f;
             
            // UpdateLineRenderer(torus.transform.position, transform.position);
@@ -96,21 +98,27 @@ public class RingMenuItem : UIBehaviour, IPointerClickHandler {
 
 
     public virtual void SetVisibility(bool visible)    {
-        var targetSize = visible ? Vector3.one : Vector3.zero;
-        transform.DOKill();
-        var transition = transform.DOScale(targetSize, 0.5f);
+        var targetSize = visible ? Vector3.one * fullScale : Vector3.zero;
+        ui.transform.DOKill();
+        var transition = ui.transform.DOScale(targetSize, 0.5f);
 
         if (!visible) transition.OnComplete(delegate
             {
                 // TODO: Enable when this strange bug is fixed...
-                //gameObject.SetActive(false);
+                ui.gameObject.SetActive(false);
+                enabled = false;
             });
-        else gameObject.SetActive(true);
+        else
+        {
+            ui.gameObject.SetActive(true);
+            enabled = true;
+        }
+
     }
 
     private void Press()
     {
-        if (!IsActive())
+        if (!gameObject.activeInHierarchy || !enabled)
             return;
 
         OnClick.Invoke();

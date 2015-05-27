@@ -15,4 +15,6 @@ public interface IRingMenu {
 
     Transform Node { get; }
     Transform ItemNode { get; }
+
+    Sprite Thumbnail { get; }
 }

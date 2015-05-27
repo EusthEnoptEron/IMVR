@@ -37,11 +37,13 @@ public static class RingMenuBuilder {
         return item.GetComponent<RingMenuItem>();
 	}
 
-    public static RingSubMenu CreateMenu(FingerType finger, string text, IRingMenu parent)
+    public static RingSubMenu CreateMenu(FingerType finger, string text, Sprite sprite, IRingMenu parent)
     {
         var item = GameObject.Instantiate<GameObject>(SubmenuPrefab);
 
         Initialize(item, finger, text, parent);
+        var menu = item.GetComponent<RingSubMenu>();
+        menu.Thumbnail = sprite;
 
         return item.GetComponent<RingSubMenu>();
     }
@@ -50,10 +52,11 @@ public static class RingMenuBuilder {
     {
         // Update names
         item.name = text;
-        item.GetComponentInChildren<Text>().text = text;
+
         var menuItem = item.GetComponent<RingMenuItem>();
         menuItem.fingerType = finger;
-
+        menuItem.text.text = text;
+        
         // Set parent
         item.transform.SetParent(parent.ItemNode.transform);
     }

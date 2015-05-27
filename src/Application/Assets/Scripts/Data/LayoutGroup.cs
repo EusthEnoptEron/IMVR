@@ -10,6 +10,7 @@ using Gestures;
 public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler {//, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
+    private List<GameObject> children = new List<GameObject>();
 
     private int m_fingers = 0;
     public float heightPerElement = 50;
@@ -86,6 +87,8 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler 
         {
             child.SetAsFirstSibling();
         }
+
+        children = gos;
     }
 
     protected override void OnDestroy()
@@ -157,17 +160,19 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler 
                                                      layout.Radius);
 
         // Do culling
-        foreach (var child in layout.transform.Children())
+        foreach (var child in children)
         {
             if (Vector3.Dot(child.transform.forward, transform.forward) < 0)
             {
                 // Disable
-                child.GetComponent<CanvasGroup>().alpha = 0;
+                child.SetActive(false);
+                //child.GetComponent<CanvasGroup>().alpha = 0;
             }
             else
             {
                 // Enable
-                child.GetComponent<CanvasGroup>().alpha = 1;
+                child.SetActive(true);
+                //child.GetComponent<CanvasGroup>().alpha = 1;
             }
         }
 

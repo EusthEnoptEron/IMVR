@@ -6,9 +6,9 @@ using Gestures;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Canvas))]
 public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
-
+    [SerializeField]
+    private Sprite _thumbnail;
     private RingMenu menu;
     private bool _destroying = false;
 
@@ -29,14 +29,8 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         menu = transform.GetComponentInParent<RingMenu>();
         Level = transform.Ancestors().Count(parent => parent.GetComponent<RingSubMenu>() != null) + 1;
 
-        var canvas = GetComponent<Canvas>();
-        canvas.overrideSorting = true;
-        canvas.sortingOrder = Level + 1;
-
-
         if (ItemNode != null)
         {
-
             // Fill list of items
             UpdateItems();
         }
@@ -124,4 +118,9 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         get { return this != null; }
     }
 
+    public Sprite Thumbnail
+    {
+        get;
+        set;
+    }
 }

@@ -40,7 +40,7 @@ public class CylinderRaycaster : BaseRaycaster {
             if (castInChildren)
             {
                 int before = resultAppendList.Count;
-                cylinder.GetComponentsInChildren<BaseRaycaster>()
+                tile.GetComponentsInChildren<BaseRaycaster>()
                     .Where(raycaster => !raycaster.enabled)
                     .ToList()
                     .ForEach(raycaster => raycaster.Raycast(eventData, resultAppendList));
