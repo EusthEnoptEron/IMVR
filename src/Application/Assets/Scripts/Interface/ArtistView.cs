@@ -175,6 +175,11 @@ public class ArtistView : View {
         return albumView;
     }
     
+
+
+    #region Event Handlers
+
+
     /// <summary>
     /// Deselects whatever is selected
     /// </summary>
@@ -184,15 +189,15 @@ public class ArtistView : View {
         RingMenuItem item;
         if (_artistMenu.Items.TryGetValue(FingerType.Pinky, out item))
         {
-            DestroyImmediate(item.gameObject);
+            RingMenu.Instance.Remove(item);
         }
 
         // Make new selection
         var songMenu = RingMenuBuilder.CreateMenu(
-            FingerType.Pinky, 
+            FingerType.Pinky,
             _selectedSongs.Length > 1
             ? _selectedSongs[0].Album.Name
-            : _selectedSongs[0].Title, 
+            : _selectedSongs[0].Title,
             _artistMenu
         );
         {
@@ -206,6 +211,8 @@ public class ArtistView : View {
             enqueueItem.OnClick.AddListener(OnEnqueueSongs);
         }
         _artistMenu.UpdateItems();
+
+        RingMenu.Instance.Navigate(songMenu, true);
     }
 
     private void OnEnqueueSongs()
@@ -221,11 +228,8 @@ public class ArtistView : View {
 
     private void OnCancelSongs()
     {
-
+        RingMenu.Instance.Navigate(_artistMenu, true);
     }
-
-
-    #region Event Handlers
 
     private void OnSelectSong(object sender, SongEventArgs e)
     {
@@ -256,6 +260,7 @@ public class ArtistView : View {
             enqueueItem.OnClick.AddListener(OnEnqueue);
         }
 
+        RingMenu.Instance.Navigate(_artistMenu, true);
     }
 
     private void OnEnqueue()

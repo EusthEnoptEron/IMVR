@@ -55,7 +55,7 @@ public static class RingMenuBuilder {
         menuItem.fingerType = finger;
 
         // Set parent
-        item.transform.SetParent(parent.ItemNode);
+        item.transform.SetParent(parent.ItemNode.transform);
     }
 
 }

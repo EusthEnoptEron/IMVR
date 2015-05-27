@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
 
     private RingMenu menu;
+    private bool _destroying = false;
 
     /// <summary>
     /// Gets called immediately after initialization and makes sure ItemNode is set.
@@ -101,7 +102,7 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         // Fill list of items
         foreach (var child in ItemNode.Children())
         {
-            child.gameObject.SetActive(menu.ActiveMenu == this);
+            //child.gameObject.SetActive(menu.ActiveMenu == this);
             var item = child.GetComponent<RingMenuItem>();
             if (item != null)
             {
@@ -118,4 +119,9 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         get;
         private set;
     }
+    public bool Exists
+    {
+        get { return this != null; }
+    }
+
 }

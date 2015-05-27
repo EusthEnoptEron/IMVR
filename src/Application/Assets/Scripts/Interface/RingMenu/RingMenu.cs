@@ -19,11 +19,28 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     public IDictionary<FingerType, RingMenuItem> Items { get; private set; }
 
     private IRingMenu _activeMenu;
+
+    /// <summary>
+    /// Gets whether or not the menu is currently opened.
+    /// </summary>
+    public bool IsOpened
+    {
+        get
+        {
+            return activated;
+        }
+    }
+
+
     public IRingMenu ActiveMenu
     {
-        get { return _activeMenu ?? this; }
+        get {
+            return (_activeMenu ?? EntryPoint) ?? this;
+        
+        }
         set
         {
+            if (!IsOpened) return;
             // Active menu changed!
             //----------------------
 
@@ -51,6 +68,13 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         }
     }
 
+
+
+    /// <summary>
+    /// Gets or sets the entry point when opening the ring menu.
+    /// </summary>
+    public IRingMenu EntryPoint;
+
     public int Level
     {
         get;
@@ -77,6 +101,8 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 	
 	// Update is called once per frame
 	void Update () {
+ 
+
         var hand = HandProvider.Instance.GetHand(HandType.Left, NoHandStrategy.SetNull);
         if (hand != null)
         {
@@ -221,12 +247,16 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     {
         if (activated != enabled)
         {
-            activated = enabled;
+            if (!enabled) ActiveMenu = null;
 
-            if (!activated) ActiveMenu = null;
+            activated = enabled;
 
             canvasGroup.DOKill();
             var animation = canvasGroup.DOFade(activated ? 1 : 0, 0.5f);
+
+            // Make all ancestors that must be visible visible (they will appear stacked on the palm)
+            foreach (var ancestor in ActiveMenu.Node.GetComponentsInParent<RingMenuItem>())
+                ancestor.SetVisibility(enabled);
 
             foreach (var child in ActiveMenu.Items.Values)
             {
@@ -278,7 +308,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         // Fill list of items
         foreach (var child in transform.Children())
         {
-            child.gameObject.SetActive(ActiveMenu == this && activated);
+            //child.gameObject.SetActive(ActiveMenu == this && activated);
             var item = child.GetComponent<RingMenuItem>();
             if (item != null)
             {
@@ -298,7 +328,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         if (ActiveMenu != null)
         {
             // Skip one because this will also get the current menu itself
-            ActiveMenu = ActiveMenu.Node.GetComponentsInParent<IRingMenu>().Skip(1).First();
+            ActiveMenu = ActiveMenu.Node.parent.GetComponentInParent<IRingMenu>();
         }
     }
 
@@ -310,11 +340,61 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 
         if (Items.TryGetValue(fingerType, out item))
         {
-            GameObject.DestroyImmediate(item);
-            UpdateItems();
-
+            Remove(item);
         }
+    }
 
+    public void Remove(RingMenuItem item)
+    {
+        if (item)
+        {
+            var menu = item.transform.parent.GetComponentInParent<IRingMenu>();
+
+            // Make sure the menu isn't active
+            if (ActiveMenu.Node.IsChildOf(item.transform))
+                ActiveMenu = menu;
+
+            if (EntryPoint != null && EntryPoint.Node.IsChildOf(item.transform))
+            {
+                EntryPoint = menu;
+                Debug.Log("Entrypoint -> " + menu.Node.name);
+
+            }
+
+            GameObject.DestroyImmediate(item.gameObject);
+
+            menu.UpdateItems();
+        }
+        else
+        {
+            ActiveMenu = null;
+            EntryPoint = null;
+        }
+      
+    }
+
+    public void Navigate(IRingMenu menu, bool asEntryPoint = false)
+    {
+        StartCoroutine(DeferredNavigate(menu, asEntryPoint));
+    }
+
+    private IEnumerator DeferredNavigate(IRingMenu menu, bool asEntryPoint = false)
+    {
+        yield return null;
+
+        if(IsOpened)
+            ActiveMenu = menu;
+        if (asEntryPoint)
+            EntryPoint = menu;
+
+        Debug.Log("Entrypoint -> " + menu.Node.name);
+    }
+
+
+
+    public bool Exists
+    {
+        get { return this != null; }
     }
 }
 

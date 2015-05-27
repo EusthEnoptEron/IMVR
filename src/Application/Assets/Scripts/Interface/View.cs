@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 public abstract class View : MonoBehaviour {
     private int level = 0;
-    private static GameObject pref_RingMenu = Resources.Load<GameObject>("Prefabs/UI/pref_RingMenu");
 
     protected virtual void Awake()
     {
