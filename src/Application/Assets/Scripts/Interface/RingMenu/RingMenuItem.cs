@@ -12,7 +12,7 @@ public class RingMenuItem : MonoBehaviour, IPointerClickHandler {
     public Image circle;
 
     public FingerType fingerType = FingerType.Index;
-    public float width = 0.05f;
+    public float width = 0.03f;
     public Color color = Color.blue;
     public float heightDifference = 0;
 
@@ -31,7 +31,7 @@ public class RingMenuItem : MonoBehaviour, IPointerClickHandler {
         //torus.GetComponent<MeshRenderer>().material.SetColor("_MainColor", color);
         circle.color = color;
 
-        fullScale = width / 500f;
+        fullScale = width / ui.GetComponent<RectTransform>().rect.width;
 
         ui.transform.localScale = Vector3.zero;
       //  InitLineRenderer();

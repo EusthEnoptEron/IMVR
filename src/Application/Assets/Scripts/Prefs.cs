@@ -9,7 +9,7 @@ public class Prefs : Singleton<Prefs> {
     {
         get
         {
-            return Path.Combine(Application.dataPath, "database.bin");
+            return Path.Combine(Application.dataPath, "database_old.bin");
         }
     }
 

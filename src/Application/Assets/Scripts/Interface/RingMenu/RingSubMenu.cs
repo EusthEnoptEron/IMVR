@@ -123,4 +123,11 @@ public class RingSubMenu : RingMenuItem, IPointerClickHandler, IRingMenu {
         get;
         set;
     }
+
+
+    public string InfoText
+    {
+        get;
+        set;
+    }
 }

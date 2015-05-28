@@ -59,7 +59,7 @@ public abstract class View : MonoBehaviour {
         this.enabled = enabled;
         foreach (var group in GetCanvasGroups())
         {
-            group.interactable = enabled;
+            //group.interactable = enabled;
             group.blocksRaycasts = enabled;
             group.Fade(enabled ? 1 : 0.5f, 0.5f);
         }

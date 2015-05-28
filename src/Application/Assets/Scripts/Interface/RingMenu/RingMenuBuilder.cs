@@ -44,7 +44,8 @@ public static class RingMenuBuilder {
         Initialize(item, finger, text, parent);
         var menu = item.GetComponent<RingSubMenu>();
         menu.Thumbnail = sprite;
-
+        menu.InfoText = text;
+       
         return item.GetComponent<RingSubMenu>();
     }
 

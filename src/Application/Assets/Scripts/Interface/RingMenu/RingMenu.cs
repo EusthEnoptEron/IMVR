@@ -22,6 +22,8 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private GameObject _stack;
 
     private IRingMenu _activeMenu;
+    private static GameObject pref_PalmThumbnail = Resources.Load<GameObject>("Prefabs/UI/pref_PalmThumbnail");
+
 
     [SerializeField]
     private Sprite _sprite;
@@ -41,7 +43,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     public IRingMenu ActiveMenu
     {
         get {
-            return (_activeMenu ?? EntryPoint) ?? this;
+            return _activeMenu ?? this;
         
         }
         set
@@ -94,6 +96,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     void Awake()
     {
     }
+
 	// Use this for initialization
 	void Start () {
         _stack = new GameObject("Stack");
@@ -101,7 +104,10 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 
         this.canvasGroup = GetComponent<CanvasGroup>();
 
-        RingMenuBuilder.CreateItem(FingerType.Middle, "Test", this);
+        RingMenuBuilder.CreateItem(FingerType.Index, "Play", this);
+
+        RingMenuBuilder.CreateItem(FingerType.Middle, "Sound Settings", this);
+        RingMenuBuilder.CreateItem(FingerType.Ring, "Shuffle", this);
 
         UpdateItems();
 
@@ -263,9 +269,11 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         if (activated != enabled)
         {
             if (!enabled) ActiveMenu = null;
-            else ActiveMenu = EntryPoint;
 
             activated = enabled;
+
+            if(enabled) ActiveMenu = EntryPoint;
+
 
             Fade(activated ? 1 : 0, 0.5f);
 
@@ -289,9 +297,9 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             group.DOFade(target, time);
         }
 
-        foreach (var sprite in _stack.GetComponentsInChildren<SpriteRenderer>())
+        foreach (var group in _stack.GetComponentsInChildren<CanvasGroup>())
         {
-            sprite.DOFade(target, time);
+            group.DOFade(target, time);
         }
     }
 
@@ -433,17 +441,18 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         var menus = ActiveMenu.Node.GetComponentsInParent<IRingMenu>().Reverse().ToArray();
         for (int i = 0; i < menus.Length; i++)
         {
-            var img = new GameObject().AddComponent<SpriteRenderer>();
-            img.transform.SetParent(_stack.transform, false);
-            img.sortingOrder = i;
-            img.sprite = menus[i].Thumbnail;
-            if (img.sprite != null)
-            {
-                img.transform.localScale =
-                    Vector3.one / (img.sprite.rect.width / img.sprite.pixelsPerUnit) * 0.1f;
-                img.transform.localPosition += Vector3.back * ((i + 1) * 0.02f);
-            }
+            var imgContainer = Instantiate(pref_PalmThumbnail).GetComponent<RectTransform>();
+            var imgText = imgContainer.GetComponentInChildren<Text>();
+            var img = imgContainer.GetComponentInChildren<Image>();
 
+            //var img = new GameObject().AddComponent<SpriteRenderer>();
+            imgContainer.transform.SetParent(_stack.transform, false);
+            img.sprite = menus[i].Thumbnail;
+            imgText.text = menus[i].InfoText;
+
+            imgContainer.transform.localScale =
+                Vector3.one / (imgContainer.rect.width) * 0.1f;
+            imgContainer.transform.localPosition += Vector3.back * ((i + 1) * 0.02f);
         }
     }
 
@@ -458,6 +467,12 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     {
         get { return _sprite; }
         set { _sprite = value; }
+    }
+
+    public string InfoText
+    {
+        get;
+        set;
     }
 }
 

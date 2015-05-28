@@ -61,22 +61,22 @@ public class ArtistView : View {
         {
 
             // BUILD BIOGHRAPHY
-            if (artist.Biography != null)
-            {
-                var textObj = GameObject.Instantiate<GameObject>(pref_biography);
-                var text = textObj.GetComponentInChildren<Text>();
+            //if (artist.Biography != null)
+            //{
+            //    var textObj = GameObject.Instantiate<GameObject>(pref_biography);
+            //    var text = textObj.GetComponentInChildren<Text>();
 
-                textObj.transform.SetParent(transform, false);
-                textObj.transform.localScale /= 800f;
-                textObj.transform.localPosition = Vector3.forward + Vector3.up;
-                //text.rectTransform.sizeDelta = new Vector2(800, 800);
-                if (artist.Biography.Length > 1000)
-                    text.text = artist.Biography.Substring(0, 1000) + "...";
-                else
-                    text.text = artist.Biography;
-                //text.resizeTextForBestFit = true;
-                //text.font = ResourceManager.Arial;
-            }
+            //    textObj.transform.SetParent(transform, false);
+            //    textObj.transform.localScale /= 800f;
+            //    textObj.transform.localPosition = Vector3.forward + Vector3.up;
+            //    //text.rectTransform.sizeDelta = new Vector2(800, 800);
+            //    if (artist.Biography.Length > 1000)
+            //        text.text = artist.Biography.Substring(0, 1000) + "...";
+            //    else
+            //        text.text = artist.Biography;
+            //    //text.resizeTextForBestFit = true;
+            //    //text.font = ResourceManager.Arial;
+            //}
 
 
             //m_artistView = GameObject.Instantiate<GameObject>(
@@ -192,6 +192,12 @@ public class ArtistView : View {
             RingMenu.Instance.Remove(item);
         }
 
+        string title;
+        if (_selectedSongs.Length > 1)
+            title = System.String.Format("Album ({0}):\n {1}", _selectedSongs.Length, _selectedSongs.First().Album.Name);
+        else 
+            title = System.String.Format("Song:\n {0}", _selectedSongs[0].Title);
+
         // Make new selection
         var songMenu = RingMenuBuilder.CreateMenu(
             FingerType.Pinky,
@@ -201,6 +207,8 @@ public class ArtistView : View {
             ImageAtlas.LoadSprite(_selectedSongs[0].Album.Atlas),
             _artistMenu
         );
+        songMenu.InfoText = title;
+
         {
             var cancelItem = RingMenuBuilder.CreateItem(FingerType.Thumb, "Cancel", songMenu);
             var playItem = RingMenuBuilder.CreateItem(FingerType.Index, "Play", songMenu);
