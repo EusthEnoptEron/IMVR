@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using IMVR.Commons;
+using System.Collections.Generic;
 
 public static class ResourceManager {
 
     private static Font _arial;
     private static Font _roboto;
     private static IMDB _db;
+    private static Dictionary<string, Sprite> _icons = new Dictionary<string, Sprite>();
 
     public static Font Arial
     {
@@ -38,6 +40,20 @@ public static class ResourceManager {
         }
     }
 
+    public static Sprite GetIcon(string name)
+    {
+        Sprite icon;
+        if (_icons.TryGetValue(name, out icon))
+        {
+            return icon;
+        }
+        else
+        {
+            icon = Resources.Load<Sprite>("Sprites/" + name);
+            _icons.Add(name, icon);
+            return icon;
+        }
+    }
 }
 
 public static class World

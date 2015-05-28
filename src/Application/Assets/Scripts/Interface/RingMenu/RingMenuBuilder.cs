@@ -30,26 +30,36 @@ public static class RingMenuBuilder {
 
     public static RingMenuItem CreateItem(FingerType finger, string text, IRingMenu parent)
     {
-        var item = GameObject.Instantiate<GameObject>(ItemPrefab);
-
-        Initialize(item, finger, text, parent);
-
-        return item.GetComponent<RingMenuItem>();
+        return CreateItem(finger, text, null, parent);
 	}
 
-    public static RingSubMenu CreateMenu(FingerType finger, string text, Sprite sprite, IRingMenu parent)
+    public static RingMenuItem CreateItem(FingerType finger, string text, Sprite icon, IRingMenu parent)
+    {
+        var item = GameObject.Instantiate<GameObject>(ItemPrefab);
+
+        Initialize(item, finger, text, icon, parent);
+
+        return item.GetComponent<RingMenuItem>();
+    }
+
+    public static RingSubMenu CreateMenu(FingerType finger, string text, Sprite icon, Sprite sprite, IRingMenu parent)
     {
         var item = GameObject.Instantiate<GameObject>(SubmenuPrefab);
 
-        Initialize(item, finger, text, parent);
+        Initialize(item, finger, text, icon, parent);
         var menu = item.GetComponent<RingSubMenu>();
         menu.Thumbnail = sprite;
         menu.InfoText = text;
-       
+
         return item.GetComponent<RingSubMenu>();
     }
 
-    private static void Initialize(GameObject item, FingerType finger, string text, IRingMenu parent)
+    public static RingSubMenu CreateMenu(FingerType finger, string text, Sprite sprite, IRingMenu parent)
+    {
+        return CreateMenu(finger, text, null, sprite, parent);
+    }
+
+    private static void Initialize(GameObject item, FingerType finger, string text, Sprite icon, IRingMenu parent)
     {
         // Update names
         item.name = text;
@@ -57,7 +67,12 @@ public static class RingMenuBuilder {
         var menuItem = item.GetComponent<RingMenuItem>();
         menuItem.fingerType = finger;
         menuItem.text.text = text;
+
+        var img = menuItem.ui.GetComponent<Image>();
         
+        img.sprite = icon;
+        if (icon == null) img.color = Color.clear;
+
         // Set parent
         item.transform.SetParent(parent.ItemNode.transform);
     }
