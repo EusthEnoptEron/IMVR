@@ -18,7 +18,7 @@ public class SongEventArgs : EventArgs
 }
 
 [RequireComponent(typeof(Text))]
-public class SongItem : MonoBehaviour, IPointerDownHandler {
+public class SongItem : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler {
     public Song song;
     private ArtistView _artistView;
 
@@ -29,6 +29,7 @@ public class SongItem : MonoBehaviour, IPointerDownHandler {
         GetComponent<Text>().text = String.Format("{0:00}. {1}", song.TrackNo, song.Title);
         _artistView = GetComponentInParent<ArtistView>();
 	}
+
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -46,5 +47,15 @@ public class SongItem : MonoBehaviour, IPointerDownHandler {
 
         //_artistView.selector.gameObject.SetActive(true);
         //Jukebox.Instance.Play(song);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+
     }
 }

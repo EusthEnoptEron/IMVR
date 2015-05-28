@@ -3,13 +3,13 @@ using System.Collections;
 using System.Linq;
 using IMVR.Commons;
 
-[RequireComponent(typeof(CircleLayout))]
+[RequireComponent(typeof(CylinderLayout))]
 public class ImageSorter : MonoBehaviour {
-    private CircleLayout layout;
+    private CylinderLayout layout;
 
     public void Start()
     {
-        layout = GetComponent<CircleLayout>();
+        layout = GetComponent<CylinderLayout>();
     }
 
     public void Update()
@@ -21,10 +21,10 @@ public class ImageSorter : MonoBehaviour {
         Debug.Log("SORT");
         var property = typeof(Image).GetProperty(propertyName);
 
-        layout.tiles = layout.tiles.OfType<ImageTile>().OrderBy(tile =>
-        {
-            return property.GetValue(tile.Image, null);
-        }).Cast<Tile>().ToList();
+        //layout.tiles = layout.tiles.OfType<ImageTile>().OrderBy(tile =>
+        //{
+        //    return property.GetValue(tile.Image, null);
+        //}).Cast<GameObject>().ToList();
 
     }
 

@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class CanvasCircleLayout : CircleLayout
+public class CanvasCircleLayout : CylinderLayout
 {
     protected override void Start()
     {

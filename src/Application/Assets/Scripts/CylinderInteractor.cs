@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine.EventSystems;
 
 
-[RequireComponent(typeof(CircleLayout))]
+[RequireComponent(typeof(CylinderLayout))]
 public class CylinderInteractor : MonoBehaviour {
     internal enum Direction
     {
@@ -20,7 +20,7 @@ public class CylinderInteractor : MonoBehaviour {
 
     private HandProvider handInput;
     private VelocityMeasurer measurer = new VelocityMeasurer();
-    private CircleLayout layout;
+    private CylinderLayout layout;
     private Direction _direction = Direction.Unknown;
     
 
@@ -35,7 +35,7 @@ public class CylinderInteractor : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         handInput = HandProvider.Instance;
-        layout = GetComponent<CircleLayout>();
+        layout = GetComponent<CylinderLayout>();
 	}
 	
 	// Update is called once per frame

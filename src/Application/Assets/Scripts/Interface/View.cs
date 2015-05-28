@@ -64,7 +64,7 @@ public abstract class View : MonoBehaviour {
             group.Fade(enabled ? 1 : 0.5f, 0.5f);
         }
 
-        var circle = GetComponent<CircleLayout>();
+        var circle = GetComponent<CylinderLayout>();
         if (circle)
         {
             var raycaster = circle.GetComponent<CylinderRaycaster>();
@@ -101,7 +101,7 @@ public abstract class View : MonoBehaviour {
 
     protected virtual void OnPush()
     {
-        var circle = GetComponentInChildren<CircleLayout>();
+        var circle = GetComponentInChildren<CylinderLayout>();
         if (circle != null)
         {
             // Increase radius
@@ -115,7 +115,7 @@ public abstract class View : MonoBehaviour {
 
     protected virtual void OnPull()
     {
-        var circle = GetComponentInChildren<CircleLayout>();
+        var circle = GetComponentInChildren<CylinderLayout>();
         if (circle != null)
         {
             // Increase radius

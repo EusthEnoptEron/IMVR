@@ -3,6 +3,7 @@ using IMVR.Commons;
 using UnityEngine.UI;
 using System.Linq;
 using Gestures;
+using System.Collections.Generic;
 
 public class ArtistView : View {
     public Artist artist;
@@ -26,26 +27,29 @@ public class ArtistView : View {
 
     private IRingMenu _artistMenu;
 
-    private CanvasCircleLayout cylinder;
+    private CylinderLayout cylinder;
+    private List<GameObject> tileList = new List<GameObject>();
     protected override void Awake()
     {
         base.Awake();
 
         // Move down by 50cm
-        transform.localPosition += Vector3.down * 0.5f;
+        //transform.localPosition += Vector3.down * 0.5f;
 
-        var canvas = gameObject.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        gameObject.AddComponent<GraphicRaycaster>();
-
+        //var canvas = gameObject.AddComponent<Canvas>();
+        //canvas.renderMode = RenderMode.WorldSpace;
+        //gameObject.AddComponent<GraphicRaycaster>();
+        gameObject.AddComponent<CanvasGroup>();
 
         // BUILD CYLINDER
-        cylinder = new GameObject().AddComponent<CanvasCircleLayout>();
+        cylinder = new GameObject().AddComponent<CylinderLayout>();
         cylinder.transform.SetParent(transform, false);
         cylinder.radius = 0.5f;
         cylinder.height = 1;
-        cylinder.scale = 1 / 800f;
+        cylinder.scale = 1;
         cylinder.Resize(10, 1);
+
+        cylinder.autoLayout = false;
 
         cylinder.gameObject.AddComponent<CylinderInteractor>();
 
@@ -93,23 +97,24 @@ public class ArtistView : View {
             selector = GameObject.Instantiate<GameObject>(pref_selector).GetComponent<MusicSelection>();
             selector.gameObject.SetActive(false);
 
-            int i = 0;
-
-            cylinder.SetTile(9, 0, InitGeneralInfo());
-            cylinder.SetTile(i++, 0, InitEarth());
 
             // Build song chart
             var chart = GameObject.Instantiate<GameObject>(pref_songChart).GetComponent<SongMetaChart>();
+
+            cylinder.SetTile(9, 0, InitGeneralInfo());
             cylinder.SetTile(8, 0, chart.gameObject);
-            chart.transform.localScale /= (cylinder.scale * 2);
-            chart.transform.localPosition += Vector3.up / (cylinder.scale * 3);
+            cylinder.SetTile(7, 0, InitEarth());
+
+
+            chart.transform.localPosition = Vector3.zero;
             chart.SetSongs(artist.Albums.SelectMany(album => album.Tracks));
 
-
+            int i = 0;
             foreach (var album in artist.Albums)
             {
                 cylinder.SetTile(i++, 0, InitAlbum(album));
             }
+
         }
     }
 
@@ -117,8 +122,8 @@ public class ArtistView : View {
     {
         var info = GameObject.Instantiate<GameObject>(pref_artistInfo);
 
-        var picture = info.transform.FindChild("Picture").GetComponent<UnityEngine.UI.Image>();
-        var nameObj = info.transform.FindChild("Name").GetComponent<Text>();
+        var picture = info.transform.FindRecursively("Picture").GetComponent<UnityEngine.UI.Image>();
+        var nameObj = info.transform.FindRecursively("Name").GetComponent<Text>();
 
         var ticket = artist.Pictures.FirstOrDefault();
         if (ticket != null)
@@ -126,8 +131,9 @@ public class ArtistView : View {
 
         nameObj.text = artist.Name;
 
+        SizeCanvas(info.GetComponent<RectTransform>());
 
-        return info;
+        return (info);
     }
 
     private GameObject InitEarth()
@@ -135,8 +141,8 @@ public class ArtistView : View {
         var earth = GameObject.Instantiate<GameObject>(pref_Earth);
         var marker = earth.GetComponentInChildren<GalleryVR.Dbg.EarthPlacer>();
         
-        marker.transform.localScale *= 15;
-        marker.transform.localPosition += Vector3.up * 3 * Tile.PIXELS_PER_UNIT;
+        //marker.transform.localScale *= 15;
+        //marker.transform.localPosition += Vector3.up * 3 * Tile.PIXELS_PER_UNIT;
 
         marker.latitude = artist.Coordinate.Latitude;
         marker.longitude = artist.Coordinate.Longitude;
@@ -151,7 +157,7 @@ public class ArtistView : View {
         //albumView.transform.SetParent(m_albumList, false);
         
         // Add cover
-        var cover = albumView.transform.FindChild("Cover").GetComponent<UnityEngine.UI.Image>();
+        var cover = albumView.transform.FindRecursively("Cover").GetComponent<UnityEngine.UI.Image>();
         cover.sprite = ImageAtlas.LoadSprite(album.Atlas);
 
         var albumItem = cover.gameObject.AddComponent<AlbumItem>();
@@ -160,7 +166,7 @@ public class ArtistView : View {
             albumItem.Touched += OnSelectAlbum;
         }
 
-        var songList = albumView.transform.FindChild("Songlist");
+        var songList = albumView.transform.FindRecursively("Songlist");
 
         // Add songs
         foreach (var song in album.Tracks)
@@ -172,7 +178,36 @@ public class ArtistView : View {
             songItem.Touched += OnSelectSong;
         }
 
+        SizeCanvas(albumView.GetComponent<RectTransform>());
         return albumView;
+    }
+
+    private GameObject Wrap(GameObject unwrappedUI)
+    {
+        var canvas = new GameObject().AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+
+        canvas.gameObject.AddComponent<GraphicRaycaster>();
+        canvas.gameObject.AddComponent<CanvasGroup>();
+
+        var rect = canvas.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(500, 5000);
+        rect.pivot = new Vector2(0.5f, 0.85f);
+
+        //rect.rect.Set(0, 0, 500, 500);
+
+        unwrappedUI.transform.SetParent(canvas.transform, false);
+
+        // scale to one meter
+        SizeCanvas(rect);
+
+        return canvas.gameObject;
+    }
+
+    private void SizeCanvas(RectTransform rect)
+    {
+        rect.localPosition = Vector3.zero;
+        rect.localScale = Vector3.one / rect.rect.width;
     }
     
 

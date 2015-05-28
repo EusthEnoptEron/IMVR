@@ -67,7 +67,7 @@ public class ImageManager : MonoBehaviour {
         //    //offset += buffer.Count();
         //}
 
-        GetComponent<CircleLayout>().tiles = tiles;
+        //GetComponent<CylinderLayout>().tiles = tiles.Select(t => t.gameObject).ToList();
     }
 
 	// Update is called once per frame

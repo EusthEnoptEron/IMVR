@@ -5,16 +5,16 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-[RequireComponent(typeof(CircleLayout))]
+[RequireComponent(typeof(CylinderLayout))]
 public class CylinderRaycaster : BaseRaycaster {
     private const float D3_EPSILON = 0.01f;
     private Camera camera;
     public bool castInChildren = true;
-    CircleLayout cylinder;
+    CylinderLayout cylinder;
 
     public void Start()
     {
-        cylinder = GetComponent<CircleLayout>();
+        cylinder = GetComponent<CylinderLayout>();
         camera = Camera.main;
         //camera = GameObject.FindGameObjectWithTag("ForegroundCamera").GetComponentInChildren<Camera>();
     }

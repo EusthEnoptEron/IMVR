@@ -5,6 +5,8 @@ public class BrowseController : ModeController {
     protected override void Start()
     {
         LoadingScreen.Instance.enabled = true;
-        ChangeView<ArtistOverView>();
+        var view = ChangeView<ArtistOverView>();
+        //view.artist = ResourceManager.DB.Artists[0];
+       
     }
 }

@@ -6,15 +6,22 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System;
 
-[RequireComponent(typeof(TileBlanket))]
-public class CircleLayout : MonoBehaviour {
+public class CylinderLayout : MonoBehaviour {
+    private List<GameObject> _tiles = new List<GameObject>();
+
     [HideInInspector]
-    public virtual List<Tile> tiles {
+    public virtual List<GameObject> tiles {
         get {
-            return blanket.tiles;
+            return _tiles;
         }
-        set {
-            blanket.SetTiles(value);
+        protected set {
+            transform.DetachChildren();
+
+            _tiles = value.Select<GameObject, GameObject>(Wrap).ToList();
+
+            foreach (var tile in _tiles)
+                tile.transform.SetParent(transform, false);
+
             UpdateLayout();
 
             BuildTileMatrix();
@@ -22,7 +29,30 @@ public class CircleLayout : MonoBehaviour {
         }
     }
 
-    public GameObject[,] tileMat;
+    public virtual void SetTiles(IEnumerable<GameObject> tiles)
+    {
+        this.tiles = tiles.ToList();
+    }
+
+    public virtual void SetTile(int x, int y, GameObject tile)
+    {
+        if (tileMat[y, x])
+            tileMat[y, x].transform.parent = null;
+
+        tileMat[y, x] = Wrap(tile);
+        tileMat[y, x].transform.SetParent(transform, false);
+
+        _dirty = true;
+    }
+
+    protected virtual GameObject Wrap(GameObject obj)
+    {
+        var wrapper = new GameObject();
+        obj.transform.SetParent(wrapper.transform, false);
+        return wrapper;
+    }
+
+    protected GameObject[,] tileMat;
 
     public bool ignoreHeight = true;
     public bool autoLayout = true;
@@ -36,16 +66,14 @@ public class CircleLayout : MonoBehaviour {
     public int ySegments { get; protected set; }
     public float tileScale { get; protected set; }
 
-    public float scale = 1f / Tile.PIXELS_PER_UNIT;
-
-    private TileBlanket blanket;
+    public float scale = 1f;
 
     private Transform world;
     protected virtual void Start() {
         tileScale = tileScale == 0 ? 1 : tileScale;
-        blanket = GetComponent<TileBlanket>();
+
         //world = GameObject.FindGameObjectWithTag("ForegroundCamera").transform;
-        world = GameObject.Find("World").transform;
+        world = World.WorldNode.transform;
 
         xSegments = Mathf.Max(1, xSegments);
         ySegments = Mathf.Max(1, ySegments);
@@ -66,8 +94,14 @@ public class CircleLayout : MonoBehaviour {
         }
 
         //Debug.Log("iüdate");
-        UpdatePositions(Time.deltaTime * 5);
+        if (_dirty)
+            UpdatePositions(1);
+        else
+            UpdatePositions(Time.deltaTime * 5);
+
+        _dirty = false;
     }
+
 
     public virtual GameObject GetTileAtPosition(Vector3 pos)
     {
@@ -86,12 +120,38 @@ public class CircleLayout : MonoBehaviour {
 
         if(ignoreHeight) y = Mathf.Clamp(y, 0, tileMat.GetLength(0)-1);
 
-        if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0)
+        if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0
+            && tileMat[y, x] != null)
             return tileMat[y, x].gameObject;
         else
             return null;
     }
 
+    /// <summary>
+    /// Resizes the internal matrix. This action will remove all tiles.
+    /// </summary>
+    /// <param name="xTiles"></param>
+    /// <param name="yTiles"></param>
+    public void Resize(int xTiles, int yTiles)
+    {
+        ySegments = yTiles;
+        xSegments = xTiles;
+
+        tileMat = new GameObject[yTiles, xTiles];
+        tileScale = radius * 2 * Mathf.Tan(Mathf.PI / xTiles);
+
+
+        //for (int y = 0; y < yTiles; y++)
+        //{
+        //    for (int x = 0; x < xTiles; x++)
+        //    {
+        //        var rect = new GameObject().AddComponent<RectTransform>();
+        //        tileMat[y, x] = rect.gameObject;
+        //        rect.transform.SetParent(transform, false);
+        //        //rect.sizeDelta = new Vector2(1 / scale * sideWidth , 1 / scale * tileHeight);
+        //    }
+        //}
+    }
     struct BestResult { public int sy; public int sx; public float scale; }
 
     public void UpdatePositions(float progress)
@@ -152,6 +212,7 @@ public class CircleLayout : MonoBehaviour {
             }
         }
     }
+
 
     protected void BuildTileMatrix()
     {

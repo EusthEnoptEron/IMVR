@@ -4,24 +4,24 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
-public class GroupedCircleLayout<T> : CircleLayout where T : TileGroup {
+public class GroupedCircleLayout<T> : CylinderLayout where T : TileGroup {
     private List<Tile> _tiles;
     
-    [HideInInspector]
-    public override List<Tile> tiles
-    {
-        get { return _tiles; }
-        set {
-            transform.DetachChildren();
+    //[HideInInspector]
+    //protected override List<Tile> tiles
+    //{
+    //    get { return _tiles; }
+    //    set {
+    //        transform.DetachChildren();
 
-            _tiles = value;
+    //        _tiles = value;
 
-            foreach (var tile in _tiles)
-                tile.transform.SetParent(transform, false);
+    //        foreach (var tile in _tiles)
+    //            tile.transform.SetParent(transform, false);
 
-            BuildTileMatrix();
-        }
-    }
+    //        BuildTileMatrix();
+    //    }
+    //}
 
     private Dictionary<string, List<GameObject>> _items = new Dictionary<string, List<GameObject>>();
 
@@ -38,13 +38,15 @@ public class GroupedCircleLayout<T> : CircleLayout where T : TileGroup {
 
     protected void Awake()
     {
-        tiles = new List<Tile>();
+        tiles = new List<GameObject>();
+        autoLayout = false;
+
     }
 
     protected override void Start()
     {
-        autoLayout = false;
         height = 1;
+        scale = 1f / Tile.PIXELS_PER_UNIT;
         base.Start();
     }
 
@@ -57,17 +59,16 @@ public class GroupedCircleLayout<T> : CircleLayout where T : TileGroup {
         tileScale = radius * 2 * Mathf.Tan(Mathf.PI / xSegments);
 
         // Create Objects        
-        var groups = new List<Tile>();
+        var groups = new List<GameObject>();
         foreach(var pair in Items.OrderBy(kv => kv.Key))
         {
             var group = new GameObject().AddComponent<T>();
-            groups.Add(group);
+            groups.Add(group.gameObject);
             group.Label = pair.Key;
             group.SetElements(pair.Value);
         }
 
         tiles = groups;
-        
     }
 
     public override GameObject GetTileAtPosition(Vector3 pos)
