@@ -25,10 +25,14 @@ public class RingMesh : MonoBehaviour {
     [SerializeField]
     private int _segments = 20;
 
+    [SerializeField]
+    private bool _debug = false;
+
     /// <summary>
     /// Vertex color.
     /// </summary>
-    public Color color;
+    [SerializeField]
+    private Color _color;
 
 	// Use this for initialization
 	private void Start () {
@@ -37,7 +41,7 @@ public class RingMesh : MonoBehaviour {
 
     private void Update()
     {
-        if (_dirty)
+        if (_dirty || _debug)
         {
             UpdateMesh();
         }
@@ -86,7 +90,7 @@ public class RingMesh : MonoBehaviour {
         mesh.vertices = vertices;
         mesh.SetIndices(quads, MeshTopology.Quads, 0);
         mesh.SetTriangles(mesh.GetTriangles(0), 0);
-        mesh.colors = Enumerable.Repeat(color, vertices.Length).ToArray();
+        mesh.colors = Enumerable.Repeat(Color, vertices.Length).ToArray();
         
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -164,6 +168,19 @@ public class RingMesh : MonoBehaviour {
         set
         {
             _outerRadius = Mathf.Clamp(value, 0, float.MaxValue);
+            _dirty = true;
+        }
+    }
+
+    public Color Color
+    {
+        get
+        {
+            return _color;
+        }
+        set
+        {
+            _color = value;
             _dirty = true;
         }
     }

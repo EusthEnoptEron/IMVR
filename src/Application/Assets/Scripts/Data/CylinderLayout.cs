@@ -94,12 +94,15 @@ public class CylinderLayout : MonoBehaviour {
         }
 
         //Debug.Log("iüdate");
+        UpdatePositions(Time.deltaTime * 5);
+
+    }
+
+    protected virtual void LateUpdate() {
         if (_dirty)
             UpdatePositions(1);
-        else
-            UpdatePositions(Time.deltaTime * 5);
-
         _dirty = false;
+
     }
 
 

@@ -3,6 +3,7 @@ using System.Collections;
 using DG.Tweening;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 public abstract class View : MonoBehaviour {
     private int level = 0;
@@ -14,9 +15,11 @@ public abstract class View : MonoBehaviour {
         transform.rotation = World.WorldNode.transform.rotation;
     }
 
+
     protected void FadeIn(CanvasGroup group)
     {
-        if (group.alpha == 1) group.alpha = 0;
+        if (group.alpha >= 0.9f) group.alpha = 0;
+
         gameObject.SetActive(true);
         group.DOKill();
         group.DOFade(1, 1f);
@@ -29,6 +32,16 @@ public abstract class View : MonoBehaviour {
         {
             gameObject.SetActive(false);
         });
+    }
+
+    protected void FinishInitialization()
+    {
+  
+            foreach (var group in GetCanvasGroups())
+            {
+                group.alpha = 0;
+            }
+
     }
 
     protected IEnumerable<CanvasGroup> GetCanvasGroups()
@@ -44,14 +57,20 @@ public abstract class View : MonoBehaviour {
 
     public void Disable()
     {
-        SetInteraction(false);
-        OnViewDisable();
+        StartCoroutine(InvokeInNextFrame(delegate
+        {
+            SetInteraction(false);
+            OnViewDisable();
+        }));
     }
 
     public void Enable()
     {
-        SetInteraction(level == 0);
-        OnViewEnable();
+        StartCoroutine(InvokeInNextFrame(delegate
+        {
+            SetInteraction(level == 0);
+            OnViewEnable();
+        }));
     }
 
     public virtual void SetInteraction(bool enabled)
@@ -138,6 +157,13 @@ public abstract class View : MonoBehaviour {
     }
 
     public virtual void BuildMenu(RingMenu menuBase) {
+    }
+
+
+    private IEnumerator InvokeInNextFrame(Action action)
+    {
+        yield return null;
+        action();
     }
 
 }

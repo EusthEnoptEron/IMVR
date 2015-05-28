@@ -7,7 +7,7 @@ public abstract class RingActivator : MonoBehaviour {
     public float fillDuration = 2;
     public float fallDuration = 4;
 
-    private FillableRing _model;
+    protected FillableRing _model;
     private bool _touched = false;
     private bool _activated = false;
 
@@ -18,7 +18,7 @@ public abstract class RingActivator : MonoBehaviour {
     }
 
 	// Use this for initialization
-	void Awake () {
+	protected virtual void Awake () {
         _model = GetComponent<FillableRing>();
 
         if (GetComponentInChildren<Collider>() == null)

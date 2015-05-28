@@ -153,6 +153,21 @@ public abstract class ModeController : MonoBehaviour
     }
 
 
+    private void OnDisable()
+    {
+        foreach (var view in viewStack.Where(v => v != null))
+            view.Disable();
+    }
+
+    private void OnEnable()
+    {
+        foreach (var view in viewStack.Where(v => v != null))
+            view.Enable();
+
+        if(ActiveView != null)
+            OnViewChanged();
+    }
+
     /// <summary>
     /// Steps into a view.
     /// </summary>

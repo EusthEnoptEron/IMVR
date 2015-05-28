@@ -38,8 +38,8 @@ public class GroupedCircleLayout<T> : CylinderLayout where T : TileGroup {
 
     protected void Awake()
     {
-        tiles = new List<GameObject>();
         autoLayout = false;
+        tiles = new List<GameObject>();
 
     }
 

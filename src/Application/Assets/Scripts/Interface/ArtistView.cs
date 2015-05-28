@@ -115,6 +115,8 @@ public class ArtistView : View {
                 cylinder.SetTile(i++, 0, InitAlbum(album));
             }
 
+            FinishInitialization();
+
         }
     }
 

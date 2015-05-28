@@ -54,7 +54,7 @@ public class FillableRing : MonoBehaviour {
         subRing.AngleRange = mainRing.AngleRange;
         subRing.StartAngle = mainRing.StartAngle;
         subRing.Segments = mainRing.Segments;
-        subRing.color = reuseColor ? mainRing.color : color;
+        subRing.Color = reuseColor ? mainRing.Color : color;
 
         // Invoke setter
         Fill = Fill;

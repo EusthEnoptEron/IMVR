@@ -29,6 +29,15 @@ public static class TransformExtensions {
         }
     }
 
+    public static IEnumerable<Transform> Siblings(this Transform element)
+    {
+        var parent = element.parent;
+        if (parent)
+        {
+            return parent.Children().Where(child => child != element);
+        } else return new Transform[0];
+    }
+
     public static IEnumerable<Transform> AncestorsAndThis(this Transform node)
     {
         var parent = node;

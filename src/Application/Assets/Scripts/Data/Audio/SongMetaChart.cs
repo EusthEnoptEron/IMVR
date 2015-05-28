@@ -59,11 +59,11 @@ public class SongMetaChart : MonoBehaviour {
         {
             case 0: combobox.transform.localPosition = (pointChart.pivotOffset + Vector3.right) * 1200; break;
             case 1: combobox.transform.localPosition = (pointChart.pivotOffset + Vector3.up) * 1200; break;
-            case 2: combobox.transform.localPosition = (pointChart.pivotOffset + Vector3.forward) * 1200; break;
+            case 2: combobox.transform.localPosition = (pointChart.pivotOffset) * 1200; break;
             default: Debug.LogError("Invalid axis"); break;
         }
 
-        combobox.transform.localScale = Vector3.one * 2;
+        combobox.transform.localScale = Vector3.one * 4;
 
         combobox.ClearItems();
         combobox.AddItems(new string[]{ "Select axis" }.Concat(Enum.GetNames(typeof(MetaGroup))).ToArray());
