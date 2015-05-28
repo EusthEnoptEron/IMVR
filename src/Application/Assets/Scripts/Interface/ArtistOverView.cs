@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using IMVR.Commons;
 using Foundation;
 using System.Linq;
+using System.Text;
+using System.Globalization;
 
 public class ArtistOverView : View {
     private ListGroupedCircleLayout layout;
@@ -27,9 +29,11 @@ public class ArtistOverView : View {
         //Debug.Log(db.Artists.Count);
         var groups = ResourceManager.DB.Artists.GroupBy(o =>
         {
-            string firstLetter = o.Name.Substring(0, 1).ToUpper();
-            if (firstLetter[0] > 1000) firstLetter = "#";
-            return firstLetter;
+            char firstLetter = RemoveDiacritics( o.Name.Substring(0, 1).ToUpper() )[0];
+            
+            if (firstLetter < 'A' || firstLetter > 'Z') firstLetter = '#';
+           
+            return firstLetter.ToString();
         })
         .ToDictionary(g => g.Key, g => g.Select(artist =>
         {
@@ -46,6 +50,23 @@ public class ArtistOverView : View {
         layout.Items = groups;
         yield return null;
 
+    }
+
+    private string RemoveDiacritics(string text)
+    {
+        var normalizedString = text.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 
 }
