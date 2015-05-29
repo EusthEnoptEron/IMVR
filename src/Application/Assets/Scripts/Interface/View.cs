@@ -5,8 +5,20 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
+public enum InteractionMode
+{
+    Disabled,
+    Enabled,
+    Partly
+}
+
 public abstract class View : MonoBehaviour {
     private int level = 0;
+    public InteractionMode Interaction
+    {
+        get;
+        private set;
+    }
 
     protected virtual void Awake()
     {
@@ -59,28 +71,35 @@ public abstract class View : MonoBehaviour {
     {
         StartCoroutine(InvokeInNextFrame(delegate
         {
-            SetInteraction(false);
+            SetInteraction(InteractionMode.Disabled);
             OnViewDisable();
         }));
     }
 
     public void Enable()
     {
+        gameObject.SetActive(true);
         StartCoroutine(InvokeInNextFrame(delegate
         {
-            SetInteraction(level == 0);
+            SetInteraction(level == 0 ? InteractionMode.Enabled : InteractionMode.Disabled);
             OnViewEnable();
         }));
     }
 
-    public virtual void SetInteraction(bool enabled)
+    public virtual void SetInteraction(InteractionMode mode)
     {
-        this.enabled = enabled;
+        Interaction = mode;
+        this.enabled = mode == InteractionMode.Enabled;
+
+        float alpha = 1;
+        if (mode == InteractionMode.Partly || mode == InteractionMode.Disabled)
+            alpha = 0.5f;
+
         foreach (var group in GetCanvasGroups())
         {
             //group.interactable = enabled;
             group.blocksRaycasts = enabled;
-            group.Fade(enabled ? 1 : 0.5f, 0.5f);
+            group.Fade(alpha, 0.5f);
         }
 
         var circle = GetComponent<CylinderLayout>();
@@ -99,7 +118,7 @@ public abstract class View : MonoBehaviour {
         if (level == 1)
         {
             transform.SetParent(World.WorldNode.transform);
-            SetInteraction(false);
+            SetInteraction(InteractionMode.Disabled);
         }
 
         OnPush();
@@ -112,7 +131,7 @@ public abstract class View : MonoBehaviour {
         if (level == 0)
         {
             transform.SetParent(null);
-            SetInteraction(true);
+            SetInteraction(InteractionMode.Enabled);
         }
 
         OnPull();

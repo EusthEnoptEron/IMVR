@@ -32,44 +32,51 @@ public class CylinderInteractor : MonoBehaviour {
 
     private bool interacting = false;
 
+    private View _view;
+
 	// Use this for initialization
 	void Start () {
         handInput = HandProvider.Instance;
         layout = GetComponent<CylinderLayout>();
+        _view = GetComponentInParent<View>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //if (handInput.GetGesture("hand_grab_l"))
-        //{
-        //    Debug.Log("GRAB");
-        //}
-        //if (handInput.GetGestureExit("hand_grab_l"))
-        //{
-        //    Debug.Log("LEAVE");
-        //}
-        
-        var hand = handInput.GetHand(HandType.Right);
-        if (hand != null 
-        //    && OVRManager.display.angularVelocity.sqrMagnitude < ovrSpeedThreshold
-        )
-        {
-            Handle(hand);
 
-            //if (handInput.GetGestureEnter("Push"))
-            //{
-            //    StartCoroutine(PushPull(true));
-            //}
-            //if (handInput.GetGestureEnter("Pull"))
-            //{
-            //    StartCoroutine(PushPull(false));
-            //}
-        }
-        else if(interacting)
+        if (_view.Interaction != InteractionMode.Disabled)
         {
-            _direction = Direction.Unknown;
-            interacting = false;
-            GetComponentInParent<View>().SetInteraction(true);
+            //if (handInput.GetGesture("hand_grab_l"))
+            //{
+            //    Debug.Log("GRAB");
+            //}
+            //if (handInput.GetGestureExit("hand_grab_l"))
+            //{
+            //    Debug.Log("LEAVE");
+            //}
+
+            var hand = handInput.GetHand(HandType.Right);
+            if (hand != null
+                //    && OVRManager.display.angularVelocity.sqrMagnitude < ovrSpeedThreshold
+            )
+            {
+                Handle(hand);
+
+                //if (handInput.GetGestureEnter("Push"))
+                //{
+                //    StartCoroutine(PushPull(true));
+                //}
+                //if (handInput.GetGestureEnter("Pull"))
+                //{
+                //    StartCoroutine(PushPull(false));
+                //}
+            }
+            else if (interacting)
+            {
+                _direction = Direction.Unknown;
+                interacting = false;
+                GetComponentInParent<View>().SetInteraction(InteractionMode.Enabled);
+            }
         }
     }
 
@@ -122,13 +129,13 @@ public class CylinderInteractor : MonoBehaviour {
             float absVerticalVelocity = Mathf.Abs(verticalVelocity);
 
             if (!interacting)
-                GetComponentInParent<View>().SetInteraction(false);
+                GetComponentInParent<View>().SetInteraction(InteractionMode.Partly);
             interacting = true;
             if ((_direction == Direction.Unknown && absHorizontalVelocity > LOW_SPEED_THRESHOLD && absVerticalVelocity < absHorizontalVelocity) 
                 || _direction == Direction.Horizontal)
             {
                 if (!interacting)
-                    GetComponentInParent<View>().SetInteraction(false);
+                    GetComponentInParent<View>().SetInteraction(InteractionMode.Partly);
                 interacting = true;
                 _direction = Direction.Horizontal;
 
@@ -153,11 +160,16 @@ public class CylinderInteractor : MonoBehaviour {
                 var groupGO = layout.GetTileAtPosition(avgPos);
                 if (groupGO)
                 {
+                    Debug.Log(groupGO.name);
                     var group = groupGO.GetComponent<LayoutGroup>();
                     if (group)
                     {
                         group.scrollSpeed += verticalVelocity * factor;
                     }
+                }
+                else
+                {
+                    Debug.Log("none found");
                 }
                 //layout.AddTorque(horizontalVelocity * factor);
             }
@@ -165,7 +177,7 @@ public class CylinderInteractor : MonoBehaviour {
         else
         {
             if(interacting)
-                GetComponentInParent<View>().SetInteraction(true);
+                GetComponentInParent<View>().SetInteraction(InteractionMode.Enabled);
             interacting = false;
             _direction = Direction.Unknown;
         }

@@ -125,7 +125,7 @@ public class CylinderLayout : MonoBehaviour {
 
         if (y < tileMat.GetLength(0) && x < tileMat.GetLength(1) && y >= 0 && x >= 0
             && tileMat[y, x] != null)
-            return tileMat[y, x].gameObject;
+            return tileMat[y, x].transform.GetChild(0).gameObject;
         else
             return null;
     }

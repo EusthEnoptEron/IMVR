@@ -46,6 +46,8 @@ public class LoadingScreen : Singleton<LoadingScreen> {
 
         HandProvider.Instance.gameObject.SetActive(false);
 
+        OVRManager.display.timeWarp = false;
+
         //shimCamera.SetActive(true);
         shutter.alpha = 1;
         foreach (var camera in shimCamera.GetComponentsInChildren<Camera>())
