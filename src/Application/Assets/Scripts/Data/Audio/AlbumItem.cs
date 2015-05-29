@@ -21,11 +21,21 @@ public class AlbumItem : MonoBehaviour, IPointerDownHandler
 {
     public Album album;
     private ArtistView _artistView;
+
+    [SerializeField]
+    private UnityEngine.UI.Image _coverImage;
+
+    [SerializeField]
+    private Text _coverText;
+
     public event EventHandler<AlbumEventArgs> Touched = delegate { };
 
     void Start()
     {
         _artistView = GetComponentInParent<ArtistView>();
+
+        _coverImage.sprite = ImageAtlas.LoadSprite(album.Atlas);
+        _coverText.text = album.Name;
     }
 
 

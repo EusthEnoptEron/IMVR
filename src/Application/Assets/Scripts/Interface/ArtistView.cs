@@ -159,14 +159,10 @@ public class ArtistView : View {
         //albumView.transform.SetParent(m_albumList, false);
         
         // Add cover
-        var cover = albumView.transform.FindRecursively("Cover").GetComponent<UnityEngine.UI.Image>();
-        cover.sprite = ImageAtlas.LoadSprite(album.Atlas);
-
-        var albumItem = cover.gameObject.AddComponent<AlbumItem>();
-        {
-            albumItem.album = album;
-            albumItem.Touched += OnSelectAlbum;
-        }
+        var albumItem = albumView.GetComponentInChildren<AlbumItem>();
+        albumItem.album = album;
+        albumItem.Touched += OnSelectAlbum;
+        
 
         var songList = albumView.transform.FindRecursively("Songlist");
 

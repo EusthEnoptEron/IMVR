@@ -37,6 +37,14 @@ public class VelocityMeasurer
         entries.RemoveAll(e => e.Time < Time.time - Interval);
         return (entries.LastOrDefault().Position - entries.FirstOrDefault().Position);
     }
+
+    public IEnumerable<Vector3> Entries
+    {
+        get
+        {
+            return entries.Select(e => e.Position);
+        }
+    }
 }
 
 public class Accumulator<T>

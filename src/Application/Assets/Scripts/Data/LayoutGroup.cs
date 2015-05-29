@@ -7,7 +7,7 @@ using System.Linq;
 using DG.Tweening;
 using Gestures;
 
-public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler {//, IFingerDownHandler, IFingerUpHandler {
+public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler, IVerticalScroll {//, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
     private List<GameObject> children = new List<GameObject>();
@@ -15,7 +15,7 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler 
     private int m_fingers = 0;
     public float heightPerElement = 50;
     public float scrollSpeed = 0;
-    private float currentAngle = 0;
+    public float currentAngle = 0;
     private float m_alpha = 0.05f;
     private float TargetAngle
     {
@@ -140,14 +140,13 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler 
             {
                 currentAngle += scrollSpeed * Time.deltaTime;
                 scrollSpeed = Mathf.MoveTowards(scrollSpeed, 0, 100 * Time.deltaTime);
-
-                ApplyRotations();
             }
             else
             {
-                currentAngle = Mathf.Lerp(currentAngle, TargetAngle, Time.deltaTime * 5);
-                ApplyRotations();
+                currentAngle = Mathf.Lerp(currentAngle, TargetAngle, Time.deltaTime);
             }
+            ApplyRotations();
+
         }
         else
         {
@@ -248,33 +247,39 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler 
 
 
     private bool hasIndex = false;
-    public void OnFingerUp(FingerEventData eventData, FingerEventData submitFinger)
-    {
-        m_fingers--;
+    //public void OnFingerUp(FingerEventData eventData, FingerEventData submitFinger)
+    //{
+    //    m_fingers--;
 
-        if (hasIndex && eventData.finger.Type == FingerType.Index)
-            hasIndex = false;
+    //    if (hasIndex && eventData.finger.Type == FingerType.Index)
+    //        hasIndex = false;
 
-        if (m_fingers == 0 && dragging)
-        {
-            EndDrag();
-        }
-    }
+    //    if (m_fingers == 0 && dragging)
+    //    {
+    //        EndDrag();
+    //    }
+    //}
 
-    public void OnFingerDown(FingerEventData eventData, FingerEventData submitFinger)
-    {
-        m_fingers++; 
+    //public void OnFingerDown(FingerEventData eventData, FingerEventData submitFinger)
+    //{
+    //    m_fingers++; 
 
-        if (!hasIndex && eventData.finger.Type == FingerType.Index)
-            hasIndex = true;
+    //    if (!hasIndex && eventData.finger.Type == FingerType.Index)
+    //        hasIndex = true;
         
-        Debug.LogFormat("{0} ENTER -> {1}", eventData.finger.Type, m_fingers);
+    //    Debug.LogFormat("{0} ENTER -> {1}", eventData.finger.Type, m_fingers);
         
 
-        if (m_fingers >= 3 && !submitFinger.occupied
-            && hasIndex)
-        {
-            BeginDrag();
-        }
+    //    if (m_fingers >= 3 && !submitFinger.occupied
+    //        && hasIndex)
+    //    {
+    //        BeginDrag();
+    //    }
+    //}
+
+    public void Scroll(float speed, Vector3 delta)
+    {
+        Debug.Log(scrollSpeed);
+        scrollSpeed = Mathf.Clamp(scrollSpeed + speed, -50, 50);
     }
 }

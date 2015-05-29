@@ -160,11 +160,13 @@ public class CylinderInteractor : MonoBehaviour {
                 var groupGO = layout.GetTileAtPosition(avgPos);
                 if (groupGO)
                 {
-                    Debug.Log(groupGO.name);
-                    var group = groupGO.GetComponent<LayoutGroup>();
-                    if (group)
+                    var panel = groupGO.GetComponent<IVerticalScroll>();
+                    if (panel != null)
                     {
-                        group.scrollSpeed += verticalVelocity * factor;
+                        var entries = measurer.Entries;
+                        var lastTwoPoints = entries.Skip(entries.Count() - 2).ToArray();
+
+                        panel.Scroll(verticalVelocity * factor, lastTwoPoints[1] - lastTwoPoints[0]);
                     }
                 }
                 else
