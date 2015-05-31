@@ -25,9 +25,6 @@ public class RingMesh : MonoBehaviour {
     [SerializeField]
     private int _segments = 20;
 
-    [SerializeField]
-    private bool _debug = false;
-
     /// <summary>
     /// Vertex color.
     /// </summary>
@@ -41,7 +38,7 @@ public class RingMesh : MonoBehaviour {
 
     private void Update()
     {
-        if (_dirty || _debug)
+        if (_dirty || Application.isEditor)
         {
             UpdateMesh();
         }
@@ -89,19 +86,28 @@ public class RingMesh : MonoBehaviour {
 
         mesh.vertices = vertices;
         mesh.SetIndices(quads, MeshTopology.Quads, 0);
-        mesh.SetTriangles(mesh.GetTriangles(0), 0);
+        //mesh.SetTriangles(mesh.GetTriangles(0), 0);
         mesh.colors = Enumerable.Repeat(Color, vertices.Length).ToArray();
         
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
 
         DestroyImmediate(meshFilter.sharedMesh);
         meshFilter.sharedMesh = mesh;
+
+        meshFilter.sharedMesh.RecalculateNormals();
+        meshFilter.sharedMesh.RecalculateBounds();
+
         _dirty = false;
 
         Updated(this, new System.EventArgs());
     }
+    
 
+	void OnDrawGizmosSelected () {
+		// Display the explosion radius when selected
+		Gizmos.color = Color.red;
+        var bounds = GetComponent<MeshRenderer>().bounds;
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
+	}
 
 
     #region Getters & Setters

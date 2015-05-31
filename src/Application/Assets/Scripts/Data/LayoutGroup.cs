@@ -7,7 +7,7 @@ using System.Linq;
 using DG.Tweening;
 using Gestures;
 
-public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler, IVerticalScroll {//, IFingerDownHandler, IFingerUpHandler {
+public class LayoutGroup : TileGroup, IVerticalScroll {//, IFingerDownHandler, IFingerUpHandler {
     private DialLayout layout;
     private Mask mask;
     private List<GameObject> children = new List<GameObject>();
@@ -17,6 +17,7 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler,
     public float scrollSpeed = 0;
     public float currentAngle = 0;
     private float m_alpha = 0.05f;
+    public float speed = 1.8f;
     private float TargetAngle
     {
         get
@@ -145,7 +146,6 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler,
             {
                 currentAngle = Mathf.Lerp(currentAngle, TargetAngle, Time.deltaTime);
             }
-            ApplyRotations();
 
         }
         else
@@ -161,23 +161,32 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler,
         // Do culling
         foreach (var child in children)
         {
+            var canvas = child.GetComponent<CanvasGroup>();
             if (Vector3.Dot(child.transform.forward, transform.forward) < 0)
             {
                 // Disable
-                child.SetActive(false);
-                //child.GetComponent<CanvasGroup>().alpha = 0;
+                //child.SetActive(false);
+                if (canvas.blocksRaycasts)
+                {
+                    canvas.alpha = 0;
+                    canvas.blocksRaycasts = false;
+                }
             }
             else
             {
                 // Enable
-                child.SetActive(true);
-                //child.GetComponent<CanvasGroup>().alpha = 1;
+                //child.SetActive(true);
+                if (!canvas.blocksRaycasts)
+                {
+                    canvas.alpha = 1;
+                    canvas.blocksRaycasts = true;
+                }
             }
         }
 
-        if (dragging) ApplyRotations();
 
         ApplyConstraints();
+        ApplyRotations();
     }
 
 
@@ -234,18 +243,6 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler,
     }
 
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-       
-
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-
-    }
-
-
     private bool hasIndex = false;
     //public void OnFingerUp(FingerEventData eventData, FingerEventData submitFinger)
     //{
@@ -279,7 +276,7 @@ public class LayoutGroup : TileGroup, IPointerEnterHandler, IPointerExitHandler,
 
     public void Scroll(float speed, Vector3 delta)
     {
-        Debug.Log(scrollSpeed);
-        scrollSpeed = Mathf.Clamp(scrollSpeed + speed, -50, 50);
+        //scrollSpeed = delta.y * 100;
+        scrollSpeed = Mathf.Clamp(scrollSpeed + speed * this.speed, -100, 100);
     }
 }

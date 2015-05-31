@@ -179,11 +179,11 @@ namespace Gestures
 
                     float z = raycast.distance;
 
-                    var offset = raycast.gameObject.GetComponentInChildren<CollisionOffset>();
-                    if (offset != null && offset.source == CollisionOffset.OffsetSource.Element)
-                        z -= offset.offset;
-                    if (offset != null && offset.source == CollisionOffset.OffsetSource.Camera)
-                        z = offset.offset;
+                    //var offset = raycast.gameObject.GetComponentInChildren<CollisionOffset>();
+                    //if (offset != null && offset.source == CollisionOffset.OffsetSource.Element)
+                    //    z -= offset.offset;
+                    //if (offset != null && offset.source == CollisionOffset.OffsetSource.Camera)
+                    //    z = offset.offset;
 
                     var hitPoint = CalculateHitPoint(screenPosition, z);
                     var distance = GetPerpendicularDistance(worldPosition, hitPoint, raycast.gameObject.transform.forward);
@@ -195,7 +195,7 @@ namespace Gestures
                                 ? data.pointerCurrentRaycast.gameObject.transform.IsChildOf(raycast.gameObject.transform)
                                 : false;
 
-                    if (data.eligibleForClick)
+                    if (data.eligibleForClick && selection != null)
                     {
                         if (selection.IsSameGameObject(raycast.gameObject))
                         {
@@ -250,8 +250,8 @@ namespace Gestures
                         //if (finger.Type == submitFinger)
                         //    Debug.Log("X: " + data.pointerCurrentRaycast.gameObject.GetPath());
                         // Deselect
-                        if(!data.eligibleForClick)
-                            selection.Update(float.PositiveInfinity);
+                        if (!data.eligibleForClick)
+                            selection.Discard();
                     }
 
                     prevFingerState.crosshair.Visible = finger.Type == submitFinger;
@@ -271,7 +271,7 @@ namespace Gestures
 
                 if (selection != null)
                 {
-                    selection.Update(float.PositiveInfinity);
+                    selection.Discard();
                 }
                 prevFingerState.crosshair.Visible = false;
 
@@ -579,7 +579,7 @@ namespace Gestures
             private Vector3 hitPoint;
             public float selectionTime;
             public float distance;
-            public bool clicked = false;
+            public bool pressed = false;
 
             public float selectionDistance = 0.2f;
             public float pressDistance = 0.01f;
@@ -624,14 +624,18 @@ namespace Gestures
                 return candidate;
             }
 
+            public void Discard()
+            {
+                valid = false;
+            }
             public void Update(float distance)
             {
                 pressState = PointerEventData.FramePressState.NotChanged;
                 this.distance = distance;
-                if (!clicked) distance = Mathf.Abs(distance);
+                if (!pressed) distance = Mathf.Abs(distance);
 
 
-                if (clicked && distance > pressDistance)
+                if (pressed && distance > pressDistance)
                 {
                     timeThreshold += Time.deltaTime;
 
@@ -641,7 +645,7 @@ namespace Gestures
                        
                         //Debug.Log(distance);
                         pressState = PointerEventData.FramePressState.Released;
-                        clicked = false;
+                        pressed = false;
                         
                     }
                 }
@@ -649,10 +653,10 @@ namespace Gestures
                     valid = false;
                    
                     
-                } else if(!clicked && 
+                } else if(!pressed && 
                     (distance < pressDistance /*|| Time.time - selectionTime > selectionDuration*/)) {
                         timeThreshold = 0;
-                        clicked = true;
+                        pressed = true;
                         pressState = PointerEventData.FramePressState.Pressed;
                     }
                 else

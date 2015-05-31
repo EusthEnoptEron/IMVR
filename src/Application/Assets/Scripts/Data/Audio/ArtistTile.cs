@@ -21,7 +21,7 @@ public class ArtistTile : Tile, IPointerClickHandler {
 
         var component = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/PictureWithText"));
         //m_image = new GameObject().AddComponent<Image>();
-        m_image = component.GetComponentInChildren<UnityEngine.UI.Image>();
+        m_image = component.transform.FindRecursively("Image").GetComponent<UnityEngine.UI.Image>();
         m_text = component.GetComponentInChildren<Text>();
 
         // Create tile
