@@ -87,10 +87,10 @@ public class CylinderLayout : MonoBehaviour {
         // Annetuation
         //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
         v *= (1 - Time.deltaTime);
-
+        Debug.Log(v);
         if (Mathf.Abs(v) > 0.0001f)
         {
-            World.WorldNode.transform.localRotation *= Quaternion.Euler(0, -v, 0);
+            World.WorldNode.transform.localRotation *= Quaternion.Euler(0, -v * Time.deltaTime, 0);
         }
 
         //Debug.Log("iüdate");
@@ -331,7 +331,7 @@ public class CylinderLayout : MonoBehaviour {
     private float v = 0;
     public void AddTorque(float N)
     {
-        v += N / radius * Time.deltaTime;
+        v += N / radius;
     }
 }
 public static class ListExtensions

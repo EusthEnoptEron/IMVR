@@ -22,7 +22,6 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private GameObject _stack;
 
     private IRingMenu _activeMenu;
-    private static GameObject pref_PalmThumbnail = Resources.Load<GameObject>("Prefabs/UI/pref_PalmThumbnail");
 
 
     [SerializeField]
@@ -207,7 +206,6 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         _stack.transform.position = hand.PalmPosition;
         _stack.transform.rotation = Quaternion.LookRotation(-hand.PalmNormal,
             Vector3.Cross(-hand.PalmNormal, hand.PalmDirection).normalized);
-
         //transform.position = hand.PalmPosition + Camera.main.transform.TransformDirection(Vector3.right * 0.2f);
     }
 
@@ -441,7 +439,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         var menus = ActiveMenu.Node.GetComponentsInParent<IRingMenu>().Reverse().ToArray();
         for (int i = 0; i < menus.Length; i++)
         {
-            var imgContainer = Instantiate(pref_PalmThumbnail).GetComponent<RectTransform>();
+            var imgContainer = Instantiate(Resources.Load<GameObject>("Prefabs/UI/pref_PalmThumbnail")).GetComponent<RectTransform>();
             var imgText = imgContainer.GetComponentInChildren<Text>();
             var img = imgContainer.GetComponentInChildren<Image>();
 
@@ -453,6 +451,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             imgContainer.transform.localScale =
                 Vector3.one / (imgContainer.rect.width) * 0.1f;
             imgContainer.transform.localPosition += Vector3.back * ((i + 1) * 0.02f);
+            imgContainer.transform.localRotation = Quaternion.Euler(0, 0, -30);
         }
     }
 

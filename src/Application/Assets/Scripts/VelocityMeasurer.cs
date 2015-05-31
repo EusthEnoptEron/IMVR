@@ -28,8 +28,13 @@ public class VelocityMeasurer
 
     public Vector3 GetVelocity()
     {
+        if (entries.Count < 2) return Vector3.zero;
+
+        var e2 = entries.Last();
+        var e1 = entries[entries.Count - 2];
         // Calculate
-        return GetDifference() / 0.5f;
+        return (e2.Position - e1.Position) / (e2.Time - e1.Time);
+        //return GetDifference() / Interval;
     }
 
     public Vector3 GetDifference()

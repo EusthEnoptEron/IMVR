@@ -17,7 +17,8 @@ public class LayoutGroup : TileGroup, IVerticalScroll {//, IFingerDownHandler, I
     public float scrollSpeed = 0;
     public float currentAngle = 0;
     private float m_alpha = 0.05f;
-    public float speed = 1.8f;
+    public float speed = 300f;
+
     private float TargetAngle
     {
         get
@@ -137,10 +138,10 @@ public class LayoutGroup : TileGroup, IVerticalScroll {//, IFingerDownHandler, I
     {
         if (!dragging)
         {
-            if (Mathf.Abs(scrollSpeed) > 0)
+            if (Mathf.Abs(scrollSpeed) > 1f)
             {
+                scrollSpeed *= (1 - Time.deltaTime);
                 currentAngle += scrollSpeed * Time.deltaTime;
-                scrollSpeed = Mathf.MoveTowards(scrollSpeed, 0, 100 * Time.deltaTime);
             }
             else
             {
@@ -277,6 +278,22 @@ public class LayoutGroup : TileGroup, IVerticalScroll {//, IFingerDownHandler, I
     public void Scroll(float speed, Vector3 delta)
     {
         //scrollSpeed = delta.y * 100;
-        scrollSpeed = Mathf.Clamp(scrollSpeed + speed * this.speed, -100, 100);
+        scrollSpeed = Mathf.Clamp(scrollSpeed + (speed * this.speed / layout.Radius), -100, 100);
+    }
+
+
+    public void BeginScroll()
+    {
+        var image = mask.GetComponent<Image>();
+        image.DOKill();
+        image.DOColor(new Color(0.8f, 1, 0.8f, m_alpha), 0.5f);
+    }
+
+    public void EndScroll()
+    {
+
+        var image = mask.GetComponent<Image>();
+        image.DOKill();
+        image.DOColor(new Color(1, 1, 1, m_alpha), 0.5f);
     }
 }

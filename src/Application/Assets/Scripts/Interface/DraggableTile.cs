@@ -15,6 +15,16 @@ public class DraggableTile : MonoBehaviour, IVerticalScroll {
 
     public void Scroll(float speed, Vector3 delta)
     {
+
         transform.position += new Vector3(0, delta.y, 0);
+    }
+
+
+    public void BeginScroll()
+    {
+    }
+
+    public void EndScroll()
+    {
     }
 }

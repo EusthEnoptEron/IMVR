@@ -9,7 +9,7 @@ public class Prefs : Singleton<Prefs> {
     {
         get
         {
-            return Path.Combine(Application.dataPath, "database_new.bin");
+            return Path.Combine(Application.streamingAssetsPath, "database_new.bin");
         }
     }
 

@@ -33,6 +33,7 @@ public class CylinderInteractor : MonoBehaviour {
     private bool interacting = false;
 
     private View _view;
+    private List<IVerticalScroll> scrollPanels = new List<IVerticalScroll>();
 
 	// Use this for initialization
 	void Start () {
@@ -73,9 +74,7 @@ public class CylinderInteractor : MonoBehaviour {
             }
             else if (interacting)
             {
-                _direction = Direction.Unknown;
-                interacting = false;
-                GetComponentInParent<View>().SetInteraction(InteractionMode.Enabled);
+                Stop();
             }
         }
     }
@@ -140,6 +139,7 @@ public class CylinderInteractor : MonoBehaviour {
                 _direction = Direction.Horizontal;
 
                 float factor = horizontalVelocity > 0.5 ? 20 : 10;
+                //Debug.LogFormat("Add velo: {0} ({1}", horizontalVelocity, horizontalVelocity * factor);
                 layout.AddTorque(horizontalVelocity * factor);
             }
             else if ((_direction == Direction.Unknown && absVerticalVelocity > LOW_SPEED_THRESHOLD && absHorizontalVelocity < absVerticalVelocity) 
@@ -166,27 +166,38 @@ public class CylinderInteractor : MonoBehaviour {
                         var entries = measurer.Entries;
                         var lastTwoPoints = entries.Skip(entries.Count() - 2).ToArray();
 
+                        if (!scrollPanels.Contains(panel))
+                        {
+                            scrollPanels.Add(panel);
+                            panel.BeginScroll();
+                        }
+
                         panel.Scroll(verticalVelocity * factor, lastTwoPoints[1] - lastTwoPoints[0]);
                     }
-                }
-                else
-                {
-                    Debug.Log("none found");
                 }
                 //layout.AddTorque(horizontalVelocity * factor);
             }
         }
         else
         {
-            if(interacting)
-                GetComponentInParent<View>().SetInteraction(InteractionMode.Enabled);
-            interacting = false;
-            _direction = Direction.Unknown;
+            Stop();
         }
         return;
 
         //if (Vector3.Dot(velocity.normalized, hand.PalmNormal) < 0.2f) return;
         //if (!hand.Fingers.All(f => f.Extended)) return;
+    }
+
+    private void Stop()
+    {
+        if (interacting)
+            GetComponentInParent<View>().SetInteraction(InteractionMode.Enabled);
+        interacting = false;
+        _direction = Direction.Unknown;
+
+        foreach (var panel in scrollPanels)
+            panel.EndScroll();
+        scrollPanels.Clear();
     }
 
     IEnumerator Swipe(HandType handType)
