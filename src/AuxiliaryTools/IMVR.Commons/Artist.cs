@@ -85,6 +85,15 @@ namespace IMVR.Commons
         /// </summary>
         [ProtoMember(12)]
         public string EchoNestID { get; set; }
+
+        /// <summary>
+        /// Gets or sets this artist's twitter handle
+        /// </summary>
+        [ProtoMember(13)]
+        public string TwitterHandle { get; set; }
+
+        [ProtoMember(14)]
+        public string MusicBrainzId { get; set; }
     }
 
     [ProtoContract]
