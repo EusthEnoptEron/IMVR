@@ -1,6 +1,36 @@
 \chapter{Design}
 
-Zuallererst einmal ist es immer sinnvoll, einen Überblick über das ganze Projekt zu schaffen. In diesem Kapitel geht es darum, diese Übersicht mithilfe von Diagrammen zu geben.
+Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden. 
 
 \section{Systemarchitektur}
+
+Um die Applikation zu bedienen, setzt der Anwender die Oculus Rift auf und bewegt sich im von der mitgelieferten Kamera erkennbaren Bereich.
+
+Die Leap Motion wird prinzipiell so verwendet, wie von der Herstellerfirma vorgesehen. Das heisst, diese wird mit dem offiziellen Aufsatz \cite{leap} an der Oculus Rift befestigt, und deckt so den frontalen Sichtbereich des Anwenders ab. Dies lässt sich gut auf Abbildung \ref{fig:systemuebersicht} erkennen.
+
+Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbunden sind und Daten an die jeweiligen Services schicken. Diese Services werden durch die in Unity verwendeten Plugins angesteuert, und die ausgewerteten Daten in IMVR verwendet.
+
+\afterpage {
+	\begin{figure}[t!]
+		\centering
+		\includegraphics[width=0.8\linewidth]{bilder/systemuebersicht}
+		\caption{Eine Übersicht der Technologien und wie sie verbunden sind.}
+		\label{fig:systemuebersicht}
+	\end{figure}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{p{0.1\linewidth} p{0.3\linewidth} p{0.5\linewidth}}
+			\textbf{Nr.} & \textbf{Komponente} & \textbf{Beschreibung} \\ \midrule
+			1. & Oculus Rift DK2 & \gls{hmd} für den grafischen Output. \\
+			2. & Leap Motion & Gerät, welches Hände erkennt und ihre Koordinaten an den Computer sendet. \\
+			3. & Oculus Rift Kamera & Kamera, welche seit dem DK2 für das örtliche Tracking zuständig ist. \\
+			4. & Computer & Host-System für IMVR. \\
+			5. & Benutzer & Benutzer, der die Oculus Rift trägt und mit seinen Händen das Programm steuert. \\
+		\end{tabular}
+	\end{table}
+}
+
+\clearpage
+
 \section{Systemdesign}

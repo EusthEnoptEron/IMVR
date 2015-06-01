@@ -6,9 +6,24 @@ Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des
 
 Der Indexer ist als parallelisiertes, knotenbasiertes System konzipiert worden. Die Parallelität wurde deshalb gewählt, weil es beim Einholen der verschiedenen Datenquellen teils zu Wartezeiten kommt, die gut anders genutzt werden können. Dieser Faktor kam besonders ins Spiel als noch zusätzlich zu den Musikdaten auch Bilderdaten gesammelt worden sind.
 
-Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte.
+Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte. Weitere Informationen zu diesem Thema werden in Abschnitt \ref{sec:indexer:herausforderungen} gegeben.
 
+Der Indexer sowie die Datenstruktur und alle anderen Tools, die eine ergänzende Funktion zur Hauptapplikation haben, wurden in einer separaten Visual Studio Solution zusammengefasst. In dieser befinden sich vier Projekte:
 
+\begin{table}[H]
+	\caption{Die Projekte in Auxiliary Tools}
+	\centering
+	\label{tab:auxiliarytools}
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Name} & \textbf{Beschreibung} \\ \midrule
+		IMVR.Commons & DLL-Projekt, welches die Klassen enthält, die zwischen Applikation und Indexer geteilt werden. \\
+		IMVR.Commons.Tests & Testprojekt mit Unit-Tests um die Integrität der Daten sicherzustellen. \\
+		IMVR.Indexer & Konsolenprojekt, welches die Musikdateien auf dem Host-System indexiert. \\
+		IMVR.SpeechServer & Konsolenprojekt, welches in der Vorarbeit verwendet wurde und in dieser Arbeit keine Verwendung fand. \\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+\end{table}
 
 
 \section{Datenquellen}
@@ -25,7 +40,7 @@ Es folgt eine kurze Zusammenstellung von untersuchten Datenquellen.
 \begin{tabular}{ l l l }
 	\noalign{\smallskip} \hline \hline \noalign{\smallskip}
 	\textbf{Name} & \textbf{Daten} & \textbf{API-Limite} \\ \midrule
-	Last.fm & Bilder, Meta-Daten & 1 Request / Sekunde \\
+	Last.fm & Bilder, Meta-Daten & 5 Request / Sekunde \\
 	The Echo Nest & Bilder, Meta-Daten, Analyse-Daten & 120 Requests / Minute \\
 	Spotify & Bilder, Meta-Daten, Playlisten, Streams & ? \\
 	Amazon & Bilder, Beschreibungen & 1 Request / Sekunde \\
@@ -75,3 +90,18 @@ Anzumerken ist, dass mehrere Einstiegspunkte auf die Daten existieren und so ein
 Die Serialisierung wird durch sogenannte Protocol Buffers \cite{wiki:protobufs} realisiert, wofür eine Open-Source Bibliothek namens \textit{protobuf-net} \footnote{\url{https://code.google.com/p/protobuf-net/}} existiert. Protocol Buffers ist ein binäres Datenformat, welches von Google Inc. entwickelt wurde und bekannt ist für seine Kompaktheit und Simplizität. Gewählt wurde es, weil die herkömmliche Serialisierung mit .NETs \code{BinaryFormatter} zum Teil zu Problemen mit Unity führen kann.
 
 \section{Herausforderungen}
+\label{sec:indexer:herausforderungen}
+
+Während der Entwicklung des Indexers kristallisierten sich diverse Schwierigkeiten, welche grundsätzlich in drei Kategorien einordnen lassen: organisatorische und datentechnische.
+
+Die Organisation, oder Planung, war deshalb problematisch, weil einer der wichtigsten Faktoren für den Aufbau des Indexers die Vielfalt der Datentypen war. Da anfangs geplant war, Musik \textit{und} Bilder zu indexieren und darzustellen, machte eine parallele Verarbeitung der Daten Sinn und war auch notwendig.
+
+Es wurden parallel mehrere Bilder auf mehreren CPU-Kernen analysiert, und gleichzeitig wurde auch die Musikdatenbank erweitert. Mit dem Wegfall des Bilder-Parts wird die parallele Verarbeitung also um einiges unwichtiger. Dies gilt besonders, weil bei den Datenquellen der Musikindexierung jeweils nur ein Thread Sinn macht, da die APIs mit Limiten ausgestattet sind.
+
+Datentechnisch stellte es sich als problematisch heraus, geeignete Datenquellen zu wählen. Von Anfang an war klar, dass der Service von The Echo Nest verwendet würde, doch dieser alleine ist nicht ausreichend.
+
+Bevor schliesslich Last.fm als Quelle für Album-Covers gewählt wurde, wurden besonders zwei APIs untersucht: Amazon und Gracenote.
+
+Im Falle von Amazon führten zwei Probleme zum Ausschluss: das Fehlen einer guten C\#-Bibliothek und die schwerfällige Registrierung. Momentan sieht die Situation so aus, dass recht viel manuell gemacht werden muss, bzw. eine umfangreiche Service-Description importiert werden muss. \cite{indexer:amazon} In Sachen Registrierung wird erwartet, dass man eine Webseite registriert, Kontaktdaten angibt und dann geprüft wird.
+
+Bei Gracenote beläuft sich das Problem hauptsächlich auf die Daten-Limite. Diese ist nirgends öffentlich ersichtlich, und sobald diese überschritten wird, sind keine Requests mehr möglich für den ganzen Tag. In einer Applikation wie IMVR, wo in einem Schritt alles indexiert werden soll, ist die ein Killer-Kriterium.
