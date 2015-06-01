@@ -4,10 +4,6 @@ Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des
 
 \section{Aufbau}
 
-Der Indexer ist als parallelisiertes, knotenbasiertes System konzipiert worden. Die Parallelität wurde deshalb gewählt, weil es beim Einholen der verschiedenen Datenquellen teils zu Wartezeiten kommt, die gut anders genutzt werden können. Dieser Faktor kam besonders ins Spiel als noch zusätzlich zu den Musikdaten auch Bilderdaten gesammelt worden sind.
-
-Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte. Weitere Informationen zu diesem Thema werden in Abschnitt \ref{sec:indexer:herausforderungen} gegeben.
-
 Der Indexer sowie die Datenstruktur und alle anderen Tools, die eine ergänzende Funktion zur Hauptapplikation haben, wurden in einer separaten Visual Studio Solution zusammengefasst. In dieser befinden sich vier Projekte:
 
 \begin{table}[H]
@@ -24,6 +20,10 @@ Der Indexer sowie die Datenstruktur und alle anderen Tools, die eine ergänzende 
 		\noalign{\smallskip} \hline \noalign{\smallskip}
 	\end{tabularx}
 \end{table}
+
+Der Indexer (IMVR.Indexer) ist als parallelisiertes, knotenbasiertes System konzipiert worden. Die Parallelität wurde deshalb gewählt, weil es beim Einholen der verschiedenen Datenquellen teils zu Wartezeiten kommt, die gut anders genutzt werden können. Dieser Faktor kam besonders ins Spiel als noch zusätzlich zu den Musikdaten auch Bilderdaten gesammelt worden sind.
+
+Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine real-time Indexierung vorgesehen war, die es letztendlich allerdings nicht in das fertige Programm schaffte. Weitere Informationen zu diesem Thema werden in Abschnitt \ref{sec:indexer:herausforderungen} gegeben.
 
 
 \section{Datenquellen}
@@ -67,10 +67,11 @@ Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren 
 \label{fig:Indexer-DataFlow}
 \end{figure}
 
-
 In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Wenn möglich wird auch gleich geprüft, ob ein Album-Cover hinterlegt ist.
 
-In einem zweiten Schritt wird über eine .NET Bibliothek, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
+In einem zweiten Schritt wird über eine .NET Bibliothek \cite{indexer:echonestcsharp}, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
+
+Was bei der Originalimplementation leider fehlt, sind neuere Features wie Genres und Ortsdaten, sowie ein intelligenter Bremsalgorithmus, der dafür sorgt, dass die Datenlimite eingehalten wird. Deshalb wurde ein Fork erstellt, der diese Daten und Funktionalitäten ergänzt\footnote{\url{https://github.com/EusthEnoptEron/echonest-sharp/tree/additional\_apis}}.
 
 \section{Datenstruktur}
 
