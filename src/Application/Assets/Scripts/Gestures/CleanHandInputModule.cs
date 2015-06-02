@@ -26,7 +26,7 @@ namespace Gestures
         /// </summary>
         public float maxDistance = 0.5f;
 
-        public float pressZone = 0.01f;
+        public float pressZone = 0.001f;
         public float nearZone = 0.1f;
 
         private HandState leftHandState;
@@ -107,9 +107,10 @@ namespace Gestures
             }
         }
 
-        private bool GetFingerData(int id, out PointerEventData data, bool create)
+        private bool GetFingerData(int id, out FingerEventData data, bool create)
         {
-            if (!m_PointerData.TryGetValue(id, out data) && create)
+            PointerEventData pointerData;
+            if (!m_PointerData.TryGetValue(id, out pointerData) && create)
             {
                 data = new FingerEventData(eventSystem)
                 {
@@ -118,14 +119,16 @@ namespace Gestures
                     useDragThreshold = true,
                 };
                 m_PointerData.Add(id, data);
-                eventSystem.pixelDragThreshold = 100;
+                eventSystem.pixelDragThreshold = 200;
 
                 return true;
             }
+            // Convert because the built-in method only works with PointerEventData
+            data = (FingerEventData)pointerData;
             return false;
         }
 
-        private bool GetFingerData(GenericFinger finger, out PointerEventData data, bool create)
+        private bool GetFingerData(GenericFinger finger, out FingerEventData data, bool create)
         {
             return GetFingerData(GenericFinger.GetId(finger), out data, create);
         }
@@ -138,17 +141,18 @@ namespace Gestures
         protected void ProcessFinger(GenericFinger finger, HandState state)
         {
             // Get event data
-            PointerEventData data;
+            FingerEventData data;
             bool created = GetFingerData(finger, out data, true);
     
             var prevFingerState = state.GetFingerState(finger.Type);
             var selection = prevFingerState.selection;
             float currentDistance = float.PositiveInfinity;
-
+            float currentDistanceAbs = float.PositiveInfinity;
 
             // Get positions
             Vector3 worldPosition = finger.TipPosition;
             Vector3 screenPosition = eventCamera.WorldToScreenPoint(worldPosition);
+            Vector3 currentPointWS = worldPosition;
 
             if (created)
                 data.position = screenPosition;
@@ -168,12 +172,14 @@ namespace Gestures
 
             // Process until one is OK
 
+            RaycastResult closestGameObject = new RaycastResult();
+            //if (finger.Type == submitFinger)
+            //    Debug.Log("----------------");
             foreach (var raycast in m_RaycastResultCache)
             {
                 if (raycast.gameObject != null)
                 {
-                   
-
+                    
                     //if (finger.Type == submitFinger)
                     //    Debug.Log(raycast.gameObject.GetPath());
 
@@ -187,99 +193,97 @@ namespace Gestures
 
                     var hitPoint = CalculateHitPoint(screenPosition, z);
                     var distance = GetPerpendicularDistance(worldPosition, hitPoint, raycast.gameObject.transform.forward);
+                    float distanceAbs = Mathf.Abs(distance);
 
-                    bool isChild = data.pointerCurrentRaycast.gameObject
-                                    ? raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
-                                    : false;
-                    bool isParent = data.pointerCurrentRaycast.gameObject 
-                                ? data.pointerCurrentRaycast.gameObject.transform.IsChildOf(raycast.gameObject.transform)
-                                : false;
+                    //if (finger.Type == submitFinger)
+                    //    Debug.LogFormat("[{1:0.00}] {0}", raycast.gameObject.GetPath(), distance);
 
-                    if (data.eligibleForClick && selection != null)
-                    {
-                        if (selection.IsSameGameObject(raycast.gameObject))
+
+                    if ( distanceAbs < currentDistanceAbs && Mathf.Abs(currentDistance - distance) > 0.01f ) {
+                        //if (finger.Type == submitFinger)
+                        //    Debug.LogFormat("CHANGE with {0} ({1}), {2})", Mathf.Abs(currentDistance - distance), distance, currentDistance);
+
+                        currentDistance = distance;
+                        currentDistanceAbs = distanceAbs;
+                        closestGameObject = raycast;
+               
+
+
+                        if (Mathf.Abs(distance) < nearZone)
                         {
                             data.pointerCurrentRaycast = raycast;
                             data.worldPosition = hitPoint;
-
-                            currentDistance = distance;
+                            currentPointWS = hitPoint;
                         }
-                        else continue;
-                    }
-
-                    if (isChild ||
-                        (!isParent && Mathf.Abs(distance) < Mathf.Abs(currentDistance))
-                    )
-                    //if (selection != null && selection.valid 
-                    //    && selection.IsSameGameObject(raycast.gameObject)
-                    //    && selection.target.GetComponent<LooseGroup>() == null )
-                    //{
-                    //    data.pointerCurrentRaycast = raycast;
-                    //    data.worldPosition = hitPoint;
-
-                    //    currentDistance = distance;
-                    //    if(finger.Type == submitFinger)
-                    //        Debug.Log("BUBUBUBUBU");
-                    //    break;
-                    //} else if (Mathf.Abs(distance) < Mathf.Abs(currentDistance)
-                    //  //  || raycast.gameObject.transform.IsChildOf(data.pointerCurrentRaycast.gameObject.transform)
-                    //    )
-                    {
-                        data.pointerCurrentRaycast = raycast;
-                        data.worldPosition = hitPoint;
-                        
-                        currentDistance = distance;
                     }
                 }
             }
 
 
-            if (data.pointerCurrentRaycast.isValid)
+            m_RaycastResultCache.Clear();
+
+            var releasable = data.eligibleForClick || data.dragging;
+
+            bool pressed = !releasable && currentDistance < pressZone;
+            bool released = releasable && currentDistance > pressZone;
+
+            if (released)
             {
-                //if (finger.Type == submitFinger) Debug.Log(data.pointerCurrentRaycast.gameObject.name);
+                // really released?
+                var oldDistanceFromCam = Vector3.Distance(eventCamera.transform.position, data.pressPoint);
+                var newDistanceFromCam = Vector3.Distance(eventCamera.transform.position, currentPointWS);
 
-                if (selection != null)
+                if (oldDistanceFromCam - newDistanceFromCam < pressZone)
                 {
-
-                    if (selection.IsSameGameObject(data.pointerCurrentRaycast.gameObject))
-                    {
-                        selection.Update(currentDistance);
-                    }
-                    else
-                    {
-                        //if (finger.Type == submitFinger)
-                        //    Debug.Log("X: " + data.pointerCurrentRaycast.gameObject.GetPath());
-                        // Deselect
-                        if (!data.eligibleForClick)
-                            selection.Discard();
-                    }
-
-                    prevFingerState.crosshair.Visible = finger.Type == submitFinger;
-                    prevFingerState.crosshair.Value = selection.Proximity;
+                    released = false;
                 }
                 else
                 {
-                    selection = new Selection(data.pointerCurrentRaycast.gameObject, data.worldPosition);
-                    selection.Update(currentDistance);
-                }
+                    // All is OK, released!
+                    if (!data.pointerCurrentRaycast.isValid)
+                    {
+                        GameObject pressedObject = null;
+                        if (data.pointerPress != null)
+                        {
+                            pressedObject = data.pointerPress;
 
-                prevFingerState.crosshair.transform.position = CalculateHitPoint(screenPosition, data.pointerCurrentRaycast.distance, false);
+                        }
+                        else if (data.pointerDrag != null)
+                        {
+                            pressedObject = data.pointerDrag;
+                        }
+                        else
+                        {
+                            if (finger.Type == submitFinger)
+                                Debug.Log("found nothing");
+                        }
+                        
+                        if (pressedObject &&  
+                            Vector3.Distance(pressedObject.transform.position, worldPosition) < nearZone)
+                        {
+                            closestGameObject = new RaycastResult() {
+                                gameObject = pressedObject
+                            };
+                        }
+                        // it would be better to have *anything* when released, even if we're out of the nearZone
+                        data.pointerCurrentRaycast = closestGameObject;
+                    }
+
+                }
             }
-            else
+
+            if (pressed)
             {
-                //if (finger.Type == submitFinger) Debug.Log("Found nopthing");
-
-                if (selection != null)
-                {
-                    selection.Discard();
-                }
-                prevFingerState.crosshair.Visible = false;
-
+                data.pressPoint = currentPointWS;
             }
 
-            m_RaycastResultCache.Clear();
+
+            if (finger.Type == submitFinger)
+                Debug.LogFormat("!{1:0.00}! {0}", data.pointerCurrentRaycast.gameObject != null ?
+                    data.pointerCurrentRaycast.gameObject.GetPath() : "null", currentDistance);
+
             
-            state.SetFingerState(finger.Type, selection, data);
+            state.SetFingerState(finger.Type, pressed, released, data);
         }
 
         private Vector3 CalculateHitPoint(Vector2 screenPosition, float distance, bool cap = true)
@@ -348,6 +352,7 @@ namespace Gestures
 
                 if (submittable)
                 {
+                    Debug.Log("Click");
                     DeselectIfSelectionChanged(currentOverGo, pointerEvent);
 
                     // search for the control that will receive the press
@@ -401,6 +406,8 @@ namespace Gestures
 
                 if (submittable)
                 {
+                    Debug.Log("Clack");
+
                     //Debug.LogFormat("RELEASE {0}", pointerEvent.pointerPress.gameObject.GetPath());
 
                     // Debug.Log("Executing pressup on: " + pointer.pointerPress);
@@ -412,13 +419,27 @@ namespace Gestures
                     var pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(currentOverGo);
 
                     // PointerClick and Drop events
-                    if (/*pointerEvent.pointerPress == pointerUpHandler && */pointerEvent.eligibleForClick)
+                    if (pointerEvent.pointerPress == pointerUpHandler && pointerEvent.eligibleForClick)
                     {
+                        Debug.LogFormat("{0} == {1} ({2})",
+                            pointerEvent.pointerPress != null ? pointerEvent.pointerPress.GetPath() : "null",
+                            pointerUpHandler != null ? pointerUpHandler.GetPath() : "null",
+                            currentOverGo != null ? currentOverGo.GetPath() : "null");
+
                         ExecuteEvents.Execute(pointerEvent.pointerPress, pointerEvent, ExecuteEvents.pointerClickHandler);
                     }
                     else if (pointerEvent.pointerDrag != null)
                     {
+
                         ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.dropHandler);
+                    }
+                    else
+                    {
+                        Debug.LogFormat("{0} != {1} ({2})",
+                            pointerEvent.pointerPress != null ? pointerEvent.pointerPress.GetPath() : "null",
+                            pointerUpHandler != null ? pointerUpHandler.GetPath() : "null",
+                            currentOverGo != null ? currentOverGo.GetPath() : "null");
+
                     }
                 }
 
@@ -448,7 +469,7 @@ namespace Gestures
         {
             var evt = ExecuteEvents.ValidateEventData<FingerEventData>(eventData);
 
-            PointerEventData submitEventData;
+            FingerEventData submitEventData;
             GetFingerData(GenericFinger.GetId(submitFinger, evt.finger.Hand.IsLeft ? HandType.Left : HandType.Right), out submitEventData, true);
 
             var submitEvt = ExecuteEvents.ValidateEventData<FingerEventData>(submitEventData);
@@ -460,7 +481,7 @@ namespace Gestures
         {
             var evt = ExecuteEvents.ValidateEventData<FingerEventData>(eventData);
 
-            PointerEventData submitEventData;
+            FingerEventData submitEventData;
             GetFingerData(GenericFinger.GetId(submitFinger, evt.finger.Hand.IsLeft ? HandType.Left : HandType.Right), out submitEventData, true);
 
             var submitEvt = ExecuteEvents.ValidateEventData<FingerEventData>(submitEventData);
@@ -526,23 +547,26 @@ namespace Gestures
                 return tracked;
             }
 
-            public void SetFingerState(FingerType finger, Selection selection, PointerEventData data)
+            public void SetFingerState(FingerType finger, bool pressed, bool released, PointerEventData data)
             {
                 var toModify = GetFingerState(finger);
-                toModify.eventData.buttonState = selection == null 
-                    ? PointerEventData.FramePressState.NotChanged
-                    : selection.GetFrameState();
+                toModify.eventData.buttonState = pressed
+                    ? PointerEventData.FramePressState.Pressed
+                    : (released
+                        ? PointerEventData.FramePressState.Released
+                        : PointerEventData.FramePressState.NotChanged
+                    );
 
                 //if (finger == FingerType.Index && selection != null)
                 //    Debug.LogFormat("{0} ({1})", toModify.eventData.buttonState, selection != null ? selection.distance : 1000);
 
                 toModify.eventData.buttonData = data;
-                toModify.selection = selection;
+                //toModify.selection = selection;
 
-                if (selection != null && !selection.valid) {
-                    toModify.selection = null;
-                    data.pointerCurrentRaycast = new RaycastResult();
-                }
+                //if (selection != null && !selection.valid) {
+                //    toModify.selection = null;
+                //    data.pointerCurrentRaycast = new RaycastResult();
+                //}
 
                 //toModify.crosshair.Value = distance;
             }

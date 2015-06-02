@@ -87,7 +87,7 @@ public class CylinderLayout : MonoBehaviour {
         // Annetuation
         //v = Mathf.MoveTowards(v, 0, Time.deltaTime);
         v *= (1 - Time.deltaTime);
-        Debug.Log(v);
+        //Debug.Log(v);
         if (Mathf.Abs(v) > 0.0001f)
         {
             World.WorldNode.transform.localRotation *= Quaternion.Euler(0, -v * Time.deltaTime, 0);

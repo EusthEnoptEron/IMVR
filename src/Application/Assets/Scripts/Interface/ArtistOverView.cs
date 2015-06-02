@@ -27,7 +27,7 @@ public class ArtistOverView : View {
         //yield return null;
 
         //Debug.Log(db.Artists.Count);
-        var groups = ResourceManager.DB.Artists.OrderBy(a => a.Name).GroupBy(o =>
+        var groups = ResourceManager.DB.Artists.OrderByDescending(a => a.Name).GroupBy(o =>
         {
             char firstLetter = RemoveDiacritics( o.Name.Substring(0, 1).ToUpper() )[0];
             
