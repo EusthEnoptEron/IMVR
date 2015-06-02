@@ -1,6 +1,43 @@
 \chapter{Implementation von IMVR}
+
+Der Indexer ist implementiert und dokumentiert, also fehlt nur noch die grafische Applikation. In diesem Kapitel wird die Implementation genauer erläutert.
+
 \section{Aufbau}
+
+
 \section{Konzept}
+
+
 \section{Interaktionskonzept}
+
+Unüberraschenderweise findet die Interaktion des Users mit IMVR fast ausschliesslich mit seinen Händen statt. In einer frühen Phase des Projektes war noch geplant, eventuell die Spracheingabe modal zu den Händen zu gebrauchen, jedoch reichte dafür die Zeit nicht mehr. Ein Artefakt dieses Vorhabens ist das \textit{SpeechServer}-Projekt, welches sich immer noch unter den \textit{AuxiliaryTools} befindet.
+
+
+
+\subsection{Ringmenü}
+
+Bei der Entwicklung von VR-Applikationen stösst man zwingenderweise auf Situationen, in denen herkömmliche Konzepte nicht mehr verwendet werden können. Die Platzierung und der Aufbau des Menüs ist so ein Punkt.
+
+Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als "lästig" herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
+
+Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
+
+Für IMVR wurde ebenfalls ein Ringmenü entwickelt, doch dieses verfügt über keine Schaltflächen im herkömmlichen Sinn. Die Finger werden auch mit Funktionen versehen, aber zum Betätigen benutzt der Anwender nicht seine andere Hand, sondern hebt einen Finger. Wenn ein Finger lange genug gehoben wird, wird die zugewiesene Aktion ausgeführt.
+
+\subsection{Fussplatten}
+
+Beim Erstellen einer visuellen Applikation stellt sich die Frage, wie man am besten die Struktur verdeutlichen kann. Eine Technik, die dafür gewählt wurde, ist der Einsatz von "Fussplatten".
+
+Hierbei befinden sich unter den Füssen des Anwenders ringförmige Platten, welche die zwei Modi der Applikation repräsentieren. Eine dritte, zentriert abgehobene Platte dient zur Beendigung der Applikation.
+
+Bei diesen Platten handelt es sich um das einzige Interaktionsmittel, welches bewusst keine Eingabe durch die Hände erfordert. In diesem Fall wird die Oculus Rift selbst als Eingabegerät verwendet, und zwar durch den Blickwinkel.
+
+Die Idee ist, dass der Benutzer feststellen will, ``wo er steht'', herunterschaut, und durch gehaltenen Blickkontakt mit den Fussplatten diese aktivieren kann. Entsprechend den \textit{Best Practices} wird dabei ein Indikator gefüllt, der anzeigt, wie lange der Blick noch gehalten werden muss.
+
+Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus Rift beobachten. Das Prinzip ist sehr leicht zu implementieren und daher auch verlockend, jedoch muss mit Vorsicht vorgegangen werden: Für den Benutzer ist es auf Dauer unangenehm, wenn von ihm ständige Kopfbewegungen gefordert werden. In IMVR wurde jedoch bewusst Gebrauch von dieser Methode gemacht, weil der Anwender nur selten nach unten schauen wird, und es relativ intuitiv ist.
+
+
 \section{Visual Design}
+
+
 \section{Herausforderungen}
