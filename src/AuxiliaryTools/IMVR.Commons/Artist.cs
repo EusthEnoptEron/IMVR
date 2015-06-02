@@ -104,15 +104,28 @@ namespace IMVR.Commons
         public float Frequency { get; set; }
     }
 
+    /// <summary>
+    /// Represents a geographic coordinate.
+    /// </summary>
     [ProtoContract]
     public struct GeoCoordinate
     {
+
         [ProtoMember(1)]
         private readonly float latitude;
+
+
         [ProtoMember(2)]
         private readonly float longitude;
 
+        /// <summary>
+        /// Gets the latitude of the position.
+        /// </summary>
         public float Latitude { get { return latitude; } }
+
+        /// <summary>
+        /// Gets the longitude of the position.
+        /// </summary>
         public float Longitude { get { return longitude; } }
 
         public GeoCoordinate(float latitude, float longitude)
