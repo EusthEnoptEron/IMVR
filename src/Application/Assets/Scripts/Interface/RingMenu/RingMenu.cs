@@ -92,8 +92,15 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private FingerType? submitCandidate;
     private float submitDelta = 0;
 
+
+    public ToggleGroup SelectionGroup;
+
     void Awake()
     {
+        SelectionGroup = new GameObject().AddComponent<ToggleGroup>();
+        SelectionGroup.transform.SetParent(transform, false);
+        SelectionGroup.allowSwitchOff = true;
+        EntryPoint = this;
     }
 
 	// Use this for initialization
@@ -359,12 +366,12 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         get { return Node; }
     }
 
-    internal void GoBack()
+    internal void GoBack(bool asEntryPoint = false)
     {
         if (ActiveMenu != null)
         {
             // Skip one because this will also get the current menu itself
-            ActiveMenu = ActiveMenu.Node.parent.GetComponentInParent<IRingMenu>();
+            Navigate(ActiveMenu.Node.parent.GetComponentInParent<IRingMenu>(), asEntryPoint);
         }
     }
 
@@ -403,7 +410,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
         else
         {
             ActiveMenu = null;
-            EntryPoint = null;
+            EntryPoint = this;
         }
       
     }

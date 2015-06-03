@@ -92,9 +92,10 @@ namespace Gestures
                 ProcessPress(fState.eventData, finger);
                 ProcessMove(fState.eventData.buttonData);
 
-                if(finger.Type == submitFinger)
+                if (finger.Type == submitFinger)
                     ProcessDrag(fState.eventData.buttonData);
             }
+
         }
 
         private void DisableHand(HandType type)
@@ -105,6 +106,9 @@ namespace Gestures
             {
                 state.GetFingerState(fingerType).crosshair.Visible = false;
             }
+
+
+
         }
 
         private bool GetFingerData(int id, out FingerEventData data, bool create)
@@ -239,32 +243,27 @@ namespace Gestures
                 }
                 else
                 {
-                    // All is OK, released!
-                    if (!data.pointerCurrentRaycast.isValid)
+                    GameObject pressedObject = null;
+                    if (data.pointerPress != null)
                     {
-                        GameObject pressedObject = null;
-                        if (data.pointerPress != null)
-                        {
-                            pressedObject = data.pointerPress;
+                        pressedObject = data.pointerPress;
 
-                        }
-                        else if (data.pointerDrag != null)
-                        {
-                            pressedObject = data.pointerDrag;
-                        }
-                        else
-                        {
-                            if (finger.Type == submitFinger)
-                                Debug.Log("found nothing");
-                        }
-                        
-                        if (pressedObject &&  
-                            Vector3.Distance(pressedObject.transform.position, worldPosition) < nearZone)
-                        {
-                            closestGameObject = new RaycastResult() {
-                                gameObject = pressedObject
-                            };
-                        }
+                    }
+                    else if (data.pointerDrag != null)
+                    {
+                        pressedObject = data.pointerDrag;
+                    }
+                    if (pressedObject &&  
+                        Vector3.Distance(pressedObject.transform.position, worldPosition) < nearZone*2)
+                    {
+                        Debug.LogFormat("CHANGE TO PRESSED {0} " + data.dragging, pressedObject);
+                        data.pointerCurrentRaycast = new RaycastResult() {
+                            gameObject = pressedObject
+                        };
+                    }
+                    else if(!data.pointerCurrentRaycast.isValid)
+                    {
+                    
                         // it would be better to have *anything* when released, even if we're out of the nearZone
                         data.pointerCurrentRaycast = closestGameObject;
                     }
@@ -430,6 +429,10 @@ namespace Gestures
                     }
                     else if (pointerEvent.pointerDrag != null)
                     {
+                        Debug.LogFormat("(D) {0} != {1} ({2})",
+                        pointerEvent.pointerPress != null ? pointerEvent.pointerPress.GetPath() : "null",
+                        pointerUpHandler != null ? pointerUpHandler.GetPath() : "null",
+                        currentOverGo != null ? currentOverGo.GetPath() : "null");
 
                         ExecuteEvents.ExecuteHierarchy(currentOverGo, pointerEvent, ExecuteEvents.dropHandler);
                     }

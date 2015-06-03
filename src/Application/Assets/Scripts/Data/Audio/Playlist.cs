@@ -55,6 +55,23 @@ public class Playlist
         Add(songs);
     }
 
+    /// <summary>
+    /// Changes the current selected playlist item to a specific song.
+    /// </summary>
+    /// <param name="song">Song to select</param>
+    /// <returns>Whether or not the song could be selected.</returns>
+    public bool Select(Song song)
+    {
+        int index = Songs.IndexOf(song);
+        if (index >= 0)
+        {
+            Index = index;
+            RaiseIndexChange();
+            return true;
+        }
+        return false;
+    }
+
     public bool IsEmpty
     {
         get

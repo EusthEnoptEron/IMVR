@@ -17,23 +17,24 @@ public class SongEventArgs : EventArgs
     }
 }
 
+
 [RequireComponent(typeof(Text))]
 public class SongItem : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler {
     public Song song;
-    private ArtistView _artistView;
+    //private ArtistView _artistView;
 
     public event EventHandler<SongEventArgs> Touched = delegate { };
 
 	// Use this for initialization
 	void Start () {
         GetComponent<Text>().text = String.Format("{0:00}. {1}", song.TrackNo, song.Title);
-        _artistView = GetComponentInParent<ArtistView>();
+        //_artistView = GetComponentInParent<ArtistView>();
 	}
 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-      
+        
     }
 
     public void OnPointerDown(PointerEventData eventData)

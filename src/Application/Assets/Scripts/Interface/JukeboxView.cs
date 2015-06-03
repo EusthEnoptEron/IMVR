@@ -6,7 +6,7 @@ using Gestures;
 using System.Linq;
 using Leap;
 
-public class JukeboxView : MonoBehaviour {
+public class JukeboxView : ArmWear {
     public float pixelsPerUnit = 1000f;
 
     private Jukebox m_jukebox;
@@ -27,9 +27,7 @@ public class JukeboxView : MonoBehaviour {
         m_slider = transform.GetComponentInChildren<Slider>();
         m_sliderText = transform.Find("SliderText").GetComponent<Text>();
         m_title = transform.Find("Title").GetComponent<Text>();
-        m_group = GetComponent<CanvasGroup>();
         m_coverImage = transform.FindChild("Cover").GetComponent<UnityEngine.UI.Image>();
-        if (m_group != null) m_group.alpha = 0;
         //m_jukebox.Playlist.Change += (sender, evt) => Rebuild();
         //m_jukebox.Playlist.IndexChange += (sender, evt) => Rebuild();
 
@@ -55,50 +53,10 @@ public class JukeboxView : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         UpdateValues();
-        UpdatePlacement();
-    }
-
-    private void UpdatePlacement()
-    {
-        float lerpProgress = Time.deltaTime * 10;
-        var hand = HandProvider.Instance.GetHand(HandType.Left);
-
-        if (hand != null)
-        {
-            if(!visible) {
-                m_group.Fade(1, 0.5f);
-                lerpProgress = 1;
-                visible = true;
-            }
-            var provider = HandProvider.Instance as LeapHandProvider;
-            var leapHand = provider.GetFrame().Hands.FirstOrDefault(h => h.Id == hand.Id);
-
-            if (leapHand != null)
-            {
-                var arm = leapHand.Arm;
-
-                transform.position = Vector3.Lerp(transform.position,
-                                        provider.transform.TransformPoint(arm.Center.ToUnityScaled()),
-                                        lerpProgress);
-                transform.rotation = Quaternion.Slerp(
-                                        transform.rotation,
-                                        provider.transform.rotation * arm.Basis.Rotation() * Reorientation(),
-                                        lerpProgress);
-            }
-        }
-        else if (visible)
-        {
-            visible = false;
-            m_group.Fade(0, 0.5f);
-        }
-    }
-
-    private Quaternion Reorientation()
-    {
-        return Quaternion.Inverse(Quaternion.LookRotation(Vector3.right, Vector3.back));
     }
 
 
