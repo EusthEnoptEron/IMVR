@@ -28,6 +28,7 @@ public class RootPanel : Singleton<RootPanel> {
             if (_controller != null) _controller.enabled = false;
 
             _controller = value;
+            Theme.Current = _controller.Theme;
 
             _controller.enabled = true;
         }

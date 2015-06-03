@@ -6,10 +6,14 @@ using DG.Tweening;
 public class ModeActivator : RingActivator {
     public ModeController controller;
     private RingMesh _floor;
+    private RingMesh _ring;
 
     protected void Start()
     {
         _floor = transform.Siblings().First(s => s.name == "Floor").GetComponent<RingMesh>();
+        _ring = GetComponent<RingMesh>();
+
+        _ring.Color = controller.Theme.BaseColor;
     }
 
     protected override bool IsStillActive

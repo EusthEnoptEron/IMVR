@@ -2,6 +2,13 @@
 using System.Collections;
 
 public class BrowseController : ModeController {
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Theme = new GreenTheme();
+    }
+
     protected override void Start()
     {
         StartCoroutine(StartDelayed());

@@ -15,12 +15,6 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
 
     private bool _playing = false;
 
-    public Color normalColor = ColorManager.Normal;
-    public Color highlightColor = ColorManager.Highlighted;
-    public Color selectedColor = ColorManager.Activated;
-    public Color playingColor = ColorManager.Special;
-
-
     //private ArtistView _artistView;
 
     // Use this for initialization
@@ -39,8 +33,20 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
 
 
             name = song.Title + " (Toggle)";
+
+            Theme.Change += (s,e) => UpdateColors();
+            UpdateColors();
         }
         //_artistView = GetComponentInParent<ArtistView>();
+    }
+
+    private void UpdateColors()
+    {
+        _progressbar.color = Theme.Current.SpecialColor;
+        _graphic.CrossFadeColor(_toggle.isOn
+           ? Theme.Current.ActivatedColor
+           : Theme.Current.NormalColor,
+        0.1f, false, false);
     }
 
     private void Update()
@@ -58,8 +64,9 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
     private void OnValueChanged(bool enabled)
     {
         _graphic.CrossFadeColor(enabled
-           ? selectedColor
-           : normalColor, 0.1f, false, false);
+           ? Theme.Current.ActivatedColor
+           : Theme.Current.NormalColor, 
+        0.1f, false, false);
 
         if (enabled)
         {
@@ -73,7 +80,7 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
         if (!_toggle.isOn)
         {
             _graphic.CrossFadeColor(
-                normalColor,
+                Theme.Current.NormalColor,
                 0.1f,
                 false,
                 false
@@ -86,7 +93,7 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
         if (!_toggle.isOn)
         {
             _graphic.CrossFadeColor(
-                highlightColor,
+                Theme.Current.HighlightedColor,
                 0.1f,
                 false,
                 false

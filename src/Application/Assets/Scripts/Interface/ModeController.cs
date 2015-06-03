@@ -8,6 +8,7 @@ using Gestures;
 public abstract class ModeController : MonoBehaviour
 {
     private Stack<View> viewStack;
+    public Theme Theme { get; protected set; }
 
     public View ActiveView
     {
@@ -17,13 +18,13 @@ public abstract class ModeController : MonoBehaviour
                 ? viewStack.Peek()
                 : null;
         }
-
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         viewStack = new Stack<View>();
         viewStack.Push(null);
+
     }
 
 
