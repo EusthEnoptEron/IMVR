@@ -11,10 +11,15 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
     public Song song;
     private Toggle _toggle;
     private Graphic _graphic;
+    private UnityEngine.UI.Image _progressbar;
 
-    public Color normalColor = Color.white;
-    public Color highlightColor = Color.gray;
-    public Color selectedColor = Color.blue;
+    private bool _playing = false;
+
+    public Color normalColor = ColorManager.Normal;
+    public Color highlightColor = ColorManager.Highlighted;
+    public Color selectedColor = ColorManager.Activated;
+    public Color playingColor = ColorManager.Special;
+
 
     //private ArtistView _artistView;
 
@@ -26,6 +31,7 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
             GetComponentInChildren<Text>().text = String.Format("{0}", song.Title);
             _toggle = GetComponent<Toggle>();
             _graphic = GetComponent<Graphic>();
+            _progressbar = transform.FindRecursively("Progress").GetComponent<UnityEngine.UI.Image>();
 
             _toggle.onValueChanged.AddListener(OnValueChanged);
 
@@ -35,6 +41,18 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
             name = song.Title + " (Toggle)";
         }
         //_artistView = GetComponentInParent<ArtistView>();
+    }
+
+    private void Update()
+    {
+        if (Jukebox.Instance.Playlist.Current == song)
+        {
+            _progressbar.fillAmount = Jukebox.Instance.Progress;
+        }
+        else
+        {
+            _progressbar.fillAmount = 0;
+        }
     }
 
     private void OnValueChanged(bool enabled)

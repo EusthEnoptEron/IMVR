@@ -42,7 +42,12 @@ public abstract class Selector : MonoBehaviour {
             RingMenu.Instance.Remove(_appendedMenu);
         }
         // ---
-
+        if (parentMenu.Items.ContainsKey(FingerType.Pinky))
+        {
+            RingMenu.Instance.Remove(
+                parentMenu.Items[FingerType.Pinky]
+            );
+        }
 
         string title;
         if (_songs.Count() > 1)
