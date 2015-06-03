@@ -18,45 +18,73 @@ public class SongEventArgs : EventArgs
 }
 
 
-[RequireComponent(typeof(Text))]
-public class SongItem : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler {
+[RequireComponent(typeof(Toggle))]
+public class SongItem : Selector, IPointerEnterHandler, IPointerExitHandler {
     public Song song;
+    private Toggle _toggle;
+    private Graphic _graphic;
+
+    public Color normalColor = Color.white;
+    public Color highlightColor = Color.gray;
+    public Color selectedColor = Color.blue;
+
     //private ArtistView _artistView;
 
-    public event EventHandler<SongEventArgs> Touched = delegate { };
+    // Use this for initialization
+    void Start()
+    {
+        if (song != null)
+        {
+            GetComponentInChildren<Text>().text = String.Format("{0:00}. {1}", song.TrackNo, song.Title);
 
-	// Use this for initialization
-	void Start () {
-        GetComponent<Text>().text = String.Format("{0:00}. {1}", song.TrackNo, song.Title);
+            _toggle = GetComponent<Toggle>();
+            _graphic = GetComponent<Graphic>();
+
+            _toggle.onValueChanged.AddListener(OnValueChanged);
+            _toggle.group = RingMenu.Instance.SelectionGroup;
+
+
+            name = song.Title + " (Toggle)";
+        }
         //_artistView = GetComponentInParent<ArtistView>();
-	}
-
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    private void OnValueChanged(bool enabled)
     {
-        Touched(this, new SongEventArgs(this));
+        _graphic.CrossFadeColor(enabled
+           ? selectedColor
+           : normalColor, 0.1f, false, false);
 
-        //_artistView.selector.transform.SetParent(transform, false);
-
-        //_artistView.selector.songs.Clear();
-        //_artistView.selector.songs.Add(song);
-
-        //_artistView.selector.gameObject.SetActive(true);
-        //Jukebox.Instance.Play(song);
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-
+        if (enabled)
+        {
+            var menu = Select(new Song[] { song });
+            RingMenu.Instance.Navigate(menu, true);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!_toggle.isOn)
+        {
+            _graphic.CrossFadeColor(
+                normalColor,
+                0.1f,
+                false,
+                false
+            );
+        }
+    }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!_toggle.isOn)
+        {
+            _graphic.CrossFadeColor(
+                highlightColor,
+                0.1f,
+                false,
+                false
+            );
+        }
     }
 }

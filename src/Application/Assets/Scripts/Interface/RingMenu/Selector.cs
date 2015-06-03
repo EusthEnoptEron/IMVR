@@ -16,6 +16,8 @@ public abstract class Selector : MonoBehaviour {
     private RingSubMenu _myMenu = null;
 
     private static Song[] _songs;
+
+    [System.NonSerialized]
     private Toggle _toggle;
 
     protected virtual void Awake()

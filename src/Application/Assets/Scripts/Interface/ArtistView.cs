@@ -173,7 +173,6 @@ public class ArtistView : View {
             
             songItem.transform.SetParent(songList, false);
             songItem.song = song;
-            songItem.Touched += OnSelectSong;
         }
 
         SizeCanvas(albumView.GetComponent<RectTransform>());

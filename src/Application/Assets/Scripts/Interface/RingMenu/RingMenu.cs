@@ -22,7 +22,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     private GameObject _stack;
 
     private IRingMenu _activeMenu;
-
+    private bool _submitted = false;
 
     [SerializeField]
     private Sprite _sprite;
@@ -180,23 +180,30 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
                     fingers.Add(finger);
                 }
             }
-            
-            if (fingers.Count == 1)
+
+            _submitted = _submitted && fingers.Count > 0;
+
+            // Do nothing while the user hasn't returned his submitted finger!
+            if (!_submitted)
             {
-                if (submitCandidate == null || submitCandidate != fingers[0].Type)
+
+                if (fingers.Count == 1)
+                {
+                    if (submitCandidate == null || submitCandidate != fingers[0].Type)
+                    {
+                        if (submitCandidate != null) ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerUpHandler);
+
+                        submitCandidate = fingers[0].Type;
+                        submitDelta = 0;
+
+                        ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerDownHandler);
+                    }
+                }
+                else
                 {
                     if (submitCandidate != null) ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerUpHandler);
-
-                    submitCandidate = fingers[0].Type;
-                    submitDelta = 0;
-
-                    ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerDownHandler);
+                    submitCandidate = null;
                 }
-            }
-            else
-            {
-                if (submitCandidate != null) ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerUpHandler);
-                submitCandidate = null;
             }
 
             UpdateCandidate(hand);
@@ -244,6 +251,7 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
             submitDelta += Time.deltaTime;
             if (submitDelta > 1f)
             {
+                _submitted = true;
                 // Submit!
                 ExecuteEvent(submitCandidate.Value, ExecuteEvents.pointerClickHandler);
                 submitCandidate = null;
