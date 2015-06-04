@@ -22,6 +22,7 @@ public class SongMetaChart : MonoBehaviour {
     private bool initialized = false;
     private bool update = false;
 
+    public event EventHandler AxisChanged = delegate { };
 
 	// Use this for initialization
 	void Awake () {
@@ -108,6 +109,8 @@ public class SongMetaChart : MonoBehaviour {
         }
 
         Refresh();
+
+        AxisChanged(this, new EventArgs());
     }
 
     private void Refresh()

@@ -53,6 +53,9 @@ public class SelectorView : View {
         chart.transform.localPosition = Vector3.zero;
         chart.SetSongs(Selection.Songs);
 
+        var indicator = chart.GetComponent<SelectionVisualizer>();
+        indicator.selection = Selection;
+
         cylinder.SetTile(1, 0, chart.gameObject);
         // ---
 
