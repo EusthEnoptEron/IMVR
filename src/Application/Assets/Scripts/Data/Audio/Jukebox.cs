@@ -75,6 +75,7 @@ public class Jukebox : Singleton<Jukebox> {
     {
         get
         {
+            if (!m_audio.clip) return 0;
             return m_audio.time / m_audio.clip.length;
         }
     }

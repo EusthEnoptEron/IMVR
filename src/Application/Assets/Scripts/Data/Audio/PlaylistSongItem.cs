@@ -37,6 +37,10 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
             Theme.Change += (s,e) => UpdateColors();
             UpdateColors();
         }
+        else
+        {
+            enabled = false;
+        }
         //_artistView = GetComponentInParent<ArtistView>();
     }
 
@@ -51,6 +55,7 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
 
     private void Update()
     {
+
         if (Jukebox.Instance.Playlist.Current == song)
         {
             _progressbar.fillAmount = Jukebox.Instance.Progress;
