@@ -37,6 +37,8 @@ public class SelectorView : View {
         // --- INIT COUNTER ---
         var counter = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/UI/pref_SelectorCounter"));
         _counterText = counter.transform.FindRecursively("Counter").GetComponent<Text>();
+        counter.GetComponentInChildren<Button>().onClick.AddListener(StartListening);
+            
 
         cylinder.SetTile(0, 0, counter);
         // ---
@@ -63,6 +65,13 @@ public class SelectorView : View {
         
         FinishInitialization();
     }
+
+    private void StartListening()
+    {
+        var listenView = Navigator.Navigate<ListenView>();
+        listenView.selection = Selection;
+    }
+
 
 
     void Selection_SelectionChanged(object sender, System.EventArgs e)
