@@ -44,6 +44,7 @@ public class SongMetaChart : MonoBehaviour {
         // Debug
         if(debug)
             SetSongs(ResourceManager.DB.Songs);
+
     }
 
     private void CreateCombobox(int axis)

@@ -59,6 +59,11 @@ public class SetPivot : EditorWindow {
 					last_p = p;
 				}
 				GUILayout.Label("Bounds " + mesh.bounds.ToString());
+                if (GUILayout.Button("Save"))
+                {
+                    AssetDatabase.CreateAsset(mesh, "Assets/temp_asset.asset");
+                    AssetDatabase.SaveAssets();
+                }
 			} else {
 				GUILayout.Label("Selected object does not have a Mesh specified.");
 			}

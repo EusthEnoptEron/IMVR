@@ -28,7 +28,7 @@ public class ArtistView : View {
     private IRingMenu _artistMenu;
 
     private CylinderLayout cylinder;
-    private List<GameObject> tileList = new List<GameObject>();
+
     protected override void Awake()
     {
         base.Awake();
@@ -116,7 +116,6 @@ public class ArtistView : View {
             }
 
             FinishInitialization();
-
         }
     }
 

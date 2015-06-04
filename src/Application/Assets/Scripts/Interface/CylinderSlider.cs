@@ -8,6 +8,9 @@ public class CylinderSlider : MonoBehaviour {
     private float _minValue = 0;
     private float _maxValue = 1;
 
+    private bool _leftHandUpdated = false;
+    private bool _rightHandUpdated = false;
+
     public UnityEngine.UI.Slider.SliderEvent onMinValueChanged = new UnityEngine.UI.Slider.SliderEvent();
     public UnityEngine.UI.Slider.SliderEvent onMaxValueChanged = new UnityEngine.UI.Slider.SliderEvent();
     public UnityEngine.UI.Slider.SliderEvent onValueChanged = new UnityEngine.UI.Slider.SliderEvent();
@@ -83,20 +86,30 @@ public class CylinderSlider : MonoBehaviour {
 
 	
 	// Update is called once per frame
-	void Update () {
-	    
+	void FixedUpdate () {
+        _leftHandUpdated = false;
+        _rightHandUpdated = false;
 	}
 
     void OnTriggerStay(Collider other)
     {
+        var finger = other.GetComponentInParent<FingerModel>();
         var hand = other.GetComponentInParent<HandModel>();
-        if (hand)
+        if (hand && finger && finger.fingerType == Leap.Finger.FingerType.TYPE_MIDDLE)
         {
+
+            bool isLeft = hand.GetLeapHand().IsLeft;
+
+            // break condition to save CPU time
+            if ((isLeft && _leftHandUpdated) || (!isLeft && _rightHandUpdated))
+                return;
+
+
             var palmNormal = transform.InverseTransformDirection(hand.GetPalmNormal());
             var dotProduct = Vector3.Dot(palmNormal, direction);
             bool eligible =
-                (hand.GetLeapHand().IsLeft && dotProduct > 0)
-            || (!hand.GetLeapHand().IsLeft && dotProduct < 0);
+                (isLeft && dotProduct > 0)
+            || (!isLeft && dotProduct < 0);
 
             eligible = eligible && hand.fingers.Count(
                 f => f.GetLeapFinger().IsExtended
@@ -105,20 +118,35 @@ public class CylinderSlider : MonoBehaviour {
             // Only let through when the hand is correctly oriented
             if (eligible)
             {
+                _leftHandUpdated = _leftHandUpdated || isLeft;
+                _rightHandUpdated = _rightHandUpdated || !isLeft;
+
                 var pos = transform.InverseTransformPoint(hand.GetPalmPosition());
                 var posVector = (pos - _minPoint) / _length;
 
                 float value = Mathf.Clamp01(Vector3.Dot(direction, posVector));
+                
 
-                if (hand.GetLeapHand().IsLeft)
+                if (isLeft)
                 {
+                    float lerpedValue = Mathf.Lerp(
+                       MinValue,
+                       value,
+                       Time.deltaTime * 5);
+
                     // change lower bound
-                    MinValue = value < 0.01f ? 0 : value;
+                    MinValue = value < 0.01f ? 0 : lerpedValue;
+
                 }
                 else
                 {
+                    float lerpedValue = Mathf.Lerp(
+                       MaxValue,
+                       value,
+                       Time.deltaTime * 5);
+
                     // change upper bound
-                    MaxValue = value > 0.99f ? 1 : value;
+                    MaxValue = value > 0.99f ? 1 : lerpedValue;
                 }
             }
         }

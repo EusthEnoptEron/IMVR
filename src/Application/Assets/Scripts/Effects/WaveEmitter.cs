@@ -19,7 +19,7 @@ public class WaveEmitter : MonoBehaviour {
         
         wave.InnerRadius = 1;
         wave.OuterRadius = wave.InnerRadius + width;
-        wave.Color = Color.blue;
+        wave.Color = Theme.Current.ActivatedColor;
         wave.GetComponent<MeshRenderer>().material = material;
 
 
