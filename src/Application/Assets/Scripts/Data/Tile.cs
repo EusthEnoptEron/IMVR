@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using VirtualHands.Data;
+using IMVR.Commons;
 
 [RequireComponent(typeof(CanvasRenderer))]
 [RequireComponent(typeof(RectTransform))]
