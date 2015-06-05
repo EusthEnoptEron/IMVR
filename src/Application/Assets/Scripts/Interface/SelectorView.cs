@@ -10,6 +10,7 @@ public class SelectorView : View {
     public SongSelection Selection;
 
     private Text _counterText;
+    private GameObject _prefLabel;
     
     protected override void Awake()
     {
@@ -23,11 +24,13 @@ public class SelectorView : View {
         cylinder = new GameObject().AddComponent<CylinderLayout>();
         cylinder.transform.SetParent(transform, false);
         cylinder.radius = 0.5f;
-        cylinder.height = 1;
+        cylinder.height = 1f;
         cylinder.scale = 1;
-        cylinder.Resize(8, 1);
+        cylinder.Resize(8, 2);
 
         cylinder.autoLayout = false;
+
+        _prefLabel = Resources.Load<GameObject>("Prefabs/UI/pref_Label");
     }
 
     protected void Start()
@@ -40,11 +43,14 @@ public class SelectorView : View {
         counter.GetComponentInChildren<Button>().onClick.AddListener(StartListening);
             
 
-        cylinder.SetTile(0, 0, counter);
+        cylinder.SetTile(0, 1, counter);
         // ---
 
         // --- INIT SLIDERS ---
-        cylinder.SetTile(cylinder.xSegments - 1, 0, InitSliders());
+        var criteria = Selection.GetCriteria();
+        cylinder.SetTile(cylinder.xSegments - 1, 1, InitSliders(0, criteria.Length / 2));
+        cylinder.SetTile(1, 1, InitSliders(criteria.Length / 2));
+
         // ---
 
         // --- INIT CHART ---
@@ -58,7 +64,7 @@ public class SelectorView : View {
         var indicator = chart.GetComponent<SelectionVisualizer>();
         indicator.selection = Selection;
 
-        cylinder.SetTile(1, 0, chart.gameObject);
+        cylinder.SetTile(0, 0, chart.gameObject);
         // ---
 
         Selection.SelectionChanged += Selection_SelectionChanged;
@@ -83,29 +89,36 @@ public class SelectorView : View {
     /// Inits the slider being used by the selector.
     /// </summary>
     /// <returns></returns>
-    private GameObject InitSliders()
+    private GameObject InitSliders(int offset, int length = -1)
     {
         GameObject container = new GameObject("Slider Container");
         GameObject sliderPrefab = Resources.Load<GameObject>("Prefabs/Objects/pref_Slider");
 
         float sliderHeight = 0.2f;
-        int i = 0;
-        foreach (var criterion in Selection.GetCriteria())
+        var criteria = Selection.GetCriteria();
+
+        if (length < 0) length = criteria.Length;
+
+        Debug.LogFormat("From {0} to {1}", offset, offset + length);
+
+
+        for (int i = 0; (i + offset) < criteria.Length && i < length; i++)
         {
-            var crit = criterion;
+            var criterion = criteria[i + offset];
             var slider = Instantiate<GameObject>(sliderPrefab).GetComponent<CylinderSlider>();
 
             slider.onValueChanged.AddListener(
-                delegate {
+                delegate
+                {
                     //Debug.Log("UPDATE" + criterion);
-                    Selection.ChangeCriterion(crit, slider.MinValue, slider.MaxValue);
+                    Selection.ChangeCriterion(criterion, slider.MinValue, slider.MaxValue);
                 }
             );
 
             slider.MinValue = Selection.GetCriterion(criterion).Min;
             slider.MaxValue = Selection.GetCriterion(criterion).Max;
 
-            slider.transform.localPosition += Vector3.down * sliderHeight * i++;
+            slider.transform.localPosition += Vector3.down * sliderHeight * i;
             slider.transform.SetParent(container.transform, false);
         }
 
