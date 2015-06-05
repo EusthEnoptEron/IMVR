@@ -94,7 +94,7 @@ public class SelectorView : View {
         GameObject container = new GameObject("Slider Container");
         GameObject sliderPrefab = Resources.Load<GameObject>("Prefabs/Objects/pref_Slider");
 
-        float sliderHeight = 0.2f;
+        float sliderHeight = 0.4f;
         var criteria = Selection.GetCriteria();
 
         if (length < 0) length = criteria.Length;
@@ -106,6 +106,7 @@ public class SelectorView : View {
         {
             var criterion = criteria[i + offset];
             var slider = Instantiate<GameObject>(sliderPrefab).GetComponent<CylinderSlider>();
+            var label = Instantiate<GameObject>(_prefLabel).GetComponent<Text>();
 
             slider.onValueChanged.AddListener(
                 delegate
@@ -119,7 +120,12 @@ public class SelectorView : View {
             slider.MaxValue = Selection.GetCriterion(criterion).Max;
 
             slider.transform.localPosition += Vector3.down * sliderHeight * i;
+            label.transform.localPosition += Vector3.down * sliderHeight * i + Vector3.up * (sliderHeight / 2f);
+
             slider.transform.SetParent(container.transform, false);
+            label.transform.SetParent(container.transform, false);
+
+            label.text = criterion.ToString();
         }
 
         return container;
