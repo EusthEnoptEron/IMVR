@@ -2,6 +2,7 @@
 using System.Collections;
 using Gestures;
 using System.Linq;
+using Foundation;
 
 
 /// <summary>
@@ -54,6 +55,8 @@ public class HandParticleController : MonoBehaviour {
             _rotationOffset = Quaternion.Euler(rotationOffset);
 
             _bakedMesh = new Mesh();
+
+            StartCoroutine(UpdateParticles());
         }
         else
         {
@@ -63,54 +66,103 @@ public class HandParticleController : MonoBehaviour {
 	}
 
     private float lastUpdate = 0;
+
+    private Transform lastTransform;
+    private float _lastTime = 0;
+    private bool _visible = false;
 	// Update is called once per frame
-	void Update () {
-        if (!throttle || (Time.time - lastUpdate) > (1 / throttleFPS))
+	IEnumerator UpdateParticles () {
+        while (true)
         {
-            var hand = HandProvider.Instance.GetHand(handType);
-            if (hand != null)
+            if (!throttle || (Time.time - lastUpdate) > (1 / throttleFPS))
             {
-
-                var leapHand = _handController.GetAllGraphicsHands().FirstOrDefault(h => h.GetLeapHand().Id == hand.Id);
-                if (leapHand != null)
+                var hand = HandProvider.Instance.GetHand(handType);
+                float time = Time.time;
+                float deltaTime = time - lastUpdate;
+                if (hand != null)
                 {
-                    var handContainer = leapHand.transform.FindChild("HandContainer");
 
-                    // Found hand representation
-
-                    // Bake mesh
-                    var skinnedMeshRenderer = leapHand.GetComponentInChildren<SkinnedMeshRenderer>();
-                    skinnedMeshRenderer.enabled = false;
-                    skinnedMeshRenderer.BakeMesh(_bakedMesh);
-
-                    _particleSystem.GetParticles(_particles);
+                    var leapHand = _handController.GetAllGraphicsHands().FirstOrDefault(h => h.GetLeapHand().Id == hand.Id);
+                    if (leapHand != null)
                     {
-                        var vertices = _bakedMesh.vertices;
-                        for (int i = 0; i < _particles.Length; i++)
+                        bool appeared = !_visible;
+                        _visible = true;
+                        _rotationOffset = Quaternion.Euler(rotationOffset);
+
+                        var handContainer = leapHand.transform.FindChild("HandContainer");
+
+                        // Found hand representation
+
+                        // Bake mesh
+                        var skinnedMeshRenderer = leapHand.GetComponentInChildren<SkinnedMeshRenderer>();
+                        skinnedMeshRenderer.enabled = false;
+                        skinnedMeshRenderer.BakeMesh(_bakedMesh);
+
+                        _particleSystem.GetParticles(_particles);
                         {
-                            var v = leapHand.transform.TransformPoint(_rotationOffset * vertices[_particles[i].randomSeed]);
+                            var vertices = _bakedMesh.vertices;
 
-                            //_particles[i].position = v;
-                            //_particles[i].velocity = Vector3.zero;
+                            // Scale needs to be ignored, so we are required to make our own transformation matrix
+                            var M1 = Matrix4x4.TRS(skinnedMeshRenderer.transform.localPosition, skinnedMeshRenderer.transform.localRotation, Vector3.one);
+                            var M2 = Matrix4x4.TRS(leapHand.transform.localPosition, leapHand.transform.localRotation, Vector3.one);
+                            var color = Theme.Current.ActivatedColor;
+                            var mat = M2 * M1;
 
-                            var distance = (v - _particles[i].position);
-                            var magnitude = distance.magnitude;
-                            if (magnitude > 0.01f)
-                                _particles[i].velocity = distance * 10;
-                            else
-                                _particles[i].velocity = distance;
+                            lastTransform = leapHand.transform;
+                            var task = Task.Run(delegate
+                            {
+                                for (int i = 0; i < _particles.Length; i++)
+                                {
+                                    var v = mat.MultiplyPoint((_rotationOffset * vertices[_particles[i].randomSeed]));
 
-                            //if(i == 0)
-                            //    Debug.LogError(distance);
+                                    //if (i == 0)
+                                    //    Task.RunOnMain(() => { Debug.Log(deltaTime); });
 
-                            _particles[i].size = (Mathf.Sin((Time.time + _particles[i].randomSeed) * 2) + 1.5f) * 0.005f;
+                                    //_particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
+                                    //_particles[i].velocity = Vector3.zero;
+
+                                    var distance = (v - _particles[i].position);
+                                    var magnitude = distance.magnitude;
+
+                                    //if(magnitude > 0.01f)
+                                    //    _particles[i].velocity = Vector3.Lerp(_particles[i].velocity, distance * 10, deltaTime * 10);
+                                    //else
+                                        _particles[i].velocity = distance * 0.1f;
+                                        _particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
+                                       
+
+                                    //if(i == 0)
+                                    //    Debug.LogError(distance);
+
+                                    _particles[i].size = (Mathf.Sin((time + _particles[i].randomSeed) * 2) + 1.5f) * 0.002f;
+                                    _particles[i].color = color;
+                                }
+                            });
+
+                            yield return StartCoroutine(task.WaitRoutine());
                         }
+                        _particleSystem.SetParticles(_particles, _particles.Length);
                     }
-                    _particleSystem.SetParticles(_particles, _particles.Length);
                 }
+                else
+                {
+                    _visible = false;
+                }
+
+                lastUpdate = time;
             }
 
-            lastUpdate = Time.time;
+            yield return null;
         }
 	}
+
+    public void OnDrawGizmos()
+    {
+        if (lastTransform)
+        {
+            Gizmos.color = Color.red;
+            //Gizmos.matrix = lastTransform.worldToLocalMatrix;
+            Gizmos.DrawMesh(_bakedMesh, lastTransform.localPosition, lastTransform.localRotation, lastTransform.localScale);
+        }
+    }
 }

@@ -14,7 +14,7 @@ public class TileGroup : Tile {
         text = new GameObject().AddComponent<Text>();
         text.font = ResourceManager.Roboto;
         text.alignment = TextAnchor.MiddleCenter;
-        text.transform.SetParent(transform);
+        text.transform.SetParent(transform, false);
 
         // Configure text
         text.transform.localPosition = new Vector3(0, -Tile.PIXELS_PER_UNIT, 0);

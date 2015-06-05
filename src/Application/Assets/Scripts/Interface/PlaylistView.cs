@@ -17,7 +17,7 @@ public class PlaylistView : ArmWear {
 
         // Debug
         //Jukebox.Instance.Playlist.Add(
-        //    ResourceManager.DB.Songs.Take(100)
+        //    ResourceManager.DB.Songs.Take(5000)
         //);
 
 
@@ -48,12 +48,12 @@ public class PlaylistView : ArmWear {
         bufferedList.Clear();
         bufferedList.AddItems(
             Jukebox.Instance.Playlist.Songs.Select(song =>
-            {
-                var item = Instantiate<GameObject>(itemTemplate);
-                var songItem = item.GetComponentInChildren<PlaylistSongItem>();
-                songItem.song = song;
-                return item;
-            }
+                new BufferedList.LazyGameObject( () => {
+                    var item = Instantiate<GameObject>(itemTemplate);
+                    var songItem = item.GetComponentInChildren<PlaylistSongItem>();
+                    songItem.song = song;
+                    return item;
+                })
             ).ToList()
         );
         //// Store scroll position

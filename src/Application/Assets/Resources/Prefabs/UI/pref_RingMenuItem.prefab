@@ -125,7 +125,7 @@ MonoBehaviour:
   fingerType: 1
   width: .0299999993
   color: {r: .882353008, g: .600000024, b: .36470589, a: 1}
-  heightDifference: .0500000007
+  heightDifference: .100000001
   OnClick:
     m_PersistentCalls:
       m_Calls: []

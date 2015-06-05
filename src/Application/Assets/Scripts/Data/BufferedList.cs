@@ -4,8 +4,41 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System;
 
 public class BufferedList : MonoBehaviour {
+
+    public class LazyGameObject {
+        public delegate GameObject InitializeAction();
+
+        private InitializeAction _initializor;
+        private GameObject _go;
+        public LazyGameObject(InitializeAction initializor)
+        {
+            _initializor = initializor;
+        }
+
+        public GameObject GameObject
+        {
+            get
+            {
+                if (!_go)
+                {
+                    _go = _initializor();
+                }
+                return _go;
+            }
+        }
+
+        public bool IsInitialized
+        {
+            get
+            {
+                return _go;
+            }
+        }
+    }
+
     public VerticalLayoutGroup layoutGroup;
     public ScrollRect scrollRect;
     public float lineHeight = 20;
@@ -13,7 +46,7 @@ public class BufferedList : MonoBehaviour {
     private FieldInfo contentBoundsInfo = typeof(ScrollRect).GetField("m_ContentBounds", BindingFlags.NonPublic | BindingFlags.Instance);
     private FieldInfo viewBoundsInfo = typeof(ScrollRect).GetField("m_ViewBounds", BindingFlags.NonPublic | BindingFlags.Instance);
 
-    private List<GameObject> gameObjects = new List<GameObject>();
+    private List<LazyGameObject> gameObjects = new List<LazyGameObject>();
 
     private bool _rebuilding = false;
     private GameObject _trash;
@@ -40,16 +73,19 @@ public class BufferedList : MonoBehaviour {
 
         _rebuilding = true;
 
-        var offset = CalculateOffset(Vector2.zero);
-
+        //var offset = CalculateOffset(Vector2.zero);
+        var offset = Vector2.zero;
         var m_ContentBounds = (Bounds)contentBoundsInfo.GetValue(scrollRect);
         var m_ViewBounds = (Bounds)viewBoundsInfo.GetValue(scrollRect);
 
-        Debug.LogFormat("Bounds Content: {0}", m_ContentBounds);
-        Debug.LogFormat("Bounds View: {0}", m_ViewBounds);
+        //Debug.LogFormat("Bounds Content: {0}", m_ContentBounds);
+        //Debug.LogFormat("Bounds View: {0}", m_ViewBounds);
 
+        //Debug.Log();
 
-        offset.y = (m_ContentBounds.size.y - m_ViewBounds.size.y) * (1-scrollRect.normalizedPosition.y);
+        offset.y = (m_ContentBounds.max.y) - m_ViewBounds.max.y;
+        //Debug.Log(offset.y);
+        //offset.y += (m_ContentBounds.size.y - m_ViewBounds.size.y) * (1-scrollRect.normalizedPosition.y);
 
         //Debug.Log("OFFSET " + offset);
         Vector2 bufferedOffset = new Vector2(0, 0);
@@ -78,25 +114,31 @@ public class BufferedList : MonoBehaviour {
         }
 
         var padding = layoutGroup.padding;
-        padding.top = (int)bufferedOffset.x;
-        padding.bottom = (int)bufferedOffset.y;
+        padding.top = Mathf.RoundToInt(bufferedOffset.x);
+        padding.bottom = Mathf.RoundToInt(bufferedOffset.y);
         layoutGroup.padding = padding;
     }
 
-    private void SetActiveSub(GameObject go, bool state)
+    private void SetActiveSub(LazyGameObject lgo, bool state)
     {
-        if (go.activeInHierarchy != state)
+        if (!lgo.IsInitialized && !state) return;
+
+        var go = lgo.GameObject;
+        var parent = state ? layoutGroup.transform : _trash.transform;
+        if (go.transform.parent != parent)
         {
             if (state)
             {
                 go.transform.SetParent(layoutGroup.transform, false);
-                go.transform.SetAsFirstSibling();
             }
             else
             {
                 go.transform.SetParent(_trash.transform, false);
             }
         }
+               
+        if(state)
+            go.transform.SetAsLastSibling();
     }
 
     private Vector2 CalculateOffset(Vector2 delta)
@@ -129,8 +171,8 @@ public class BufferedList : MonoBehaviour {
         {
             min.y += delta.y;
             max.y += delta.y;
-            Debug.LogFormat("Max Content: {0}, Max View: {1}", max.y, m_ViewBounds.max.y);
-            Debug.LogFormat("Min Content: {0}, Min View: {1}", min.y, m_ViewBounds.min.y);
+            //Debug.LogFormat("Max Content: {0}, Max View: {1}", max.y, m_ViewBounds.max.y);
+            //Debug.LogFormat("Min Content: {0}, Min View: {1}", min.y, m_ViewBounds.min.y);
             if (max.y < m_ViewBounds.max.y)
                 offset.y = m_ViewBounds.max.y - max.y;
             else if (min.y > m_ViewBounds.min.y)
@@ -140,21 +182,16 @@ public class BufferedList : MonoBehaviour {
         return offset;
     }
 
-    public void AddItems(IEnumerable<GameObject> objects)
+    public void AddItems(IEnumerable<LazyGameObject> objects)
     {
         // Make new children with the power of love
-        foreach (var obj in objects)
-        {
-            obj.transform.SetParent(_trash.transform, false);
-        }
-
         gameObjects.AddRange(objects);
     }
 
     public void Clear()
     {
         // Kill all children in a socially sustainable way
-        gameObjects.ForEach(Destroy);
+        gameObjects.Where(go => go.IsInitialized).Select(go => go.GameObject).ToList().ForEach(Destroy);
         gameObjects.Clear();
     }
 }

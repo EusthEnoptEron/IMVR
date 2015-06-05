@@ -277,9 +277,9 @@ namespace Gestures
             }
 
 
-            if (finger.Type == submitFinger)
-                Debug.LogFormat("!{1:0.00}! {0}", data.pointerCurrentRaycast.gameObject != null ?
-                    data.pointerCurrentRaycast.gameObject.GetPath() : "null", currentDistance);
+            //if (finger.Type == submitFinger)
+            //    Debug.LogFormat("!{1:0.00}! {0}", data.pointerCurrentRaycast.gameObject != null ?
+            //        data.pointerCurrentRaycast.gameObject.GetPath() : "null", currentDistance);
 
             
             state.SetFingerState(finger.Type, pressed, released, data);
