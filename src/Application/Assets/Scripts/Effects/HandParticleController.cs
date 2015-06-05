@@ -3,6 +3,7 @@ using System.Collections;
 using Gestures;
 using System.Linq;
 using Foundation;
+using System.Collections.Generic;
 
 
 /// <summary>
@@ -12,17 +13,27 @@ using Foundation;
 public class HandParticleController : MonoBehaviour {
     public HandType handType;
 
+    private class ParticleMapping
+    {
+        public int Vertex1 = 0;
+        public int Vertex2 = 0;
+        public float Ratio = 0;
+        public int Mesh;
+    }
 
     private HandController _handController;
     private ParticleSystem _particleSystem;
     private ParticleSystem.Particle[] _particles;
 
-    private Mesh _bakedMesh;
-    public Vector3 rotationOffset = Vector3.zero;
-    private Quaternion _rotationOffset;
 
     public bool throttle = false;
     public float throttleFPS = 20f;
+
+    private Vector3[] _vertices;
+    private MeshRenderer[] _renderers;
+    private ParticleMapping[] _mappings;
+
+    public int particlesPerMesh = 50;
 
 	// Use this for initialization
 	void Start () {
@@ -33,28 +44,62 @@ public class HandParticleController : MonoBehaviour {
             : _handController.rightGraphicsModel
         );
 
-        if (model != null && model is RiggedHand)
+        if (model != null && model is SkeletalHand)
         {
             _particleSystem = GetComponent<ParticleSystem>();
-            int count = model.transform.Descendants().First(d => d.GetComponent<SkinnedMeshRenderer>()).GetComponent<SkinnedMeshRenderer>().sharedMesh.vertexCount;
+            _renderers = model.GetComponentsInChildren<MeshRenderer>(true);
+            var vList = new List<Vector3>();
 
-            // Emit particles for now.
+            // Emit all particles
+            int count = _renderers.Length * particlesPerMesh;
+            Debug.LogError(count);
+            _particles = new ParticleSystem.Particle[count];
+            _mappings = new ParticleMapping[count];
             _particleSystem.Emit(count);
+
+            _particleSystem.GetParticles(_particles);
+
+            int i = 0;
+            int meshCounter = 0;
+            foreach (var renderer in _renderers)
             {
-                _particles = new ParticleSystem.Particle[count];
-                _particleSystem.GetParticles(_particles);
-                for (uint i = 0; i < _particles.Length; i++)
+                int offset = vList.Count;
+                vList.AddRange(renderer.GetComponent<MeshFilter>().sharedMesh.vertices);
+                int vertexCount = vList.Count - offset;
+
+
+                for (int j = 0; j < particlesPerMesh; j++)
                 {
-                    _particles[i].randomSeed = i;
-                    _particles[i].lifetime = _particles[i].startLifetime = 10000;
+                    int v1, v2;
+                    v1 = v2 = 0;
+                    while (v1 == v2)
+                    {
+                        v1 = Random.Range(offset, offset + vertexCount);
+                        v2 = Random.Range(offset, offset + vertexCount);
+                    }
+
+                    _mappings[i] = new ParticleMapping()
+                    {
+                         Ratio = Random.value,
+                         Vertex1 = v1,
+                         Vertex2 = v2,
+                         Mesh = meshCounter
+                    };
+
+                    // Abuse seed to correlate
+                    _particles[i].randomSeed = (uint)i;
                     _particles[i].size = 0.01f;
+                    _particles[i].lifetime = _particles[i].startLifetime = 10000;
+
+                    i++;
                 }
-                _particleSystem.SetParticles(_particles, _particles.Length);
+
+                meshCounter++;
+
             }
 
-            _rotationOffset = Quaternion.Euler(rotationOffset);
-
-            _bakedMesh = new Mesh();
+            _particleSystem.SetParticles(_particles, count);
+            _vertices = vList.ToArray();
 
             StartCoroutine(UpdateParticles());
         }
@@ -87,36 +132,36 @@ public class HandParticleController : MonoBehaviour {
                     {
                         bool appeared = !_visible;
                         _visible = true;
-                        _rotationOffset = Quaternion.Euler(rotationOffset);
+                        _renderers = leapHand.GetComponentsInChildren<MeshRenderer>();
+                        //_renderers.ToList().ForEach(r => r.enabled = false);
+                        var mats = _renderers.Select(r => r.transform.localToWorldMatrix).ToArray();
 
-                        var handContainer = leapHand.transform.FindChild("HandContainer");
 
                         // Found hand representation
-
-                        // Bake mesh
-                        var skinnedMeshRenderer = leapHand.GetComponentInChildren<SkinnedMeshRenderer>();
-                        skinnedMeshRenderer.enabled = false;
-                        skinnedMeshRenderer.BakeMesh(_bakedMesh);
-
                         _particleSystem.GetParticles(_particles);
                         {
-                            var vertices = _bakedMesh.vertices;
 
                             // Scale needs to be ignored, so we are required to make our own transformation matrix
-                            var M1 = Matrix4x4.TRS(skinnedMeshRenderer.transform.localPosition, skinnedMeshRenderer.transform.localRotation, Vector3.one);
-                            var M2 = Matrix4x4.TRS(leapHand.transform.localPosition, leapHand.transform.localRotation, Vector3.one);
                             var color = Theme.Current.ActivatedColor;
-                            var mat = M2 * M1;
+                            
 
                             lastTransform = leapHand.transform;
                             var task = Task.Run(delegate
                             {
                                 for (int i = 0; i < _particles.Length; i++)
                                 {
-                                    var v = mat.MultiplyPoint((_rotationOffset * vertices[_particles[i].randomSeed]));
+                                    uint index = _particles[i].randomSeed;
+
+                                    var v = mats[_mappings[index].Mesh].MultiplyPoint( 
+                                        Vector3.Lerp(
+                                            _vertices[_mappings[index].Vertex1],
+                                            _vertices[_mappings[index].Vertex2], 
+                                            _mappings[index].Ratio
+                                        ) 
+                                    );
 
                                     //if (i == 0)
-                                    //    Task.RunOnMain(() => { Debug.Log(deltaTime); });
+                                    //    Task.RunOnMain(() => { Debug.Log(v); });
 
                                     //_particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
                                     //_particles[i].velocity = Vector3.zero;
@@ -146,6 +191,8 @@ public class HandParticleController : MonoBehaviour {
                 }
                 else
                 {
+                    if (_visible)
+                        Bang();
                     _visible = false;
                 }
 
@@ -156,13 +203,16 @@ public class HandParticleController : MonoBehaviour {
         }
 	}
 
-    public void OnDrawGizmos()
+    private void Bang()
     {
-        if (lastTransform)
+        _particleSystem.GetParticles(_particles);
+
+        for (int i = 0; i < _particles.Length; i++)
         {
-            Gizmos.color = Color.red;
-            //Gizmos.matrix = lastTransform.worldToLocalMatrix;
-            Gizmos.DrawMesh(_bakedMesh, lastTransform.localPosition, lastTransform.localRotation, lastTransform.localScale);
+            _particles[i].velocity = Random.insideUnitSphere;
         }
+
+        _particleSystem.SetParticles(_particles, _particles.Length);
     }
+
 }
