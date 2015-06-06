@@ -2,9 +2,7 @@
 
 Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden. 
 
-\section{Systemarchitektur}
-
-\section{Zusammenspiel der Geräte}
+\section{Systemübersicht}
 Um die Applikation zu bedienen, setzt der Anwender die Oculus Rift auf und bewegt sich im von der mitgelieferten Kamera erkennbaren Bereich.
 
 Die Leap Motion wird prinzipiell so verwendet, wie von der Herstellerfirma vorgesehen. Das heisst, diese wird mit dem offiziellen Aufsatz \cite{leap} an der Oculus Rift befestigt, und deckt so den frontalen Sichtbereich des Anwenders ab. Dies lässt sich gut auf Abbildung \ref{fig:systemuebersicht} erkennen.
@@ -34,12 +32,18 @@ Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbund
 
 \clearpage
 
-\section{Zusammenspiel der Projekte}
+\section{Systemarchitektur}
+
+Zuerst ist es wichtig, zu verstehen, wie die Applikation grob aufgebaut ist. In Abbildung \ref{fig:flow} wird dies in zwei Schritten illustriert.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\linewidth]{diagramme/flow}
+\caption{Grober Überblick des Programmablaufs}
+\label{fig:flow}
+\end{figure}
 
 
-\section{Aufbau des Projekts}
-
-Softwaremässig ist das Projekt in zwei Teile aufgegliedert: den Indexer und die Applikation. Die spiegelt sich auch in der Ordnerstruktur wider.
 
 
 \section{Systemdesign}

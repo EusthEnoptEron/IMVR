@@ -1,17 +1,41 @@
 \chapter{Implementation von IMVR}
 
-Der Indexer ist implementiert und dokumentiert, also fehlt nur noch die grafische Applikation. In diesem Kapitel wird die Implementation genauer erläutert.
+Der Indexer ist implementiert und dokumentiert, also fehlt nur noch die eigentliche Applikation. Vieles hat sich im Laufe des Projekts verändert und entwickelt, und viele Probleme traten zum Vorschein, die an dieser Stelle genauer erläutert werden sollen.
+
+\section{Unity 5}
+
+Die Implementation von IMVR lässt sich leider nicht ohne einen gewissen Hintergrund in Unity 5 erklären. 
+
+\subsection{Grundkonzepte}
+
+Unity ist eine Entwicklungsumgebung und eine Spiel-Engine, die momentan aufgrund ihrer Bedienungsfreundlichkeit  und einer  frei erhältlichen  Version sehr  beliebt in  der Szene  der Indie-Developer ist. Gleichzeitig dient sie auch als gutes Prototyping-Tool, um schnell Ideen umzusetzen. 
+
+Um Unity in groben Zügen zu erklären, sollen zwei Ansichtspunkte beschrieben werden: der Szenenaufbau und die Ressourcenverwaltung. 
+
+Ein  Projekt  in  Unity  ist  in  sogenannte  \textit{Scenes}  (Szenen)  gegliedert,  welche  aus  Objekten (\textit{GameObject})  bestehen  –  das  Grundprinzip  der  Scene-Graphs  wird  also  angewandt. Speziell  ist,  dass  die  Interaktion  und  Spiellogik  grundsätzlich  nur  innerhalb  von \textit{Components}  geschieht.  Jedes  Script  und  jede  \textit{Eigenschaft}  wird  als  Component  einem GameObject  zugeordnet.  So  hat  zum  Beispiel  ein  Licht  ein  \textit{Light}-Component  oder  die Kamera ein \textit{Camera}-Component. Selbst die Position jedes GameObjects ist nur ein Wert im  \textit{Transform}-Component.
+
+Ein  anderer  Aspekt  von  Unity  ist  die  Ressourcenverwaltung.  Im  Grunde  genommen  ist  es 
+dem  Programmierer  überlassen,  wie  er  seine  Ressourcen  verwaltet.  Das  einzige,  was 
+beachtet  werden  muss,  ist,  dass  alle  Ressourcen  im  \textit{Assets}-Folder  abgelegt  werden 
+müssen.  Üblicherweise  wird  dann  ein  Ordner  für  jede  Art  von  Asset  erstellt,  z.B.  für 
+Materialien, Texturen, Meshes, Scripts, etc.
+
+Ein  weiterer  wichtiger  Begriff  sind  die  \textit{Prefabs}.  Damit  sind  Vorlagen  gemeint,  die  man 
+erstellt, indem man fertige Objekte aus der aktuellen Szene in das Asset-Folder zieht, und 
+danach wiederverwerten kann. 
+
+\subsection{Unity im Kontext von IMVR}
+
+Was sofort auffällt bei der Betrachtung der Ressourcenverwaltung, ist, dass diese starke Kopplung von Assets zu Projekten sich mit der grundlegenden Aufgabe dieses Projektes beisst. Unity sieht vor, dass der Programmierer während der Entwicklung alle seine Assets in den dafür vorgesehenen Ordner platziert, das Projekt am Schluss kompiliert, und dann höchstens im Nachhinein neue Assets als \textit{Asset Bundles} an seine Anwender verteilt. In diesem Projekt ist es jedoch zwingend nötig, dynamisch Bilder und Musik anhand der Dateien auf dem Anwender-PC zu laden. Auf die Folgen und Lösungen zu diesem Problem wird in den Kapiteln \ref{subsec:resources} und  \ref{subsec:musicformats} näher eingegangen.
+
 
 \section{Aufbau}
 
-
-\section{Konzept}
-
+\section{Darstellungskonzept}
 
 \section{Interaktionskonzept}
 
 Unüberraschenderweise findet die Interaktion des Users mit IMVR fast ausschliesslich mit seinen Händen statt. In einer frühen Phase des Projektes war noch geplant, eventuell die Spracheingabe modal zu den Händen zu gebrauchen, jedoch reichte dafür die Zeit nicht mehr. Ein Artefakt dieses Vorhabens ist das \textit{SpeechServer}-Projekt, welches sich immer noch unter den \textit{AuxiliaryTools} befindet.
-
 
 
 \subsection{Ringmenü}
@@ -20,7 +44,7 @@ Bei der Entwicklung von VR-Applikationen stösst man zwingenderweise auf Situatio
 
 Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als "lästig" herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
 
-Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
+Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub \cite{hoverVR}, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
 
 Für IMVR wurde ebenfalls ein Ringmenü entwickelt, doch dieses verfügt über keine Schaltflächen im herkömmlichen Sinn. Die Finger werden auch mit Funktionen versehen, aber zum Betätigen benutzt der Anwender nicht seine andere Hand, sondern hebt einen Finger. Wenn ein Finger lange genug gehoben wird, wird die zugewiesene Aktion ausgeführt.
 
@@ -39,5 +63,14 @@ Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus
 
 \section{Visual Design}
 
-
 \section{Herausforderungen}
+
+\subsection{Ressourcen-Management}
+\label{subsec:resources}
+
+\subsection{Abspielen externer Musik}
+\label{subsec:musicformats}
+
+\subsection{Canvas-Elemente}
+
+% Alpha-Sorting, etc. Tile-Blanket
