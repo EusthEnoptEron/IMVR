@@ -18,7 +18,7 @@ public class BrowseController : ModeController {
     {
         yield return new WaitForSeconds(1);
 
-        LoadingScreen.Instance.enabled = true;
+        //LoadingScreen.Instance.enabled = true;
 
         yield return null;
 

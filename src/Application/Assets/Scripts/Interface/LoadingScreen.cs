@@ -6,37 +6,93 @@ using DG.Tweening;
 using Gestures;
 
 public class LoadingScreen : Singleton<LoadingScreen> {
-    private Image fill;
-    private CanvasGroup shutter;
-    private int okCount = 0;
+    
+    private static readonly string kPrecacheFontGlyphsString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_+=~`[]{}|\\:;\"'<>,.?/ ";
+     
+    [System.Serializable]
+    public struct CacheFont
+    {
+        public Font theFont;
+        public int size;
+        public FontStyle style;
+    };
 
+    private Image _fill;
+    private CanvasGroup _shutter;
+    private int _okCount = 0;
+
+    
     public GameObject shimCamera;
-
+    
+    /// <summary>
+    /// Fonts to preload.
+    /// </summary>
+    public CacheFont[] fonts;
 
 	// Use this for initialization
 	void Awake () {
-        fill = transform.FindRecursively("Fill").GetComponent<Image>();
-        shutter = transform.GetComponentInChildren<CanvasGroup>();
-
-        //var materials = GetComponentsInChildren<CanvasRenderer>()
-        //                .Select(c => c.GetMaterial())
-        //                .Where(m => m != null);
-
-        //Debug.LogFormat("Materials found: {0}", materials.Count());
+        _fill = transform.FindRecursively("Fill").GetComponent<Image>();
+        _shutter = transform.GetComponentInChildren<CanvasGroup>();
 
 	}
+
+    void Start()
+    {
+
+        // Precache fonts, taken from http://answers.unity3d.com/questions/733570/massive-lag-due-to-fontcachefontfortext-please-hel.html
+        if (fonts != null)
+        {
+            foreach (var font in fonts)
+            {
+                StartCoroutine(PrecacheFontGlyphs(
+                    font.theFont,
+                    font.size,
+                    font.style,
+                    kPrecacheFontGlyphsString
+                ));
+            }
+        }
+
+        // Load artist imagery
+        ResourceManager.DB.Artists.ForEach(artist =>
+        {
+
+            var ticket = artist.Pictures.FirstOrDefault()
+                    ?? artist.Albums.Select(album => album.Atlas).FirstOrDefault();
+
+            if (ticket != null)
+                ImageAtlas.LoadSprite(ticket);
+        });
+    }
+
+
+    // Precache the font glyphs for the given font data.
+    // Intended to run asynchronously inside of a coroutine.
+    IEnumerator PrecacheFontGlyphs(Font theFont, int fontSize, FontStyle style, string glyphs)
+    {
+        for (int index = 0; (index < glyphs.Length); ++index)
+        {
+            theFont.RequestCharactersInTexture(
+                glyphs[index].ToString(),
+                fontSize, style);
+            yield return null;
+        }
+
+        yield break;
+    }
+
 	
 	// Update is called once per frame
 	void Update () {
         //Debug.Log(ImageAtlas.Progress);
-        fill.fillAmount = ImageAtlas.Progress;
+        _fill.fillAmount = ImageAtlas.Progress;
 
-        if (!ImageAtlas.IsLoading) okCount++;
-        else okCount = 0;
+        if (!ImageAtlas.IsLoading) _okCount++;
+        else _okCount = 0;
 
-        if (okCount > 5)
+        if (_okCount > 5)
         {
-            okCount = 0;
+            _okCount = 0;
             enabled = false;
         }
 	}
@@ -49,7 +105,7 @@ public class LoadingScreen : Singleton<LoadingScreen> {
         OVRManager.display.timeWarp = false;
 
         //shimCamera.SetActive(true);
-        shutter.alpha = 1;
+        _shutter.alpha = 1;
         foreach (var camera in shimCamera.GetComponentsInChildren<Camera>())
         {
             camera.clearFlags = CameraClearFlags.SolidColor;
@@ -62,7 +118,7 @@ public class LoadingScreen : Singleton<LoadingScreen> {
 
         OVRManager.capiHmd.RecenterPose();
        
-        shutter.DOFade(0, 1).OnComplete(delegate
+        _shutter.DOFade(0, 1).OnComplete(delegate
         {
             foreach (var camera in shimCamera.GetComponentsInChildren<Camera>())
             {
