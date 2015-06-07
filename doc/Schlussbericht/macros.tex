@@ -3,3 +3,19 @@
 \newcommand\fnurl[2]{%
 	\href{#2}{#1}\footnote{\url{#2}}%
 }
+
+\lstset{language=[Sharp]C,
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	basewidth=0.5em,
+	escapeinside={(*@}{@*)},
+	commentstyle=\color{greencomments},
+	keywordstyle=\color{bluekeywords},
+	stringstyle=\color{redstrings},
+	basicstyle=\ttfamily,
+	captionpos=b,
+	numbers={left}
+}

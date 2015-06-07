@@ -27,6 +27,13 @@
 \usepackage[ngerman]{babel}										% german hyphenation
 \usepackage{afterpage}
 %\usepackage[latin1]{inputenc}  							% Unix/Linux - load extended character set (ISO 8859-1)
+
+
+\usepackage{color}
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+
 \usepackage[ansinew]{inputenc}  							% Windows - load extended character set (ISO 8859-1)
 \usepackage[T1]{fontenc}											% hyphenation of words with ä,ö and ü
 \usepackage{textcomp}													% additional symbols
@@ -52,6 +59,8 @@
 %\usepackage{rotating}
 \usepackage{pdflscape}
 \usepackage{enumitem}
+\usepackage{listings}
+\usepackage{inconsolata}
 %\usepackage{svg}
 %---------------------------------------------------------------------------
 
@@ -136,7 +145,7 @@
 \include{datenbanken/glossar}
 %\addbibresource{datenbanken/bibliography.bib}
 %---------------------------------------------------------------------------
-
+\include{macros}
 % Intro:
 %---------------------------------------------------------------------------
 \begin{document}                              	% Start Document
@@ -163,7 +172,7 @@
 \renewcommand{\headrulewidth}{0pt}				% no header stripline
 \renewcommand{\footrulewidth}{0pt} 				% no bottom stripline
 
-\include{macros}
+
 
 \pagestyle{plain}
 

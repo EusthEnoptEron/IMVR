@@ -203,6 +203,38 @@ Alles in allem wurde damit eine ansprechende und intuitive Darstellung der Hände
 
 \subsection{Point Chart}
 
+Wenn man von Datenvisualisierung redet, ist es ganz klar, dass auch Diagramme dargestellt werden wollen. Umso besser, wenn dies stereoskopisch geschehen kann: Dadurch lässt sich die dritte Dimension erheblich besser wahrnehmen.
+
+Im Rahmen dieses Projekts wurde ein Point-Chart entwickelt, der dazu dient, die Musik des Anwenders in ein dreidimensionales System einzuordnen und auf einen Blick darzustellen. Die Dimensionen sind 1:1 die Features, die während der Indexierung von The Echo Nest heruntergeladen wurden, also Merkmale wie \textit{Danceability}, \textit{Energy} und \textit{Tempo}.
+
+Wie auf dem UML ersichtlich, wurde die Implementation des Point Charts in drei verschiedenen Klassen durchgeführt.
+
+\code{PointChart} ist eine relativ generisch gehaltene Implementation eines Point Charts, welche sich nur um die Darstellung kümmert.
+
+\code{SongMetaChart} ist eine Komponente, die auf der ersten basiert und diese steuert, und die Metadaten-Logik ins Spiel bringt.
+
+\code{SelectionVisualizer} ist eine weitere Komponente, die ihrerseits auf \code{SongMetaChart} aufbaut und die momentane Selektion (nur im Listen-Modus) visualisiert.
+
+Die zentrale Klasse der Funktionalität, \code{PointChart}, besteht visuell ebenfalls aus drei Teilen. Es werden drei Elemente bei Änderungen prozedural erstellt:
+
+\begin{itemize}
+	\item Ein Koordinatensystem, das aus drei Balken besteht, welche mit \textit{Triangles} generiert werden
+	\item Ein dreidimensionales Gitternetz, welches mit Linien erstellt wird
+	\item Einer Punktewolke aus Partikeln
+\end{itemize}
+
+Die zwei Meshes werden grundsätzlich nur einmal generiert, können aber mithilfe der Methode \code{RebuildMesh()} jederzeit neu erzeugt werden. Die Linien des Gitters bestehen aus einem durchsichtigen Material-Shader, welcher ihnen eine passend subtile Sichtbarkeit gibt.
+
+Das Partikelsystem, welches für die Punkte des Diagramms zuständig ist, sollte immer bei Änderungen der Punktwerte mithilfe der Methode \code{UpdatePoints()} erneuert werden.
+
+Ursprünglich war geplant, diese Punkte durch ein \textit{Point}-Rendering zu implementieren, doch diese Art des Renderings ist im Falle von Unity relativ limitiert. Will man lediglich Punkte als einzelne Pixel darstellen, stellt das kein Problem dar. Problematisch wird es, sobald die Grösse der Punkte geändert werden soll, denn dann ist man auf einen OpenGL-Build angewiesen \cite{psize}.
+
+Die Implementation per Partikelsystem funktioniert gut. Auf was geachtet werden muss, ist die Lebenszeit der einzelnen Partikel. Da sie in diesem Fall nicht kurzlebig sind sondern persistent, wird ihre Lebenszeit bei der Emission der Partikel auf einen Wert gesetzt, der mit sehr hoher Wahrscheinlichkeit nie erreicht werden wird.
+
+\lstinputlisting[caption={Erstellung der Punkte in einem PointChart}, 
+label={lst:pointchart}]{code/PointChart_UpdatePoints.cs}
+
+
 \subsection{Farben uns Symbolik}
 
 \subsection{Beat Detector und Wellen}
