@@ -135,7 +135,63 @@ Damit andere Teile der Applikation auf diese Wertänderungen reagieren können, wi
 
 \section{Visual Design}
 
+Viele Elemente in IMVR haben mit dem Visuellen zu tun. Sie sollen die Musik unterstützend begleiten, Verhältnisse darstellen und natürlich gefallen.
+
 \subsection{Darstellung der Hände}
+
+Das erste Thema, das beim Visuellen einfällt, sind die Hände. Bei der Gestaltung der Hände waren grundsätzlich folgende Voraussetzungen zu erfüllen:
+
+\begin{enumerate}
+	\item handförmigs
+	\item abstrakt
+	\item momentaner Modus ist erkennbar
+\end{enumerate}
+
+Der erste Punkt versteht sich von selbst. Der zweite Punkt, die Abstraktheit, kommt daher, weil es am besten zur Applikation passt. Eine echt-aussehende, materielle Hand würde fehl am Platz wirken, wenn der Rest der Szene fast ausschliesslich aus Geometrie besteht und keinen Zusammenhang mit der Realität hat.
+
+Neben dem erwähnten Argument, hat eine abstrakte Hand auch den Vorteil, dass die Darstellung der momentan Musik angepasst werden kann, z.B. durch Farbe oder Bewegung. % TODO: Ist sowas drin? 
+
+Beim dritten Punkt ist mit \textit{Modus} der aktuelle Applikationsmodus gemeint, also der Browse- bzw. Listen-Modus. Diese werden unter Anderem durch die Farbe unterschieden, und diese Farbe zeigt sich auch bei der Visualisierung der Hände.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/hand1}
+	\caption{Die ursprüngliche Visualisierung der Hand}
+	\label{fig:hand1}
+\end{figure}
+
+Für die erste Art der Visualisierung (Abbildung \ref{fig:hand1}) wurde eine leicht abgeänderte Form einer Standardhand im Leap Motion Package gewählt. Dabei handelte es sich um eine auf Voxel basierende Darstellung. Für jeden Knochen in der Hand wurde ein Voxel-Sheet erstellt, welches dann den Bewegungen der Hand gefolgt ist. In der Implementation in IMVR wurden lediglich die Voxels mit Kugeln ersetzt, um ein bisschen Individualität zu schaffen.
+
+Diese Darstellungsform wurde jedoch im Laufe des Projekts zugunsten einer partikelbasierten Implementation verworfen. In der ersten partikelbasierten Form, wurde versucht eine geriggte Hand mit Partikeln zu umrahmen statt das Mesh selbst zu rendern. Das war jedoch mit ein paar grossen Nachteilen verbunden:
+
+\begin{enumerate}[label=(\alph*)]
+	\item Die Bone-Weights werden auf der GPU appliziert, deshalb muss das Mesh in jedem Frame auf der CPU nachgebildet werden.
+	\item Durch die hohe Zahl der Vertices werden über 10\,000 Partikel pro Hand erstellt, was sich sehr schlecht auf die Performance auswirkt.
+	\item Da das Finden von Punkten innerhalb eines komplizierten Meshes nicht trivial ist, müssen alle Punkte auf der Hülle platziert werden.  
+\end{enumerate}
+
+Aufgrund dieser Nachteile, wurde die Implementation schliesslich noch einen Schritt weiter abgeändert. In der finalen Visualisierung (Abbildung \ref{fig:hand2}) wird eine abstrakte Hand, welche aus mehreren Meshes besteht, mit Partikeln \textit{gefüllt}. Damit erhält der Anwender ein intuitives Feedback, wenn die Hand erkannt wird, anstatt dass diese aus dem Nichts erscheint. Damit er trotzdem nicht auf den Effekt warten muss, erhält die Hand einen leicht halb-durchsichtigen Rahmen.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{bilder/hand2}
+	\caption{Die finale Visualisierung der Hand mit Partikeln}
+	\label{fig:hand2}
+\end{figure}
+
+Ein Grossteil des Codes konnte von der vorhergehenden Implementation mit dem geriggten Modell übernommen werden. Der Vorteil hier ist, dass die Hand auf \textit{Transforms} aufbaut: Die Submeshes, ein Mesh pro Knochen, werden durch ihre \textit{Transforms} korrekt platziert, damit eine Hand gebildet wird. Dadurch entsteht zwar nicht ein fliessender Übergang wie bei einer geriggten Hand, aber man kann mit primitiven Elementen arbeiten.
+
+In diesem Fall wurde ein Handmodell gewählt, welches grösstenteils aus einfachen, abgerundeten Quadern besteht. Bei der Erstellung der Hand, werden alle Meshes abgelaufen und für jedes Mesh eine gewisse Anzahl Partikel erstellt. Damit diese \textit{innerhalb} der Hand erscheinen, und nicht auf der Hülle wie bei der vorherigen Implementation, wird jede Partikelposition aus zwei zufälligen, verschiedenen Vertices gebildet mit einer ebenfalls zufälligen Gewichtung. Weil die Formen alle konvex sind, ist garantiert, dass die gebildeten Punkten alle innerhalb der Meshes liegen.
+
+Um schliesslich einen schönen Effekt zu erzielen, wurden noch ein paar zusätzliche Details eingebaut:
+
+\begin{itemize}
+	\item Die Partikel sind animiert
+	\item Die Partikel erhalten die Farbe des aktuellen Modus'
+	\item Die Partikel werden beim Verlieren der Handerkennung zerstreut
+\end{itemize}
+
+Alles in allem wurde damit eine ansprechende und intuitive Darstellung der Hände erreicht.
 
 \subsection{Point Chart}
 
