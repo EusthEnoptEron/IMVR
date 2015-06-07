@@ -57,11 +57,12 @@ public class ArmWear : MonoBehaviour {
                 // [-1, 1]
                 // x < 0 => Back side
                 // x > 0 => Front side
+                // We'll put 0.3 atop of that to sort out some border-line cases.
                 float dotProduct = Vector3.Dot(armNormal, camDirection);
 
                 SetState(
-                    (dotProduct < 0 && position == ArmWearPosition.Back)
-                 || (dotProduct > 0 && position == ArmWearPosition.Front)
+                    (dotProduct < -0.5f && position == ArmWearPosition.Back)
+                 || (dotProduct > 0.5f && position == ArmWearPosition.Front)
                 );
 
                 //if (_group.alpha > 0)

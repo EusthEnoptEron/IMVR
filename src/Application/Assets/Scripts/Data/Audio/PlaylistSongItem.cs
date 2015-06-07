@@ -34,7 +34,7 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
 
             name = song.Title + " (Toggle)";
 
-            Theme.Change += (s,e) => UpdateColors();
+            Theme.Change += OnThemeChange;
             UpdateColors();
         }
         else
@@ -44,6 +44,13 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
         //_artistView = GetComponentInParent<ArtistView>();
     }
 
+    private void OnThemeChange(object sender, EventArgs e)
+    {
+        UpdateColors();
+    }
+
+
+
     private void UpdateColors()
     {
         _progressbar.color = Theme.Current.SpecialColor;
@@ -51,6 +58,11 @@ public class PlaylistSongItem : Selector, IPointerEnterHandler, IPointerExitHand
            ? Theme.Current.ActivatedColor
            : Theme.Current.NormalColor,
         0.1f, false, false);
+    }
+
+    private void OnDestroy()
+    {
+        Theme.Change -= OnThemeChange;
     }
 
     private void Update()

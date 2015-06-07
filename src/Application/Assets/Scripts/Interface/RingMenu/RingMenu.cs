@@ -158,7 +158,8 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
     bool ShouldMaintainMenu(GenericHand hand)
     {
         return !HandProvider.Instance.GetGesture("Pull")
-            && Vector3.Dot(hand.LocalPalmNormal, new Vector3(1, 1, -1).normalized) > 0;        
+            //&& Vector3.Dot(hand.LocalPalmNormal, new Vector3(1, 1, -1).normalized) > 0;
+            && Vector3.Dot(hand.PalmNormal, Camera.main.transform.forward) < -0.5f;
     }
 
     void UpdateHand(GenericHand hand)
