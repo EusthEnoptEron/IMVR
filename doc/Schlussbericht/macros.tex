@@ -19,3 +19,13 @@
 	captionpos=b,
 	numbers={left}
 }
+
+\newcommand*{\captionsource}[2]{%
+	\caption[{#1}]{%
+		#1%
+		\\\hspace{\linewidth}%
+		\textbf{Source:} #2%
+	}%
+}
+
+\newcommand{\source}[1]{\caption*{\hfill Quelle: {#1}} }

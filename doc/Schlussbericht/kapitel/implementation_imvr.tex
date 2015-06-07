@@ -58,6 +58,8 @@ Die Idee ist, dass der Benutzer feststellen will, ``wo er steht'', herunterschau
 
 Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus Rift beobachten. Das Prinzip ist sehr leicht zu implementieren und daher auch verlockend, jedoch muss mit Vorsicht vorgegangen werden: Für den Benutzer ist es auf Dauer unangenehm, wenn von ihm ständige Kopfbewegungen gefordert werden. In IMVR wurde jedoch bewusst Gebrauch von dieser Methode gemacht, weil der Anwender nur selten nach unten schauen wird, und es relativ intuitiv ist.
 
+%TODO: note that ring mesh can be seen in \ref{subsec:waves}
+
 \subsection{Music Arm}
 
 Da es in dieser Arbeit voll und ganz um das Eingreifen ins Geschehen mit den eigenen Händen geht, wäre es bedauerlich, wenn es nicht möglich wäre, die Musik mit den Händen zu steuern. Ein weiteres Konzept, welches genau dieses Problem löst, ist der sogenannte "Music Arm".
@@ -235,13 +237,65 @@ Die Implementation per Partikelsystem funktioniert gut. Auf was geachtet werden 
 label={lst:pointchart}]{code/PointChart_UpdatePoints.cs}
 
 
-\subsection{Farben uns Symbolik}
+\subsection{Farben und Symbolik}
+%TODO: Themes
 
 \subsection{Beat Detector und Wellen}
+\label{subsec:waves}
+
+Damit die Szene, in der sich der Anwender wiederfindet, nicht zu steril und still ist, wurde ein sehr rudimentärer Beat Detector implementiert, der bei jedem Beat eine Welle mit entsprechender Stärke aussendet.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/beat-waves}
+	\caption{Beats werden mithilfe von Wellen dargestellt (rot umrahmt)}
+	\label{fig:beat-waves}
+\end{figure}
+
+Für die Programmierung der Beat-Detection wurde ein Artikel von GameDev.com zurate gezogen \cite{BeatDetection}. Ganz grob gesagt, wird einfach nach Peaks im Energieverlauf der Musik gesucht. Die benötigten Werte werden alle durch die selbsterstellte Helper-Klasse \code{VisualizationHelper} bereitgestellt. Als kleine Veränderung zum ursprünglichen Algorithmus wurde die Suche nach Beats auf das Frequenzspektrum zwischen 50Hz und 200Hz beschränkt. %TODO: Glossary?
+
+Anstatt einer dynamischen Beat-Detection hätte auch ein Pre-Processing durchgeführt bzw. die Werte von The Echo Nest verwendet werden können. Allerdings ist eine so genaue Beat Detection in diesem Fall nicht notwendig, und für ein exaktes Timing wäre eine stetige Synchronisation zwischen Daten und Musik notwendig.
+
+Die Ringe, die ausgesendet werden, werden alle prozedural generiert und passen sich der \textit{Theme}-Farbe an. Das System basiert auf drei Klassen:
+
+\begin{itemize}
+	\item Der \code{BeatDetector} versendet bei Beats eine \code{OnBeat(strength)} Nachricht an Komponent im gleichen \textit{GameObject}.
+	\item Der \code{WaveEmitter} fängt die Nachricht ab und erstellt ein neues \textit{GameObject} mit einer \code{RingMesh}-Komponente.
+	\item \code{RingMesh} sorgt dann schliesslich dafür, dass der Kreisring bzw. das Kreissegment korrekt dargestellt wird.
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{diagramme/ringmesh}
+	\caption{Die Ring-Meshes werden mithilfe von \textit{Quads} generiert}
+	\label{fig:ringmesh}
+\end{figure}
+
+Die Erstellung des Kreisrings ist sehr simpel gehalten. Die Komponente erlaubt das Konfigurieren von Innenradius, Aussenradius, Startwinkel, Winkelbereich und Anzahl Segmenten. Diese Eigenschaften werden überwacht, und bei jeder Änderung wird beim nächsten Update der Engine eine Neugenerierung des Meshes ausgelöst.
+
+Bei der Generierung wird ein Array der Länge $n_\textit{Segmente}*2$ erstellt, welches die Vertices enthält. %TODO: +2!
+Die Punkte des Aussen- und Innenkreis werden dann gleichzeitig in dieses Array gefüllt, wobei der Aussenkreis einen Offset von $n_\textit{Segmente}$ erhält (siehe Abbildung \ref{fig:ringmesh}). Schliesslich werden dann die Quads mit jeweils vier Indexen gebildet.
+%TODO: Prüfe Richtung
+
 
 \subsection{Visualisierung der Musik}
 
-\subsection{Globus}
+\subsection{Avatar}
+
+Auch der Anwender selbst muss irgendwie dargestellt werden. Ein Avatar gilt generell als ein Hilfsmittel, um die Immersivität zu steigern, kann jedoch auch verschlechternd wirken \cite{oculus:bestpractices}.
+
+Im Falle von IMVR wurde jedoch die Entscheidung getroffen, einen simplen Avatar einzubauen. Aufgrund der Art der Applikation, fiel hierbei die Wahl auf eine abstrakte Figur, die frei verfügbar und vollständig geriggt ist. Dadurch bleibt jederzeit die Möglichkeit offen, per \gls{ik} die Figur zu steuern.
+
+Da die Hände und der Kopf nicht benötigt werden, wurden diese kurzerhand mithilfe von 3DS Max 2015 demontiert. Die vorherig erwähnte Kontrolle über IK wurde nicht implementiert, könnte aber in einem nächsten Schritt eingebaut werden.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/avatar}
+	\caption{Der verwendete Avatar mit Kopf und Armen}
+	\source{http://www.turbosquid.com/FullPreview/Index.cfm/ID/833108}
+	\label{fig:avatar}
+\end{figure}
+
 
 
 \section{Herausforderungen}
@@ -253,5 +307,8 @@ label={lst:pointchart}]{code/PointChart_UpdatePoints.cs}
 \label{subsec:musicformats}
 
 \subsection{Canvas-Elemente}
+
+\subsection{Auswerten der Musik}
+%TODO: CSCore, NAudio, FFT
 
 % Alpha-Sorting, etc. Tile-Blanket
