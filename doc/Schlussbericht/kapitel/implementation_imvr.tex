@@ -31,8 +31,6 @@ Was sofort auffällt bei der Betrachtung der Ressourcenverwaltung, ist, dass dies
 
 \section{Aufbau}
 
-\section{Darstellungskonzept}
-
 \section{Interaktionskonzept}
 
 Unüberraschenderweise findet die Interaktion des Users mit IMVR fast ausschliesslich mit seinen Händen statt. In einer frühen Phase des Projektes war noch geplant, eventuell die Spracheingabe modal zu den Händen zu gebrauchen, jedoch reichte dafür die Zeit nicht mehr. Ein Artefakt dieses Vorhabens ist das \textit{SpeechServer}-Projekt, welches sich immer noch unter den \textit{AuxiliaryTools} befindet.
@@ -60,8 +58,95 @@ Die Idee ist, dass der Benutzer feststellen will, ``wo er steht'', herunterschau
 
 Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus Rift beobachten. Das Prinzip ist sehr leicht zu implementieren und daher auch verlockend, jedoch muss mit Vorsicht vorgegangen werden: Für den Benutzer ist es auf Dauer unangenehm, wenn von ihm ständige Kopfbewegungen gefordert werden. In IMVR wurde jedoch bewusst Gebrauch von dieser Methode gemacht, weil der Anwender nur selten nach unten schauen wird, und es relativ intuitiv ist.
 
+\subsection{Music Arm}
+
+Da es in dieser Arbeit voll und ganz um das Eingreifen ins Geschehen mit den eigenen Händen geht, wäre es bedauerlich, wenn es nicht möglich wäre, die Musik mit den Händen zu steuern. Ein weiteres Konzept, welches genau dieses Problem löst, ist der sogenannte "Music Arm".
+
+Beim Music Arm handelt es sich um das Interface, welches an Stelle des menschlichen Arms angezeigt wird. Dieser digitale Arm bietet die Möglichkeit, die Playlist zu verwalten, sowie die momentan abgespielte Musik anzuschauen bzw. vor- und zurückzuspulen.
+
+Hierbei wird eine Technik verwendet, welche einen Unterschied zwischen der Vorder- und der Rückseite macht. Schaut der Benutzer auf die ``Uhr'', also hält seinen Handrücken vor sich, dann erscheint ein Interface, in welchem er alle wichtigen Informationen über das momentane Lied erhält (Name, Artist, Cover, Länge und Fortschritt).
+
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.9\linewidth]{bilder/musicarm_front}
+		\caption{Vorderseitenmenü}
+		\label{fig:musicarm_front}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.5\linewidth]{bilder/musicarm_back}
+		\caption{Rückseitenmenü}
+		\label{fig:musicarm_back}
+	\end{subfigure}
+	\caption{Darstellung des Music Arms}
+	\label{fig:musicarm_frontback}
+\end{figure}
+
+
+Dreht der Anwendet jedoch seinen Arm und schaut auf die Rückseite, wird er eine Liste erhalten, die er scrollen und  selektieren kann. Bei der Selektion wird das Element auf das Ringmenü "gesendet", wo der Anwender dann die Möglichkeit hat, das Lied abzuspielen, oder die Selektion aufzuheben. Würde man sofort bei der Selektion ein Lied abspielen, ergäbe sich das Problem, dass durch die mangelhafte Genauigkeit der Leap Motion und der Bedienung allgemein viele Fehlselektionen passieren würden und somit diverse Lieder zufällig abgespielt würden. Abbildung \ref{fig:musicarm_frontback} zeigt, wie dieses Interface aussieht.
+
+Der Entscheid, welche Seite angezeigt wird, geschieht über ein simples Skalarprodukt. Der Forward-Vektor der Kamera wird verglichen mit der Normale des Arms, welche in die gleiche Richtung zeigt, wie der Handrücken. Wenn der Wert tiefer als -0.5 ist, die Vektoren also entgegengerichtet sind, wird die Unterseite erkannt, und wenn der Wert höher als 0.5 ist, die Oberseite. Der Entscheid könnte auch bei 0 gefällt werden, aber dann würden auch Grenzfälle angezeigt werden, in denen besser gar kein Menü angezeigt wird.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\linewidth]{diagramme/musicarm}
+\caption{Bestimmung der momentanen Armseite}
+\label{fig:musicarm}
+\end{figure}
+
+\subsection{Slider Balken}
+
+Im Hörteil der Applikation, dem blauen Teil, sollte es dem Anwender ermöglicht werden, die Features der gewünscheten Musik anzugeben, und diese dann anzuhören. Wie bereits erwähnt, bilden diese Werte einen Bereich zwischen 0 und 1 ab (mit Ausnahme des Tempos). Will der Anwender eine energievolle Musik hören, muss es ihm deshalb möglich sein, neben dem Maximalwert auch einen Minimalwert anzugeben. Es liegt also ein typischer Use-Case für einen Range-Slider vor.
+
+Da sich kein solcher im Werkzeugkasten von Unity befindet, musste ein eigener erstellt werden. Um einen anderen Approach zu testen, als mit der starken Verwendung von Unitys neuem UI-System in den anderen Teilen der Applikation gewählt wurde, wurde in diesem Fall bewusst ein Slider mithilfe eines Zylinder-Meshes erstellt.
+
+Beim implementierten Slider hat der Anwender die Möglichkeit, direkt mit seinen zwei Händen einen Auswahlbereich einzustellen, indem er diese parallel in den Zylinder hält und entsprechend bewegt. Anders als die relativ abstrakte Implementation der anderen Interaktionselemente, basiert dieser Slider auf das Kollisionsmodell von Unity und die physikalische Hände, die mit dem Leap Motion Plugin mitgeliefert werden.
+
+Das System funktioniert so, dass zu Beginn eine Achse $\hat{v}_{richtung}$ festgelegt wird, in die sich der Zylinder füllt (z.B. von links nach rechts). Bei einer Kollision der Hand mit dem Zylinder, wird nun zuerst geprüft, ob die Hand gültig ist. Sofern das der Fall ist, wird die Position der Handfläche $\vec{P}_{hand}$ auf die Achse $\hat{v}_{richtung}$ projiziert und auf die Länge des Zylinders skaliert.
+
+Der Wert, der dadurch entsteht, wird dann je nach geprüfter Handseite als neues Minimum bzw. Maximum verwendet. Allerdings geschieht davor noch eine lineare Interpolation vom vorigen Wert für einen weichen Übergang und ein Snapping zum Vereinfachen der Auswahl des Maximums bzw. Minimums.
+
+Damit andere Teile der Applikation auf diese Wertänderungen reagieren können, wird beim Ändern der Extrema jeweils die Events \code{onMinValueChanged} bzw. \code{onMaxValueChanged} sowie \code{onValueChanged} ausgelöst. Durch Abfangen dieser Events wird z.B. der Zähler im \textit{Selector} bei Änderungen der Selektion aktualisiert.
+
+%\begin{algorithm}
+%	\caption{My algorithm}
+%	\begin{algorithmic}[1]
+%		\Procedure{MyProcedure}{}
+%		\State $H \gets Hand$
+%		\State $\vec{P}_{hand} \gets \text{Position der Hand}$
+%		\State $\vec{P}_{min} \gets \text{Position wenn leer}$
+%		\State $\vec{P}_{max} \gets \text{Position wenn voll}$
+%		\State $\hat{v}_{dir} \gets \frac{\vec{P}_{max}-\vec{P}_{min}}{|\vec{P}_{max}-\vec{P}_{min}|}$
+%		\If {$\text{isValid(}\textit{H}\text{)}$}
+%		\State $j \gets j-1$.
+%		\State $i \gets i-1$.
+%		\State \textbf{goto} \emph{loop}.
+%		\State \textbf{close};
+%		\EndIf
+%		\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+%		\State \textbf{goto} \emph{top}.
+%		\EndProcedure
+%	\end{algorithmic}
+%\end{algorithm}
+
 
 \section{Visual Design}
+
+\subsection{Darstellung der Hände}
+
+\subsection{Point Chart}
+
+\subsection{Farben uns Symbolik}
+
+\subsection{Beat Detector und Wellen}
+
+\subsection{Visualisierung der Musik}
+
+\subsection{Globus}
+
 
 \section{Herausforderungen}
 
