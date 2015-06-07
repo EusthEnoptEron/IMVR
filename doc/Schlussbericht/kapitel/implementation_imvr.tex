@@ -103,9 +103,17 @@ Im Hörteil der Applikation, dem blauen Teil, sollte es dem Anwender ermöglicht w
 
 Da sich kein solcher im Werkzeugkasten von Unity befindet, musste ein eigener erstellt werden. Um einen anderen Approach zu testen, als mit der starken Verwendung von Unitys neuem UI-System in den anderen Teilen der Applikation gewählt wurde, wurde in diesem Fall bewusst ein Slider mithilfe eines Zylinder-Meshes erstellt.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/cylinder-slider}
+	\caption{In-Game Screenshot zur Bedienung der Slider-Balken}
+	\label{fig:cylinder-slider}
+\end{figure}
+
+
 Beim implementierten Slider hat der Anwender die Möglichkeit, direkt mit seinen zwei Händen einen Auswahlbereich einzustellen, indem er diese parallel in den Zylinder hält und entsprechend bewegt. Anders als die relativ abstrakte Implementation der anderen Interaktionselemente, basiert dieser Slider auf das Kollisionsmodell von Unity und die physikalische Hände, die mit dem Leap Motion Plugin mitgeliefert werden.
 
-Das System funktioniert so, dass zu Beginn eine Achse $\hat{v}_{richtung}$ festgelegt wird, in die sich der Zylinder füllt (z.B. von links nach rechts). Bei einer Kollision der Hand mit dem Zylinder, wird nun zuerst geprüft, ob die Hand gültig ist. Sofern das der Fall ist, wird die Position der Handfläche $\vec{P}_{hand}$ auf die Achse $\hat{v}_{richtung}$ projiziert und auf die Länge des Zylinders skaliert.
+Das System funktioniert so, dass zu Beginn eine Achse $\hat{v}_\textit{dir}$ festgelegt wird, in die sich der Zylinder füllt (z.B. von links nach rechts). Bei einer Kollision der Hand mit dem Zylinder, wird nun zuerst geprüft, ob die Hand gültig ist. Sofern das der Fall ist, wird die Position der Handfläche $\vec{P}_\textit{hand}$ auf die Achse $\hat{v}_\textit{dir}$ projiziert und auf die Länge des Zylinders skaliert.
 
 Der Wert, der dadurch entsteht, wird dann je nach geprüfter Handseite als neues Minimum bzw. Maximum verwendet. Allerdings geschieht davor noch eine lineare Interpolation vom vorigen Wert für einen weichen Übergang und ein Snapping zum Vereinfachen der Auswahl des Maximums bzw. Minimums.
 
