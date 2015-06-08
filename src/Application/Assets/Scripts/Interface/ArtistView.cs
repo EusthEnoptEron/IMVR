@@ -12,8 +12,6 @@ public class ArtistView : View {
     private Transform m_albumList;
     private Song[] _selectedSongs = new Song[0];
 
-    public MusicSelection selector;
-
     // UI Prefabs
     private static GameObject pref_albumView = Resources.Load<GameObject>("Prefabs/UI/pref_AlbumView");
     private static GameObject pref_songItem = Resources.Load<GameObject>("Prefabs/UI/pref_SongItem");
@@ -93,10 +91,6 @@ public class ArtistView : View {
             //m_artistView.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
 
             //m_albumList = m_artistView.transform.FindRecursively("AlbumList");
-
-            selector = GameObject.Instantiate<GameObject>(pref_selector).GetComponent<MusicSelection>();
-            selector.gameObject.SetActive(false);
-
 
             // Build song chart
             var chart = GameObject.Instantiate<GameObject>(pref_songChart).GetComponent<SongMetaChart>();
