@@ -54,3 +54,52 @@ Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie i
 
 \section{Systemdesign}
 
+Jetzt, wo das grobe Zusammenspiel der Elemente im System klar geworden ist, soll ein bisschen näher auf die Unterelemente eingegangen werden. Aufgrund der Brückenfunktion und deshalb der globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
+
+\subsection{Commons (Datenbank)}
+
+Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch ein weiteres Projekt erstellt mit einer eigenen Datenstruktur, welche in Abbildung \ref{fig:Indexer-Commons-1} ersichtlich ist.
+
+\afterpage {
+	\begin{figure}[t!]
+		\centering
+		\includegraphics[width=1\linewidth]{bilder/Indexer-IMVR-Commons.pdf}
+		\caption{Klassendiagramm für die Klassen im IMVR.Commons Package.}
+		\label{fig:Indexer-Commons-1}
+	\end{figure}
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabularx}{\textwidth}{ l X }
+			\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+			\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+			Artist & Klasse für einen einzelnen Artisten mit Biografie und ein paar Kennwerten sowie Koordinaten und Aktivitätsdaten. \\
+			Album & Jeder Artist hat ein oder mehrere Alben, an denen er beteiligt ist. Das Album selbst hat nur ein Name und ein Jahr und kann zu mehreren Künstlern gehören.\\
+			Song & Repräsentiert einen Song und gehört genau einem Künstler. Jeder Song hat einen Pfad und ist somit von einer reellen Datei gestützt. Ein Song erhält zusätzlich verschieden Kennwerte, die von Services heruntergeladen werden. \\
+			TermItem & Ein Begriff (z.B. Genre), der einem Künstler mit einem Gewicht und einer Frequenz zugeordnet wird. Könnte noch weiter normalisiert werden, wurde aber der Einfachheit halber so gelassen.\\
+			AtlasTicket & Repräsentiert eine Position bzw. ein Bild in einem Atlas. Mit der Position ist gemeint, an welcher Stelle das Bild im Atlas erscheint.\\
+			IMDB & Zentraler Zugangsknoten zu den Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
+			\noalign{\smallskip} \hline \noalign{\smallskip}
+		\end{tabularx}
+		\caption{Erklärung der wichtigsten Klassen}
+		\label{tab:commons}
+	\end{table}
+}
+
+\clearpage
+
+Es handelt sich um ein bewusst sehr minimalistisch gehaltenes Schema, um eine Musiksammlung darzustellen. Zu den Problemen, die nicht abgedeckt werden gehören zum Beispiel:
+
+\begin{itemize}
+	\item Jede Ausgabe eines Liedes gilt als ein separates Lied
+	\item Für kombinierte Artisten (z.B. A feat. B) wird jeweils ein neuer Artist erstellt
+	\item Mehrere Aktivitätsperioden eines Künstlers können nicht abgebildet werden
+\end{itemize}
+
+Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das liegt ausserhalb des Bereichs dieses Projektes.
+
+\subsection{Indexer}
+
+
+
+\subsection{IMVR}
