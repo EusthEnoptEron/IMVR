@@ -8,12 +8,12 @@ public static class Navigator {
 
     public static void ChangeView(View view, bool pop = true)
     {
-        RootPanel.Instance.Controller.ChangeView(view, pop);
+        ModeController.Instance.Controller.ChangeView(view, pop);
     }
 
     public static T ChangeView<T>() where T : View
     {
-        return RootPanel.Instance.Controller.ChangeView<T>();
+        return ModeController.Instance.Controller.ChangeView<T>();
     }
 
 
@@ -24,7 +24,7 @@ public static class Navigator {
     /// <returns></returns>
     public static T Navigate<T>() where T : View
     {
-        return RootPanel.Instance.Controller.Navigate<T>();
+        return ModeController.Instance.Controller.Navigate<T>();
     }
 
     /// <summary>
@@ -33,6 +33,6 @@ public static class Navigator {
     /// <returns></returns>
     public static View GoBack()
     {
-        return RootPanel.Instance.Controller.GoBack();
+        return ModeController.Instance.Controller.GoBack();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ExploreController : ModeController {
+public class ListenMode : Mode {
 
     protected override void Awake()
     {

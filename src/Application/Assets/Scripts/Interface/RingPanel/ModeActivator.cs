@@ -4,7 +4,7 @@ using System.Linq;
 using DG.Tweening;
 
 public class ModeActivator : RingActivator {
-    public ModeController controller;
+    public Mode controller;
     private RingMesh _floor;
     private RingMesh _ring;
 
@@ -18,12 +18,12 @@ public class ModeActivator : RingActivator {
 
     protected override bool IsStillActive
     {
-        get { return RootPanel.Instance.Controller == controller; }
+        get { return ModeController.Instance.Controller == controller; }
     }
 
     protected override void Activate()
     {
-        RootPanel.Instance.Controller = controller;
+        ModeController.Instance.Controller = controller;
 
         DOTween.To(
             () => _floor.Color,

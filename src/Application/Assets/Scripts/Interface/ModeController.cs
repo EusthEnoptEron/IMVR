@@ -1,246 +1,123 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.Audio;
 using IMVR.Commons;
-using System.Linq;
+using System.IO;
 using Gestures;
 
-public abstract class ModeController : MonoBehaviour
-{
-    private Stack<View> viewStack;
-    public Theme Theme { get; protected set; }
+public class ModeController : Singleton<ModeController> {
 
-    public View ActiveView
+    public AudioMixerSnapshot normalSnapshot;
+    public AudioMixerSnapshot menuSnapshot;
+
+
+    private Mode _controller;
+    private float downThresholdEnter = 0.8f;
+    private float downThresholdStay = 0.5f;
+    private bool isMenuMode = false;
+    private bool _invokeStarted = false;
+
+    public Mode Controller
     {
         get
         {
-            return viewStack.Count > 0
-                ? viewStack.Peek()
-                : null;
+            return _controller;
+        }
+        set
+        {
+            if (_controller != null) _controller.enabled = false;
+
+            _controller = value;
+            Theme.Current = _controller.Theme;
+
+            _controller.enabled = true;
         }
     }
 
-    protected virtual void Awake()
+    private void Awake()
     {
-        viewStack = new Stack<View>();
-        viewStack.Push(null);
-
-    }
-
-
-    // Use this for initialization
-    protected abstract void Start();
-
-    private Vector3 m_pullStartPosition;
-    private bool m_pulling = false;
-    // Update is called once per frame
-    void Update()
-    {
-        var hand = HandProvider.Instance.GetHand(HandType.Left);
-        m_pulling = m_pulling && hand != null;
-
-        if(HandProvider.Instance.GetGestureEnter("Pull")) {
-            StartCoroutine(HandlePull(0.05f));
-        }
-
-        if (HandProvider.Instance.GetGestureEnter("Push Down"))
+        var menuSong = new Song()
         {
-            StartCoroutine(HandlePushDown(0.05f));
-        }
-
-        if (HandProvider.Instance.GetGesture("Pull Up"))
-        {
-            foreach (var view in viewStack)
+            Artist = new Artist()
             {
-                view.Enable();
-            }
-        }
+                Name = "煉獄庭園"
+            },
+            Album = new Album(),
+            Title = "円-Madoka-",
+            Path  = Path.Combine(Application.streamingAssetsPath, @"Audio\madoka.mp3")
+        };
+
+        Jukebox.Instance.Playlist.Add(menuSong);
+        Jukebox.Instance.Playlist.Cyclic = true;
+
+        Jukebox.Instance.Play();
     }
 
-
-    private IEnumerator HandlePull(float requiredDistance)
+    private void Update()
     {
-        m_pulling = true;
-
-        var hand = HandProvider.Instance.GetHand(HandType.Left);
-        var startPosition = hand.PalmPosition;
-
-        while (HandProvider.Instance.GetGesture("Pull"))
+        bool lookingDown = IsLookingDown;
+        if (lookingDown)
         {
-            hand = HandProvider.Instance.GetHand(HandType.Left);
-            if (hand != null)
-            {
-                var pullEndPosition = hand.PalmPosition;
-                var axis = (Camera.main.transform.position - startPosition).normalized;
-                var distance = Vector3.Dot(pullEndPosition - startPosition, axis);
+            SetMode(true);
 
-                if (distance > requiredDistance)
+            if (isMenuMode)
+            {
+                var ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+                Debug.DrawRay(ray.origin, ray.direction);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, 3f, LayerMask.GetMask("Ringpanel")))
                 {
-                    if (viewStack.Count > 1)
+                    var activator = hit.collider.GetComponentInParent<RingActivator>();
+                    if (activator != null)
                     {
-                        GoBack();
-                        break;
+                        activator.Fill();
                     }
                 }
             }
-            else break;
-
-            yield return null;
         }
-
-        m_pulling = false;
-    }
-
-    private IEnumerator HandlePushDown(float requiredDistance)
-    {
-        var hand = HandProvider.Instance.GetHand(HandType.Left);
-        var startPosition = hand.PalmPosition;
-
-        while (HandProvider.Instance.GetGesture("Push Down"))
+        else
         {
-            hand = HandProvider.Instance.GetHand(HandType.Left);
-            if (hand != null)
-            {
-                var pullEndPosition = hand.PalmPosition;
-                var axis = -Camera.main.transform.up;
-                var distance = Vector3.Dot(pullEndPosition - startPosition, axis);
-
-                if (distance > requiredDistance)
-                {
-                    foreach (var view in viewStack)
-                        view.Disable();
-                }
-            }
-            else
-            {
-                break;
-            }
-
-            yield return null;
+            SetMode(false);
         }
     }
 
-
-    public void ChangeView(View view, bool pop = true)
+    private void SetMode(bool menuMode)
     {
-
-        var activeView = pop
-            ? viewStack.Pop()
-            : ActiveView;
-
-        if (activeView != null)
+        if (isMenuMode && !menuMode)
         {
-            if (pop)
-                activeView.Disable();
-            else
-                PushStack();
+            _invokeStarted = false;
+            CancelInvoke("Activate");
+            // Enabled -> Disabled
+            normalSnapshot.TransitionTo(0.1f);
+            HandProvider.Instance.enabled = true;
+
+
+            isMenuMode = false;
         }
-
-        activeView = view;
-        viewStack.Push(activeView);
-
-        activeView.Enable();
-
-        OnViewChanged();
-
+        else if (!isMenuMode && menuMode && !_invokeStarted)
+        {
+            // Disabled -> Enabled
+            menuSnapshot.TransitionTo(0.5f);
+            _invokeStarted = true;
+            Invoke("Activate", 0.5f);
+        }
     }
 
-    public T ChangeView<T>() where T : View
+    private void Activate()
     {
-        var view = new GameObject().AddComponent<T>();
-        ChangeView(view);
+        HandProvider.Instance.GetComponent<HandController>().DestroyAllHands();
 
-        return view;
+        HandProvider.Instance.enabled = false;
+        isMenuMode = true;
+        _invokeStarted = false;
     }
 
-
-    private void OnDisable()
+    private bool IsLookingDown
     {
-        foreach (var view in viewStack.Where(v => v != null))
-            view.Disable();
+        get
+        {
+            return Mathf.Abs(Vector3.Dot(Vector3.down, Camera.main.transform.forward)) > (isMenuMode ? downThresholdStay : downThresholdEnter);
+        }
     }
 
-    private void OnEnable()
-    {
-        foreach (var view in viewStack.Where(v => v != null))
-            view.Enable();
-
-        if(ActiveView != null)
-            OnViewChanged();
-    }
-
-    /// <summary>
-    /// Steps into a view.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public T Navigate<T>() where T : View
-    {
-        var view = new GameObject().AddComponent<T>();
-        ChangeView(view, false);
-
-        return view;
-    }
-
-    /// <summary>
-    /// Goes back a view.
-    /// </summary>
-    /// <returns></returns>
-    public View GoBack()
-    {
-        var view = viewStack.Pop();
-        view.Disable();
-
-        PullStack();
-        OnViewChanged();
-
-        return view;
-    }
-
-    private void PushStack()
-    {
-        foreach (var view in viewStack.ToArray())
-            view.Push();
-    }
-
-    private void PullStack()
-    {
-        foreach (var view in viewStack.ToArray())
-            view.Pull();
-    }
-
-    public void NavigateToOverview()
-    {
-        Navigate<ArtistOverView>();
-    }
-
-    public void NavigateToMetaGroup(MetaGroup group)
-    {
-        var view = Navigate<MetaGroupView>();
-        view.group = group;
-    }
-
-    public void NavigateToMetaGroup(string group) {
-        NavigateToMetaGroup((MetaGroup)System.Enum.Parse(typeof(MetaGroup), group, false));
-    }
-
-
-    private void OnViewChanged()
-    {
-        StartCoroutine(BuildMenu());
-    }
-
-    private IEnumerator BuildMenu()
-    {
-
-        yield return null;
-
-        var menu = RingMenu.Instance;
-        menu.RemoveItem(FingerType.Pinky);
-
-        ActiveView.BuildMenu(menu);
-
-        menu.UpdateItems();
-
-    }
 }

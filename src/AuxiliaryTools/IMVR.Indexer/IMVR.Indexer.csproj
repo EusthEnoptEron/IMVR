@@ -109,16 +109,12 @@
   <ItemGroup>
     <Compile Include="AbstractWorker.cs" />
     <Compile Include="AtlasManager.cs" />
-    <Compile Include="BlockingCollection.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="ConsumerNode.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="DBSyncNode.cs" />
     <Compile Include="DualNode.cs" />
     <Compile Include="IConsumer.cs" />
     <Compile Include="ImageAnalysisNode.cs" />
     <Compile Include="FileWalker.cs" />
-    <Compile Include="Generated\Database.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="IProducer.cs" />
     <Compile Include="EchoNestNode.cs" />

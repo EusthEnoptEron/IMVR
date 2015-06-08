@@ -122,11 +122,11 @@ public class PointChart : MonoBehaviour {
 
     public void UpdatePoints()
     {
+        float scale = transform.lossyScale.x;
+
         var particles = new ParticleSystem.Particle[points.Length];
         particleSystem.Emit(points.Length);
         particleSystem.GetParticles(particles);
-        float scale = transform.lossyScale.x;
-
         for (int i = 0; i < points.Length; i++)
         {
             particles[i].size = Mathf.Lerp(0.3f, 0.05f, points.Length / 5000) * scale;
@@ -135,9 +135,6 @@ public class PointChart : MonoBehaviour {
             particles[i].position = (points[i] + pivotOffset) * scale;
             particles[i].color = new Color(points[i].x, points[i].y, points[i].z);
             particles[i].angularVelocity = Random.RandomRange(-45f, 45f);
-
-            //particleSystem.Emit(particle);
-
         }
         particleSystem.SetParticles(particles, particles.Length);
     }

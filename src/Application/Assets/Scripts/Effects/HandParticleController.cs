@@ -144,7 +144,6 @@ public class HandParticleController : MonoBehaviour {
                             // Scale needs to be ignored, so we are required to make our own transformation matrix
                             var color = Theme.Current.ActivatedColor;
                             
-
                             lastTransform = leapHand.transform;
                             var task = Task.Run(delegate
                             {
@@ -160,25 +159,12 @@ public class HandParticleController : MonoBehaviour {
                                         ) 
                                     );
 
-                                    //if (i == 0)
-                                    //    Task.RunOnMain(() => { Debug.Log(v); });
-
-                                    //_particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
-                                    //_particles[i].velocity = Vector3.zero;
-
                                     var distance = (v - _particles[i].position);
                                     var magnitude = distance.magnitude;
 
-                                    //if(magnitude > 0.01f)
-                                    //    _particles[i].velocity = Vector3.Lerp(_particles[i].velocity, distance * 10, deltaTime * 10);
-                                    //else
-                                        _particles[i].velocity = distance * 0.1f;
-                                        _particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
+                                    _particles[i].velocity = distance * 0.1f;
+                                    _particles[i].position = Vector3.Lerp(_particles[i].position, v, deltaTime * 10);
                                        
-
-                                    //if(i == 0)
-                                    //    Debug.LogError(distance);
-
                                     _particles[i].size = (Mathf.Sin((time + _particles[i].randomSeed) * 2) + 1.5f) * 0.002f;
                                     _particles[i].color = color;
                                 }

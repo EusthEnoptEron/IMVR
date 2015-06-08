@@ -42,10 +42,9 @@ public class SongMetaChart : MonoBehaviour {
         InitCombobox(2);
 
         initialized = true;
-
         // Debug
-        //if(debug)
-        //    SetSongs(ResourceManager.DB.Songs);
+        if(debug)
+            SetSongs(ResourceManager.DB.Songs);
 
     }
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BrowseController : ModeController {
+public class BrowseMode : Mode {
 
     protected override void Awake()
     {
