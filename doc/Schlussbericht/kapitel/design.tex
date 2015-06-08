@@ -81,7 +81,7 @@ Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch ein weit
 			IMDB & Zentraler Zugangsknoten zu den Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
 			\noalign{\smallskip} \hline \noalign{\smallskip}
 		\end{tabularx}
-		\caption{Erklärung der wichtigsten Klassen}
+		\caption{Erklärung der wichtigsten allgemeinen Klassen}
 		\label{tab:commons}
 	\end{table}
 }
@@ -109,7 +109,36 @@ Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das
 	\end{figure}
 \end{landscape}
 
+Der Indexer basiert auf Nodes. Das Konzept wird dabei mithilfe eines Producer-Consumer Patterns abgebildet.
+
+Alle Nodes im System führen eine Aufgabe auf einem oder mehreren Threads durch. Wenn diese einen Input haben, implementieren sie \code{IConsumer} oder eine der abstrakten Implementationen davon, und wenn diese einen Output haben, implementieren sie \code{IProducer}, um die Daten an den nächsten Node weiterzugeben.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		Options & Singleton-Klasse, welche mit den Command-Args gebildet wird und die Konfigurationen beinhält.\\
+		IProducer & Ein Produzent von Daten ($\rightarrow$ Output-Knoten)\\
+		IConsumer & Ein Konsument von Daten ($\rightarrow$ Input-Knoten)\\
+		AbstractWorker & Jede Node erbt von dieser Klasse. Sie sorgt dafür, dass die Nodes auf eine einheitliche Weise initialisiert, durchgeführt und aufgeräumt werden können.\\
+		ConsumerNode & Hilfsklasse, welche IConsumer implementiert und mithilfe einer Methode \code{ProcessItem} den Einsatz erleichtert.\\
+		DualNode & Hat die gleiche Funktion wie eine \code{ConsumerNode}, aber implementiert zusätzlich \code{IProducer} und bietet mit \code{Publish} ebenfalls eine Hilfsmethode an.\\
+		EchoNestNode & Holt Daten aus der The Echo Nest API und schreibt diese in die Datenbank.\\
+		LastFmNode & Holt Daten aus der Last.fm API und schreibt diese in die Datenbank. \\
+		MusicIndexer & Konsumiert Files und extrahiert daraus Artisten, Alben und Songs. \\
+		FileWalker & Durchläuft die Medienordner und findet Musik und Bilder. \\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der wichtigsten Klassen des Indexers}
+	\label{tab:IMVR.Indexer}
+\end{table}
+
 \subsection{IMVR}
+
+Nun, da das Design des Indexers festgelegt ist, bedarf auch die Hauptapplikation einer Erklärung. Um das Design besser verdaulich zu machen, wurde hierbei das Schema in verschiedene, logische Teilbereiche gegliedert, die auch den Namespaces des Projekts entsprechen.
+
+Es wird empfohlen, diese Schemas zusammen mit den Erklärungen in Kapitel \ref{chap:implementation_imvr} zu verwenden.
 
 \begin{landscape}
 	\subsubsection{Interface}
@@ -120,6 +149,12 @@ Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das
 		\label{uml:IMVR.Interface}
 	\end{figure}
 \end{landscape}
+
+Das Interface von IMVR basiert auf sogenannten \textit{Views}. Zu jedem Zeitpunkt der Applikation ist irgendeine View aktiv, die verantwortlich für die momentane Darstellung der Szene ist.
+
+Die Views gehören und werden kontrolliert vom momentan aktiven \textit{Mode}, wovon zwei existieren: der \code{BrowseMode} und der \code{ListenMode}. Der aktuelle Modus wird verwaltet durch die Klasse \code{ModeController}. Das Wechseln des Modus ist Aufgabe des Ring-Panels und wird in einem separaten Kapitel behandelt.
+
+Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordnet wird. Dieses Theme enthält eine Anzahl von Farben, die später von anderen GUI-Elementen verwendet werden und für eine leichtere Unterscheidung des momentanen Modus sorgen sollen.
 
 \begin{landscape}
 	\subsubsection{Music Arm}
