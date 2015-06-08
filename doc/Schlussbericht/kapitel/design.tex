@@ -63,8 +63,8 @@ Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch ein weit
 \afterpage {
 	\begin{figure}[t!]
 		\centering
-		\includegraphics[width=1\linewidth]{bilder/Indexer-IMVR-Commons.pdf}
-		\caption{Klassendiagramm für die Klassen im IMVR.Commons Package.}
+		\includegraphics[width=1\linewidth]{diagramme/IMVR.Commons-UML.pdf}
+		\caption{Klassendiagramm für die Klassen im IMVR.Commons Package}
 		\label{fig:Indexer-Commons-1}
 	\end{figure}
 	
@@ -98,8 +98,74 @@ Es handelt sich um ein bewusst sehr minimalistisch gehaltenes Schema, um eine Mu
 
 Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das liegt ausserhalb des Bereichs dieses Projektes.
 
-\subsection{Indexer}
 
-
+\begin{landscape}
+	\subsection{Indexer}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\linewidth]{diagramme/IMVR.Indexer-UML}
+		\caption{Klassendiagramm des Indexers}
+		\label{uml:IMVR.Indexer}
+	\end{figure}
+\end{landscape}
 
 \subsection{IMVR}
+
+\begin{landscape}
+	\subsubsection{Interface}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\linewidth]{diagramme/IMVR.Interface-UML}
+		\caption{Klassendiagramm des Interfaces der Applikation (View-Behavior)}
+		\label{uml:IMVR.Interface}
+	\end{figure}
+\end{landscape}
+
+\begin{landscape}
+	\subsubsection{Music Arm}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{diagramme/IMVR.Interface.MusicArm-UML}
+		\caption{Klassendiagramm des Music Arms}
+		\label{uml:IMVR.Interface.MusicArm}
+	\end{figure}
+\end{landscape}
+
+\subsubsection{Ring Panel}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{diagramme/IMVR.Interface.RingPanel-UML}
+	\caption{Klassendiagramm des Ring Panels, womit der Anwender Modi auswählt}
+	\label{uml:IMVR.Interface.RingPanel}
+\end{figure}
+
+\subsubsection{Daten}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{diagramme/IMVR.Data-UML}
+	\caption{Klassendiagramm des Teils, der die Daten der Datenbank verwendet}
+	\label{uml:IMVR.Data}
+\end{figure}
+
+
+\subsubsection{Effekte}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{diagramme/IMVR.FX-UML.pdf}
+	\caption{Klassendiagramm der Effekte und prozeduralen Meshes}
+	\label{uml:IMVR.FX}
+\end{figure}
+
+
+\subsubsection{Gesten}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{diagramme/IMVR.Gestures-UML}
+	\caption{Klassendiagramm des Abstraktionslayers für die Leap Motion}
+	\label{uml:IMVR.Gestures}
+\end{figure}
+
