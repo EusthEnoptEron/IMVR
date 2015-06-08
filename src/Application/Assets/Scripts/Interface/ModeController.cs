@@ -17,7 +17,7 @@ public class ModeController : Singleton<ModeController> {
     private bool isMenuMode = false;
     private bool _invokeStarted = false;
 
-    public Mode Controller
+    public Mode Mode
     {
         get
         {

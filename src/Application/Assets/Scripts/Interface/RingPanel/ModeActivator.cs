@@ -18,12 +18,12 @@ public class ModeActivator : RingActivator {
 
     protected override bool IsStillActive
     {
-        get { return ModeController.Instance.Controller == controller; }
+        get { return ModeController.Instance.Mode == controller; }
     }
 
     protected override void Activate()
     {
-        ModeController.Instance.Controller = controller;
+        ModeController.Instance.Mode = controller;
 
         DOTween.To(
             () => _floor.Color,
