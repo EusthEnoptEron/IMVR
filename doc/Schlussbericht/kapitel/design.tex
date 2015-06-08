@@ -3,6 +3,7 @@
 Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden. 
 
 \section{Systemübersicht}
+\label{sec:sysoverview}
 Um die Applikation zu bedienen, setzt der Anwender die Oculus Rift auf und bewegt sich im von der mitgelieferten Kamera erkennbaren Bereich.
 
 Die Leap Motion wird prinzipiell so verwendet, wie von der Herstellerfirma vorgesehen. Das heisst, diese wird mit dem offiziellen Aufsatz \cite{leap} an der Oculus Rift befestigt, und deckt so den frontalen Sichtbereich des Anwenders ab. Dies lässt sich gut auf Abbildung \ref{fig:systemuebersicht} erkennen.
@@ -36,13 +37,18 @@ Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbund
 
 Zuerst ist es wichtig, zu verstehen, wie die Applikation grob aufgebaut ist. In Abbildung \ref{fig:flow} wird dies in zwei Schritten illustriert.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=1\linewidth]{diagramme/flow}
 \caption{Grober Überblick des Programmablaufs}
 \label{fig:flow}
 \end{figure}
 
+Man erkennt wie der Benutzer zuerst ausserhalb der Unity-Applikation den Indexer startet und durchlaufen lässt. Dieser durchläuft alle Ordner, die er in einer \textit{folders.txt} findet und schreibt diese in die Datenbank. Im nächsten Schritt werden aus diversen Quellen weitere Daten abgerufen.
+
+Was ebenfalls auf der Grafik zu sehen ist, sind die Atlasse. Um Ressourcen zu sparen (siehe Kapitel \ref{subsec:resources}), werden alle Bilder in sogenannten Atlassen, sprich Bildersammlungen, gespeichert. Die Bilder, von denen hier die Rede ist, sind Fotos der Artisten und das Artwork der indexierten Alben. 
+
+Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er beschreiten will und je nach Wahl entsprechende weitere Optionen.
 
 
 
