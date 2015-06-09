@@ -29,6 +29,25 @@ danach wiederverwerten kann.
 
 Was sofort auffällt bei der Betrachtung der Ressourcenverwaltung, ist, dass diese starke Kopplung von Assets zu Projekten sich mit der grundlegenden Aufgabe dieses Projektes beisst. Unity sieht vor, dass der Programmierer während der Entwicklung alle seine Assets in den dafür vorgesehenen Ordner platziert, das Projekt am Schluss kompiliert, und dann höchstens im Nachhinein neue Assets als \textit{Asset Bundles} an seine Anwender verteilt. In diesem Projekt ist es jedoch zwingend nötig, dynamisch Bilder und Musik anhand der Dateien auf dem Anwender-PC zu laden. Auf die Folgen und Lösungen zu diesem Problem wird in den Kapiteln \ref{subsec:resources} und  \ref{subsec:musicformats} näher eingegangen.
 
+\subsection{UI}
+
+Ein Feature, von dem die Applikation starken Gebrauch macht, ist das UI-System von Unity. Vor Version 4.6 des Editors wurde das GUI grösstenteils im Programmcode selbst erstellt mithilfe des alten System \textit{nGUI}.
+
+Das neue System ist analog zu nGUI unter dem Namen \textit{uGUI} bekannt. Neuerdings werden GUI-Elemente direkt im Editor platziert und können von einer umfangreichen Layout-Engine profitieren. Ausserdem verfügen UI-Komponenten über ihre eigene Behaviour-Klasse \code{UIBehaviour}.
+
+Der entscheidende Vorteil davon im Kontext dieses Projektes ist die Möglichkeit, diese UI-Elemente dreidimensional darzustellen. Neben einem Overlay- und einem perspektivischen Kamera-Modus verfügt ein Canvas, das Root-Element eines UIs, über einen World-Modus, wo das Canvas direkt in der Welt positioniert wird.
+
+Eine Implikation, die dieses System in sich birgt, ist, dass es nicht mehr so einfach wie zu Zeiten von nGUI ist, ein GUI im Code zu erstellen. Würde man alle Elemente dynamisch generieren, würde dies zu unleserlichem und schlecht handhabbaren Code führen.
+
+Um dieses Problem zu umgehen, bieten sich Prefabs an. Der Prozess der Erstellung eines einzelnen UIs sieht folgendermassen aus:
+
+\begin{enumerate}
+	\item Designen der UI im Editor
+	\item Speichern als Prefab
+	\item Im Code: Laden und per \code{SetTransform()} an ein anderes Element anhängen
+	\item Iterieren bis fertiggestellt
+\end{enumerate}
+
 
 \section{Aufbau}
 
