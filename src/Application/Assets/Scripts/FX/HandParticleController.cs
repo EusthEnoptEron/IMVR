@@ -35,6 +35,8 @@ public class HandParticleController : MonoBehaviour {
 
     public int particlesPerMesh = 50;
 
+    private BeatEventArgs beat = null;
+
 	// Use this for initialization
 	void Start () {
         _handController = HandProvider.Instance.GetComponent<HandController>();
@@ -52,7 +54,7 @@ public class HandParticleController : MonoBehaviour {
 
             // Emit all particles
             int count = _renderers.Length * particlesPerMesh;
-            Debug.LogError(count);
+
             _particles = new ParticleSystem.Particle[count];
             _mappings = new ParticleMapping[count];
             _particleSystem.Emit(count);
@@ -101,6 +103,8 @@ public class HandParticleController : MonoBehaviour {
             _particleSystem.SetParticles(_particles, count);
             _vertices = vList.ToArray();
 
+            BeatDetector.Instance.Beat += OnBeat;
+
             StartCoroutine(UpdateParticles());
         }
         else
@@ -109,6 +113,11 @@ public class HandParticleController : MonoBehaviour {
             gameObject.SetActive(false);
         }
 	}
+
+    private void OnBeat(object sender, BeatEventArgs e)
+    {
+        beat = e;
+    }
 
     private float lastUpdate = 0;
 
@@ -185,6 +194,7 @@ public class HandParticleController : MonoBehaviour {
                 lastUpdate = time;
             }
 
+            beat = null;
             yield return null;
         }
 	}

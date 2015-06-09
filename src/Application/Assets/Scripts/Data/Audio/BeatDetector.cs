@@ -2,8 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
-public class BeatDetector : MonoBehaviour {
+
+public class BeatEventArgs : EventArgs
+{
+    public float Strength { get; private set; }
+
+    internal BeatEventArgs(float strength)
+    {
+        Strength = strength;
+    }
+}
+public class BeatDetector : Singleton<BeatDetector> {
     public float C = 1.3f;
 
     private LinkedList<float> E = new LinkedList<float>();
@@ -13,6 +24,9 @@ public class BeatDetector : MonoBehaviour {
     public float beatInterval = 0.5f;
 
     private VisualizationHelper helper;
+
+    public EventHandler<BeatEventArgs> Beat = delegate { };
+
 	// Use this for initialization
 	void Start () {
 
@@ -49,7 +63,9 @@ public class BeatDetector : MonoBehaviour {
             if (e > C * Energy)
             {
                 lastBeat = Time.time;
+                var args = new BeatEventArgs(e);
                 SendMessage("OnBeat", e, SendMessageOptions.DontRequireReceiver);
+                Beat(this, args);
             }
         }
 	}

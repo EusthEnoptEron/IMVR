@@ -9,6 +9,7 @@ public abstract class Mode : MonoBehaviour
 {
     private Stack<View> viewStack;
     public Theme Theme { get; protected set; }
+    public Sprite sprite;
 
     public View ActiveView
     {
@@ -237,10 +238,9 @@ public abstract class Mode : MonoBehaviour
 
         var menu = RingMenu.Instance;
         menu.RemoveItem(FingerType.Pinky);
-
+        menu.Thumbnail = sprite;
         ActiveView.BuildMenu(menu);
 
         menu.UpdateItems();
-
     }
 }
