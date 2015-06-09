@@ -35,7 +35,9 @@ Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbund
 
 \section{Systemarchitektur}
 
-Zuerst ist es wichtig, zu verstehen, wie die Applikation grob aufgebaut ist. In Abbildung \ref{fig:flow} wird dies in zwei Schritten illustriert.
+\subsection{Grober Ablauf}
+Zunächst ist es wichtig, zu verstehen, wie die Applikation grob aufgebaut ist. In Abbildung \ref{fig:flow} wird dies in zwei Schritten illustriert.
+
 
 \begin{figure}[H]
 \centering
@@ -50,6 +52,16 @@ Was ebenfalls auf der Grafik zu sehen ist, sind die Atlasse. Um Ressourcen zu sp
 
 Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er beschreiten will und je nach Wahl entsprechende weitere Optionen.
 
+\subsection{Ablauf von IMVR}
+
+Abbildung \ref{fig:IMVR-Flow} liefert einen genaueren Einblick in den Programmfluss von IMVR. Im Zentrum steht ganz klar die Wahl des Modus, welche grundsätzlich zu jedem Zeitpunkt der Applikation getätigt werden kann. Auch beendet wird die Applikation bei dieser Verzweigung. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{diagramme/IMVR-Flow}
+	\caption{Linearer Ablauf von IMVR}
+	\label{fig:IMVR-Flow}
+\end{figure}
 
 
 \section{Systemdesign}

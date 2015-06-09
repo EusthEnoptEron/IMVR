@@ -51,20 +51,11 @@ Um dieses Problem zu umgehen, bieten sich Prefabs an. Der Prozess der Erstellung
 
 \section{Aufbau}
 
+%TODO: Unity-Struktur
+
 \section{Interaktionskonzept}
 
 Unüberraschenderweise findet die Interaktion des Users mit IMVR fast ausschliesslich mit seinen Händen statt. In einer frühen Phase des Projektes war noch geplant, eventuell die Spracheingabe modal zu den Händen zu gebrauchen, jedoch reichte dafür die Zeit nicht mehr. Ein Artefakt dieses Vorhabens ist das \textit{SpeechServer}-Projekt, welches sich immer noch unter den \textit{AuxiliaryTools} befindet.
-
-
-\subsection{Ringmenü}
-
-Bei der Entwicklung von VR-Applikationen stösst man zwingenderweise auf Situationen, in denen herkömmliche Konzepte nicht mehr verwendet werden können. Die Platzierung und der Aufbau des Menüs ist so ein Punkt.
-
-Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als "lästig" herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
-
-Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub \cite{hoverVR}, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
-
-Für IMVR wurde ebenfalls ein Ringmenü entwickelt, doch dieses verfügt über keine Schaltflächen im herkömmlichen Sinn. Die Finger werden auch mit Funktionen versehen, aber zum Betätigen benutzt der Anwender nicht seine andere Hand, sondern hebt einen Finger. Wenn ein Finger lange genug gehoben wird, wird die zugewiesene Aktion ausgeführt.
 
 \subsection{Fussplatten}
 
@@ -79,6 +70,17 @@ Die Idee ist, dass der Benutzer feststellen will, ``wo er steht'', herunterschau
 Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus Rift beobachten. Das Prinzip ist sehr leicht zu implementieren und daher auch verlockend, jedoch muss mit Vorsicht vorgegangen werden: Für den Benutzer ist es auf Dauer unangenehm, wenn von ihm ständige Kopfbewegungen gefordert werden. In IMVR wurde jedoch bewusst Gebrauch von dieser Methode gemacht, weil der Anwender nur selten nach unten schauen wird, und es relativ intuitiv ist.
 
 %TODO: note that ring mesh can be seen in \ref{subsec:waves}
+
+
+\subsection{Ringmenü}
+
+Bei der Entwicklung von VR-Applikationen stösst man zwingenderweise auf Situationen, in denen herkömmliche Konzepte nicht mehr verwendet werden können. Die Platzierung und der Aufbau des Menüs ist so ein Punkt.
+
+Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als "lästig" herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
+
+Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub \cite{hoverVR}, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
+
+Für IMVR wurde ebenfalls ein Ringmenü entwickelt, doch dieses verfügt über keine Schaltflächen im herkömmlichen Sinn. Die Finger werden auch mit Funktionen versehen, aber zum Betätigen benutzt der Anwender nicht seine andere Hand, sondern hebt einen Finger. Wenn ein Finger lange genug gehoben wird, wird die zugewiesene Aktion ausgeführt.
 
 \subsection{Music Arm}
 
@@ -267,7 +269,12 @@ label={lst:pointchart}]{code/PointChart_UpdatePoints.cs}
 
 
 \subsection{Farben und Symbolik}
-%TODO: Themes
+
+Um die einzelnen Modi mit Farben abzugrenzen, wurden \textit{Themes} eingeführt, die jeweils eine Kollektion von Farben beinhalten. Beim Aktivieren eines Modus wird dieses Theme ebenfalls aktiviert - zugreifbar per \code{Theme.Current} - und auf die UI-Elemente angewendet.
+
+Als farbliche Vorlage wurde das UI von Android \cite{android_ui} gewählt. Farben und UI-Ideen wurden teilweise aus den Spezifikation des Material-Designs entnommen.
+
+Damit alle Elemente auf einen Themenwechsel reagieren können, verfügt die Klasse \code{Theme} über ein \code{Change}-Event.
 
 \subsection{Beat Detector und Wellen}
 \label{subsec:waves}
@@ -309,6 +316,41 @@ Die Punkte des Aussen- und Innenkreis werden dann gleichzeitig in dieses Array g
 
 \subsection{Visualisierung der Musik}
 
+Damit das Eintauchen in die Musik nicht zu langweilig und unspektakulär wird, wurden ein paar Klassen für die Musikvisualisierung entwickelt.
+
+In einem ersten Schritt wurde mithilfe von NAudio \cite{naudio} versucht, selbst Daten über den Frequenzbereich der momentanen Musik per FFT zu sammeln. Dies funktionierte grundsätzlich, brachte aber den Nachteil mit sich, dass ausschliesslich NAudio für die Wiedergabe genutzt werden konnte.
+
+Es stellte sich dann heraus, dass Unity mit \code{GetOutputData} und \code{GetSpectrumData} selbst über eine Analysefunktion für Musik verfügt\footnote{Dokumentation: http://docs.unity3d.com/ScriptReference/AudioSource.GetSpectrumData.html}, und das sogar mit verschiedenen Analysefenstern.
+
+Um die gewonnenen Daten zentral zu verwalten, wurde nun eine Klasse namens \code{VisualizationHelper} erstellt. Diese hilft ausserdem dabei, die momentane Lautstärke der Stereo-Kanäle zu bestimmen, indem sie ein RMS-Wert über alle Samples erstellt \cite{outputData}.
+
+%TODO: Glossary
+Es gibt drei verschiedene Arten, wie die Musik momentan visualisiert wird:
+
+\begin{enumerate}
+	\item die Beats
+	\item die Lautstärke der Stereokanäle (Waveform)
+	\item die Lautstärke von Frequenzbereichen
+\end{enumerate}
+
+Wie die Detektion und Visualisierung von Beats durchgeführt wird, wurde bereits in Kapitel \ref{subsec:waves} beschrieben.
+
+Für die Lautstärke der Stereokanäle wird mit dem Linienrenderer von Unity dynamisch eine Welle generiert, die einem Kreis entlangläuft. Die Klasse \code{RingVisualizer} steuert hierbei den Renderer. Die Implementation ist äussert simpel:
+
+\lstinputlisting[caption={Aktualisierung der Punkte im \code{RingVisualizer}}, 
+label={lst:ringvisualizer}]{code/RingVisualizer_Update.cs}
+
+Jedem Punkt im Line-Renderer wird ein sich verschiebender Volume-Wert zugewiesen, der vom \code{VisualizationHelper} bereitgestellt wird. Hierbei gibt dieser Volume-Wert die Position auf der Y-Achse vor (die Höhe), während die Position auf der XZ-Ebene per Sinus und Kosinus bestimmt wird.
+
+Etwas interessanter ist jedoch die Berechnung der Lautstärke in einem bestimmten Frequenzbereich.
+
+\lstinputlisting[caption={Berechnung des RMS-Wertes über einen Frequenzbereich}, 
+label={lst:ringvisualizer}]{code/SpectrumBar_Update.cs}
+
+Diese Berechnung wird in der Klasse \code{SpectrumBar} durchgeführt. Wie auf dem UML (Abbildung \ref{uml:IMVR.FX}) zu sehen ist, verfügt jede Instanz über eine Start- und eine Endfrequenz, der den Frequenzbereich festlegt. Dieser Bereich sollte mit höheren Frequenzen unbedingt logarithmisch anwachsen, da sonst die Kurve ungleichmässig verteilt ist.
+
+Zuerst wird im Code dieser Frequenzbereich in Indexe für das \code{Spectrum}-Array umgewandelt. Die Grösse dieses Arrays, und somit die Abstände der Frequenzen, ist abhängig von der Anzahl Samples, die für den FFT eingesetzt werden.
+
 \subsection{Avatar}
 
 Auch der Anwender selbst muss irgendwie dargestellt werden. Ein Avatar gilt generell als ein Hilfsmittel, um die Immersivität zu steigern, kann jedoch auch verschlechternd wirken \cite{oculus:bestpractices}.
@@ -324,8 +366,6 @@ Da die Hände und der Kopf nicht benötigt werden, wurden diese kurzerhand mithilf
 	\source{http://www.turbosquid.com/FullPreview/Index.cfm/ID/833108}
 	\label{fig:avatar}
 \end{figure}
-
-
 
 \section{Herausforderungen}
 
