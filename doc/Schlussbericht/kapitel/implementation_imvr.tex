@@ -315,6 +315,7 @@ Die Punkte des Aussen- und Innenkreis werden dann gleichzeitig in dieses Array g
 
 
 \subsection{Visualisierung der Musik}
+\label{subsec:visualization}
 
 Damit das Eintauchen in die Musik nicht zu langweilig und unspektakulär wird, wurden ein paar Klassen für die Musikvisualisierung entwickelt.
 
@@ -351,6 +352,8 @@ Diese Berechnung wird in der Klasse \code{SpectrumBar} durchgeführt. Wie auf dem
 
 Zuerst wird im Code dieser Frequenzbereich in Indexe für das \code{Spectrum}-Array umgewandelt. Die Grösse dieses Arrays, und somit die Abstände der Frequenzen, ist abhängig von der Anzahl Samples, die für den FFT eingesetzt werden.
 
+Die Werte, die zwischen den zwei Indexen liegen, werden dann quadratisch akkumuliert. Der Durchschnitt des Resultats wird dann schliesslich für die Höhe eines Quaders verwendet.
+
 \subsection{Avatar}
 
 Auch der Anwender selbst muss irgendwie dargestellt werden. Ein Avatar gilt generell als ein Hilfsmittel, um die Immersivität zu steigern, kann jedoch auch verschlechternd wirken \cite{oculus:bestpractices}.
@@ -369,11 +372,51 @@ Da die Hände und der Kopf nicht benötigt werden, wurden diese kurzerhand mithilf
 
 \section{Herausforderungen}
 
+Während der Entwicklung kristallisierten sich zahlreiche Probleme, die gelöst werden mussten. Teilweise reichte die Zeit allerdings nicht ganz, um die Fehler zu beheben.
+
 \subsection{Ressourcen-Management}
 \label{subsec:resources}
 
+Ein zentrales Problem bei der Erstellung von IMVR waren die Ressourcen. Besonders im Stadium, wo noch eine enorme Anzahl Bilder dargestellt werden sollten, war es wichtig, die Bilderressourcen effektiv zu verwalten.
+
+Das Problem bei Bildtexturen ist, dass jede verwendete Textur auf die GPU gesendet werden muss und einen Draw-Call auslöst. Werden also 1000 Bilder in der Szene angezeigt, geschehen mindestens 1000 Draw-Calls, was die Performance der Applikation stark herunterzieht.
+
+Als Lösung für dieses Problem wurde die Darstellung der Bilder in IMVR eng um den Einsatz von Atlassen konzipiert. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{diagramme/Atlas}
+	\caption{Illustration der Funktionsweise eines Atlasses}
+	\label{fig:atlas}
+\end{figure}
+
+Bei einem Atlas werden mehrere Texturen in eine Textur zusammengefasst und die Shader greifen dann jeweils nur auf einen Bereich der Atlas-Textur zu. In Unity ist das relativ leicht durch die \code{Sprite}-Klasse anzuwenden:
+
+\begin{lstlisting}
+Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), tileSize, 0, SpriteMeshType.FullRect);
+\end{lstlisting}
+
+Der Parameter \code{texture} referenziert hierbei die Textur, und \code{rect} beschreibt den benötigten Ausschnitt in Pixel.
+
 \subsection{Abspielen externer Musik}
 \label{subsec:musicformats}
+
+Ein Problem von Unity ist wie gesagt die enge Anbindung eines Projektes an sein Assets-Ordner. Eine Auswirkung dieses Design-Entscheids ist, dass Unity zur Laufzeit nur unkomprimierte WAVE-Streams und Ogg Vorbis enkodierte Streams lesen kann. Diese Limitation wurde anfangs mithilfe der Bibliothek NAudio umgangen, aber da der Einsatz von NAudio, wie in Kapitel \ref{subsec:visualization} erläutert, die Benutzung von \code{GetOutputData} und \code{GetSpectrumData} verhindert, wurde dieser Ansatz verworfen.
+
+Stattdessen wurde auf eine andere C\#-Bibliothek ausgewichen: CSCore \ref{cscore}. Im Gegenzug zu einer schlechteren Portabilität als NAudio (läuft nur auf Windows) bietet CSCore Klassen zur einfachen Konversion von codierten Audio-Streams zu simplen PCM-Streams an.
+
+In Unity dreht sich die Audiowiedergabe um die Klassen \code{AudioListener}, \code{AudioSource} und \code{AudioClip}. Die Rolle dieser Klasse ist grösstenteils selbsterklärend: Ein \code{AudioListener} (die Kamera) hört eine Anzahl von \code{AudioSources}, welche jeweils einen \code{AudioClip} abspielen.
+
+Im Falle von CSCore war es nötig, den \code{AudioClip} zu überschreiben. Da die Klasse jedoch \code{sealed} und somit nicht erweiterbar ist, wurde kurzerhand ein Wrapper darum erstellt. Die Wrapper-Klasse, \code{CSCAudioClip}, bietet eine Property \textit{Clip} an, welche einen gültigen \code{AudioClip} zurückliefert. 
+
+Der Clip selbst wird direkt im Konstruktor der Klasse erstellt:
+
+\lstinputlisting[caption={Initialisierung eines Audio-Clips per CSCore}, 
+label={lst:ringvisualizer}]{code/CSCAudioClip_Initialize.cs}
+
+Zuerst wird ein Codec-Stream erstellt, der die Datei in einen PCM-Stream umwandelt. Da Unity die Byte-Werte dieses Streams nicht interpretieren kann, müssen diese noch in Floats umgewandelt werden. Dies geschieht über einen \code{WaveToSampleBase}-Stream. Die Unterscheidung der Bit-Tiefe wird gemacht, damit der Decoder weiss, wie viele Bits zur Bildung der Floats benutzt werden müssen.
+
+Nach diesem Prozedere kann der Clip wie ein herkömmlicher Audio-Clip einer \code{AudioSource} zugeordnet und abgespielt werden. Ein Nachteil dieser Implementation ist, dass der Clip nach Benutzung per \code{Dispose()} vom Memory gelöscht werden muss.
 
 \subsection{Canvas-Elemente}
 
@@ -382,7 +425,5 @@ Da die Hände und der Kopf nicht benötigt werden, wurden diese kurzerhand mithilf
 
 %TODO: Performance der Playlist, Ladebildschirm
 
-\subsection{Auswerten der Musik}
-%TODO: CSCore, NAudio, FFT
 
 % Alpha-Sorting, etc. Tile-Blanket
