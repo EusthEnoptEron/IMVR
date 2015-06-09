@@ -1,6 +1,6 @@
 \chapter{Design}
 
-Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden. 
+Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden.
 
 \section{Systemübersicht}
 \label{sec:sysoverview}
@@ -55,6 +55,9 @@ Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie i
 \section{Systemdesign}
 
 Jetzt, wo das grobe Zusammenspiel der Elemente im System klar geworden ist, soll ein bisschen näher auf die Unterelemente eingegangen werden. Aufgrund der Brückenfunktion und deshalb der globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
+
+
+Zu beachten: Die meisten Klassen in den folgenden UML-Diagrammen sind Unity-Komponenten und erben somit von der Klasse  \code{MonoBehaviour}. Um die Diagramme lesbar zu halten, wurde diese Beziehung oft ignoriert. Weiterhin wurden manche C\#-Properties als "get\_Property" und "set\_Property" ausgeschrieben, wo zusätzliche Logik vorhanden ist.
 
 \subsection{Commons (Datenbank)}
 
@@ -156,6 +159,27 @@ Die Views gehören und werden kontrolliert vom momentan aktiven \textit{Mode}, wo
 
 Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordnet wird. Dieses Theme enthält eine Anzahl von Farben, die später von anderen GUI-Elementen verwendet werden und für eine leichtere Unterscheidung des momentanen Modus sorgen sollen.
 
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		ModeController & Führt Buch über den momentan aktiven Modus.\\
+		Mode & Verfügt über einen eigenen Stack von Views, durch die der Anwender navigiert.\\
+		BrowseMode & Modus, in dem der Anwender gezielt durch seine Musiksammlung navigiert, indem ihm eine Übersicht aller Künstler angezeigt wird. Beginnt mit der View \code{ArtistOverView}.\\
+		ListenMode & Modus, in dem der Anwender nur die Art der Musik angibt, die er hören will. Die Applikation übernimmt den Rest. Beginnt mit der View \code{SelectorView}.\\
+		Theme & Eine Sammlung von Farben, die einem Modus zugeordnet wird.\\
+		View & Eine ``Ansicht'', die aktiviert und deaktiviert sowie nach vorne und nach hinten geschoben werden kann.\\
+		ArtistOverView & Stellt einen gruppierten Zylinder mit den Künstlern in der Musiksammlung dar. \\
+		ArtistView & Stellt einen einzelnen Artisten und seine Alben dar. \\
+		SelectorView & Stellt ein Auswahlwerkzeug dar, mit dem der Anwender eine Musikart selektieren kann.\\
+		ListenView & Verwaltet die visuellen Effekte beim Hören von Musik im Listen-Mode.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der wichtigsten Interface-Klassen}
+	\label{tab:IMVR.Interface}
+\end{table}
+
 \begin{landscape}
 	\subsubsection{Music Arm}
 	\begin{figure}[H]
@@ -166,14 +190,58 @@ Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordn
 	\end{figure}
 \end{landscape}
 
+Das eigentliche Menü, der \textit{Music Arm}, befindet sich im IMVR.Interface.MusicArm Namespace. Er verwaltet die momentan abzuspielende Musik und die selektierten Lieder.
+
+Beim Design der Klassen war ursprünglich ein viel allgemeinerer Ansatz für den Music Arm geplant. Konkret gesagt, wurden die Klassen so gestaltet, dass das Ring-Menü, welches zum Einsatz kommt, im Editor für \textit{irgendeine} Aufgabe konfiguriert werden kann.
+
+In einem gewissen Stadium des Projekts wurde jedoch der Music Arm konzipiert und das Ring-Menü stark umstrukturiert. Neu erhält jede View beim Laden die Möglichkeit, mithilfe der Helper-Klasse \code{RingMenuBuilder} ein eigenes Menü zu gestalten, wobei die Belegung des Zeige-, Mittel- und Ringfingers vorgegeben ist.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		RingMenu & Die zentrale Klasse des Music Arms und gleichzeitig auch die Root-Ebene des Menüs. Existiert nur einmal, verwaltet, welche Stufe momentan angezeigt wird, und sorgt für das Anzeigen und Verstecken des Menüs.\\
+		RingMenuItem & Ein einzelner Menüeintrag im Menü. Platziert sich m den entsprechenden Finger wenn sichtbar und hat einen Event-Handler für Click-Events (in diesem Fall Auswahl des Menüs).\\
+		IRingMenu & Interface für Menüs mit Einträgen.\\
+		RingSubMenu & Implementiert \code{IRingMenu} und funktioniert wie RingMenu, nur ist es selbst auch ein Eintrag in einem anderen \code{IRingMenu}.\\
+		RingMenuBuilder & Hilft beim dynamischen Erstellen von neuen Menüeinträgen.\\
+		ArmWear & Beschreibt eine Komponente, die am Arm ``getragen'' werden kann.\\
+		JukeboxView & Zeigt das momentane Lied in der Jukebox an und wird auf der Frontseite des Arms getragen.\\
+		PlaylistView & Zeigt die momentan Playlist an und befindet sich auf der Rückseite des Arms.\\
+		Selector & Hilft Komponenten, die im Ring-Menü eine Songselektion machen wollen, dabei.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der wichtigsten Music-Arm-Klassen}
+	\label{tab:IMVR.Interface.MusicArm}
+\end{table}
+
+
 \subsubsection{Ring Panel}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\linewidth]{diagramme/IMVR.Interface.RingPanel-UML}
+	\includegraphics[width=0.8\linewidth]{diagramme/IMVR.Interface.RingPanel-UML}
 	\caption{Klassendiagramm des Ring Panels, womit der Anwender Modi auswählt}
 	\label{uml:IMVR.Interface.RingPanel}
 \end{figure}
+
+Das Ring-Panel befindet sich unter den Füssen des Anwenders und wird mit dem Blick bedient. In diesem Namespace befinden sich nur die Klassen, die für die Logik zuständig sind - der visuelle Teil ist bei den Effekten (IMVR.FX) zu finden.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		RingActivator & Abstrakte Klasse, die visuell von einem sich füllenden Ring-Mesh dargestellt wird, und beim anhaltenden Blick aktiviert wird.\\
+		ModeActivator & Eine Unterklasse des \code{RingActivator}s, die nur dazu zuständig ist, einen Modus zu aktivieren (siehe \textit{IMVR.Interface}). \\
+		ExitActivator & Ein weiterer Activator, der beim Aktivieren die Applikation beendet.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der Klassen des Ring-Panels}
+	\label{tab:IMVR.Interface.RingPanel}
+\end{table}
+
 
 \subsubsection{Daten}
 
@@ -184,9 +252,69 @@ Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordn
 	\label{uml:IMVR.Data}
 \end{figure}
 
+Die Klassen, die sich mit den Daten aus der Datenbank bzw. der Darstellung dieser beschäftigen, befinden sich im Namespace \textit{IMVR.Data}.
+
+Der Namespace ist gegliedert in \textit{Data}, \textit{Data.Music} und \textit{Data.Image}. Ersterer befasst sich mit der generellen Darstellung der Daten, der zweite kümmert sich um das Arbeiten mit Musik, und \textit{Data.Image} schliesslich um Aufgaben mit Bildern.
+
+Ursprünglich war geplant, einen Modus nur für die Bilderbibliothek des Anwenders zu entwickeln, und die dabei verwendeten Klassen in den entsprechenden Namespace zu platzieren. Eine Grosszahl dieser Klassen wurde jedoch zusammen mit dem Modus selbst gestrichen. Übrig geblieben sind die Klassen, die noch Verwendung bei der Musik finden (z.B. für das Darstellen von Artwork).
+
+Die allgemeinen Klassen in IMVR.Data enthalten designmässig zum Teil ebenfalls Überbleibsel aus dem Entwicklungsstadium, wo ein separater Bildermodus geplant war. Hauptsächlich zeigt sich das beispielsweise beim \code{CylinderRaycaster}. Dessen Aufgabe war ursprünglich, die grosse Anzahl Bilder handhabbar zu machen, weil einzelnes Raycasting zu viel Zeit beanspruchen würde.
+
+\begin{table}[h]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		CylinderLayout & Komponente für die allgemeine Darstellung von GameObjects in einem Zylinder-Layout. Kann per \code{CylinderInteractor} rotiert werden und verfügt über einen optimierten Raycaster.\\
+		GroupedCylinderLayout & Ein spezielles \code{CylinderLayout}, welches die Elemente gruppiert mit jeweils einem Label darstellt.\\
+		SimpleGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf normale GameObjects spezialisiert ist.\\
+		ListGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf Listen von Canvas-GameObjects spezialisiert ist.\\
+		CylinderInteractor & Kümmert sich um die User-Interaktion mit dem Layout. Hilft beim Rotieren und vertikalen Scrollen. \\
+		CylinderRaycaster & Sorgt für ein effizientes Raycasting der Elemente im Layout. Wird wichtig, wenn über 100 interaktive Elemente im Zylinder verteilt sind.\\
+		BufferedList & Hilft bei der effizienten Darstellung der Playlist (siehe Kapitel \ref{subsec:performance}).\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der wichtigsten Klassen von IMVR.Data}
+	\label{tab:IMVR.Interface.Data}
+\end{table}
+
+Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Klasse, die auf einer hohen Ebene für das einfache Laden von Atlassen aus IMVR.Commons sorgt, eine intelligente Klasse zum Laden von Bildern und eine tiefe Klasse, welche direkt mit den Daten der Atlasse arbeitet.
+
+\begin{table}[h]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		AtlasHelper & Hilft beim Laden von Atlassen aus der Datenbank, indem er logische Methoden fürs Laden liefert. Gibt zudem Auskunft über die aktiven Ladevorgänge.\\
+		DeferredLoader & Lädt und verwaltet Atlasse vom Filesystem, und liefert Texturen und Sprites für den Zugriff darauf.\\
+		TextureAtlas & Ein einzelner Texturenatlas auf dem Filesystem mit einer bestimmten Kachelgrösse.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der Klassen von IMVR.Data.Image}
+	\label{tab:IMVR.Interface.Data.Image}
+\end{table}
+
+Im Namespace für die Musik gibt es grob gesagt zwei Arten von Klassen: die Jukebox und die Klassen zur Darstellung von Musikdaten.
+
+\begin{table}[h]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		Jukebox & Kontrolliert die momentane Wiedergabe und reagiert auf Events der Playlist.\\
+		Playlist & Eine Liste von Songs, die für die Wiedergabe vorgesehen sind. Hat eine momentane Selektion, die geändert werden kann. Sender Events beim Ändern der Liste bzw. der momentanen Selektion.\\
+		SongItem & Zeigt ein Lied an. \\
+		PlaylistSongItem & Zeigt ein Lied an, optimiert für die Anzeige in \code{PlaylistView}.\\
+		SongMetaChart & Steuert die FX-Klasse \code{PointChart} um damit Songmetriken dreidimensional darzustellen (siehe Kapitel \ref{subsec:pointchart}) \\
+		SongSelection & Enthält eine Ansicht auf die Musikdaten, die durch Auswahlbereiche in verschiedenen MetaGroups eingeschränkt ist. Jede MetaGroup ist ein Kriterium mit einem Wert im Bereich $[0..1]$.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der wichtigsten Klassen von IMVR.Data.Music}
+	\label{tab:IMVR.Interface.Data.Music}
+\end{table}
 
 \subsubsection{Effekte}
-
+\label{sec:IMVR.FX}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1\linewidth]{diagramme/IMVR.FX-UML.pdf}
@@ -194,6 +322,40 @@ Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordn
 	\label{uml:IMVR.FX}
 \end{figure}
 
+Der visuelle Aspekt der Applikation ist im Namespace \textit{IMVR.FX} aufbewahrt. Hier befinden sich die prozeduralen Meshes und die Partikelsysteme. Was man hier nicht finden wird, sind die visuellen Elemente, die direkt für das Interface verwendet werden. Die Klassen in \textit{IMVR.FX} haben eine unterstützende Funktion.
+
+Auch in diesem Namespace gibt es Klassen in leicht unterschiedlichen Anwendungsszenarios. In einem Szenario geht es darum, Musik zu visualisieren wie es z.B. ein Musik-Player tut.
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		VisualizationHelper & Steht im Mittelpunkt der Musik-Visualisierung. Verwaltet die Sample- und Spektrumdaten, die in Echtzeit aus der Musik gewonnen werden.\\
+		SpectrumBar & Ein Mesh, welches je nach Stärke des Signals in einem bestimmten Frequenzbereich, höher steigt bzw. tiefer sinkt.\\
+		RingVisualizer & Eine kreisförmige, kontinuierliche Linie, welche die Lautstärke eines Kanals (links oder rechts) darstellt.\\
+		BeatDetector & Klasse zur Erkennung von Beats in der wiedergegebenen Musik.\\
+		Pulsator & Komponente, welche ein Objekt im Takt der Musik pulsieren lässt.\\
+		WaveEmitter & Sendet im Takt der Musik Wellen in entsprechender Stärke aus (siehe Kapitel \ref{subsec:waves})\\
+		ParticleSpitter & Wirft im Takt der Musik Partikel in die Szene.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der FX-Klassen, die sich mit der Musik-Visualisierung befassen}
+	\label{tab:IMVR.FX-Music}
+\end{table}
+
+Neben diesen Visualisierungsklassen gibt es auch Komponenten, die sich mit Effekten befassen, die nicht von der momentanen Musik abhängen.
+
+\begin{table}[h]
+	\centering
+	\begin{tabularx}{\textwidth}{ l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erklärung der FX-Klassen, die sich mit der Musik-Visualisierung befassen}
+	\label{tab:IMVR.FX-General}
+\end{table}
 
 \subsubsection{Gesten}
 

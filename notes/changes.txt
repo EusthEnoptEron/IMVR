@@ -1,0 +1,2 @@
+- Move CylinderSlider to IMVR.FX
+- Rename ImageAtlas to AtlasHelper.
