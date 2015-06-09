@@ -351,9 +351,14 @@ Neben diesen Visualisierungsklassen gibt es auch Komponenten, die sich mit Effek
 	\begin{tabularx}{\textwidth}{ l X }
 		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
+		RingMesh & Ein zweidimensionales Mesh, welches einen beliebigen Kreisring darstellen kann (siehe Kapitel \ref{subsec:waves}).\\
+		FillableRing & Erweitert ein Ring-Mesh mit einer Füllung, die mit der Property \code{Fill} auf einen Wert im Bereich $[0..1]$ eingestellt werden kann.\\
+		PointChart & Stellt ein dreidimensionales Point-Chart dar, welches auf Partikel aufbaut (siehe Kapitel \ref{subsec:pointchart}).\\
+		HandParticleController & Kontrolliert die Positionen und Bewegungen der Partikel einer Handseite (siehe Kapitel \ref{subsec:handfx}). \\
+		ParticleMapping & Mappt einen Partikel auf eine Kombination aus zwei Vertices.\\
 		\noalign{\smallskip} \hline \noalign{\smallskip}
 	\end{tabularx}
-	\caption{Erklärung der FX-Klassen, die sich mit der Musik-Visualisierung befassen}
+	\caption{Erklärung der allgemeinen FX-Klassen}
 	\label{tab:IMVR.FX-General}
 \end{table}
 
@@ -365,4 +370,8 @@ Neben diesen Visualisierungsklassen gibt es auch Komponenten, die sich mit Effek
 	\caption{Klassendiagramm des Abstraktionslayers für die Leap Motion}
 	\label{uml:IMVR.Gestures}
 \end{figure}
+
+Im Vorprojekt wurde ein Abstraktionslayer für die Hände und Gesten der Leap Motion entwickelt. Dabei wird die in diesem Fall sinnvolle Beschränkung eingeführt, dass nur \textit{eine} linke und \textit{eine} rechte Hand zu jedem gegebenen Zeitpunkt in der Applikation existieren kann.
+
+Ausserdem wird ein einfacher Zugriff auf die Handdaten per \code{HandProvider} möglich, welcher auch ein eigenes System zur Gestenerkennung umfasst. Für eine genauere Detaillierung der Funktionsweise dieses Abstraktionslayers sei auf den Schlussbericht der Vorarbeit verwiesen.
 
