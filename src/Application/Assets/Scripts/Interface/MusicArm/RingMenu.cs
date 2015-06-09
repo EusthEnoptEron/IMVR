@@ -110,16 +110,36 @@ public class RingMenu : Singleton<RingMenu>, IRingMenu {
 
         this.canvasGroup = GetComponent<CanvasGroup>();
 
-        RingMenuBuilder.CreateItem(FingerType.Index, "Play", this);
+        var playMenu = RingMenuBuilder.CreateItem(FingerType.Index, "Play", this);
 
         RingMenuBuilder.CreateItem(FingerType.Middle, "Sound Settings", this);
-        RingMenuBuilder.CreateItem(FingerType.Ring, "Shuffle", this);
+        var shuffleMenu = RingMenuBuilder.CreateItem(FingerType.Ring, "Shuffle", this);
+
+        playMenu.OnClick.AddListener(OnPlay);
+        shuffleMenu.OnClick.AddListener(OnShuffle);
 
         UpdateItems();
 
         ActiveMenu = null;
 
 	}
+
+    private void OnShuffle()
+    {
+        Jukebox.Instance.Playlist.ShuffleSongs();
+    }
+
+    private void OnPlay()
+    {
+        if (Jukebox.Instance.IsPlaying)
+        {
+            Jukebox.Instance.Pause();
+        }
+        else
+        {
+            Jukebox.Instance.Play();
+        }
+    }
 
 	
 	// Update is called once per frame

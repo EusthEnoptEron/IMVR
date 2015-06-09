@@ -8,10 +8,10 @@ using UnityEngine.Audio;
 
 [RequireComponent(typeof(AudioSource))]
 public class Jukebox : Singleton<Jukebox> {
-    private bool playing = false;
-    private bool loading = false;
-    private CSCAudioClip currentClip;
-    private AudioMixerGroup audioGroup;
+    private bool _playing = false;
+    private bool _loading = false;
+    private CSCAudioClip _currentClip;
+    private AudioMixerGroup _audioGroup;
 
 
     /// <summary>
@@ -30,10 +30,10 @@ public class Jukebox : Singleton<Jukebox> {
         Playlist = new Playlist();
         Playlist.IndexChange += OnIndexChange;
 
-        audioGroup = Resources.Load<AudioMixer>("Audio/Master Mix").FindMatchingGroups("BGM")[0];
+        _audioGroup = Resources.Load<AudioMixer>("Audio/Master Mix").FindMatchingGroups("BGM")[0];
         
         m_audio = GetComponent<AudioSource>();
-        m_audio.outputAudioMixerGroup = audioGroup;
+        m_audio.outputAudioMixerGroup = _audioGroup;
     }
 
     private void OnIndexChange(object sender, EventArgs e)
@@ -43,7 +43,7 @@ public class Jukebox : Singleton<Jukebox> {
 
     protected void Update()
     {
-        if (playing && !loading)
+        if (_playing && !_loading)
         {
             if (!m_audio.isPlaying)
             {
@@ -58,7 +58,7 @@ public class Jukebox : Singleton<Jukebox> {
     public void Play()
     {
 
-        playing = true;
+        _playing = true;
         if (!m_audio.isPlaying && !Playlist.IsEmpty) {
             if (Playlist.Current == null)
             {
@@ -104,7 +104,7 @@ public class Jukebox : Singleton<Jukebox> {
 
     private IEnumerator PlayRoutine(Song song)
     {
-        loading = true;
+        _loading = true;
         Debug.Log("LOADING...");
         AudioClip audioClip = null;
         CSCAudioClip cscClip = null;
@@ -128,19 +128,19 @@ public class Jukebox : Singleton<Jukebox> {
 
         if (Playlist.Current == song)
         {
-            if (currentClip != null)
+            if (_currentClip != null)
             {
-                currentClip.Dispose();
-                currentClip = null;
+                _currentClip.Dispose();
+                _currentClip = null;
             }
-            if(cscClip != null) currentClip = new CSCAudioClip(song.Path);
+            if(cscClip != null) _currentClip = new CSCAudioClip(song.Path);
 
             m_audio.time = 0;
             m_audio.clip = audioClip;
             
             //m_audio.clip = www.GetAudioClip(false);
-            loading = false;
-            if (playing)
+            _loading = false;
+            if (_playing)
             {
                 m_audio.Play();
             }
@@ -154,7 +154,7 @@ public class Jukebox : Singleton<Jukebox> {
 
     public void Pause()
     {
-        playing = false;
+        _playing = false;
 
         if (m_audio.isPlaying)
         {
@@ -165,15 +165,15 @@ public class Jukebox : Singleton<Jukebox> {
     public void Stop()
     {
         m_audio.Stop();
-        playing = false;
+        _playing = false;
 
     }
 
     private void OnApplicationQuit()
     {
         // Clean CSCAudioClip if need be
-        if (currentClip != null)
-            currentClip.Dispose();
+        if (_currentClip != null)
+            _currentClip.Dispose();
     }
 
     public void Seek(float time)
@@ -200,8 +200,16 @@ public class Jukebox : Singleton<Jukebox> {
     /// <param name="song">The song that will be played on the spot.</param>
     public void Play(Song song)
     {
-        playing = true;
+        _playing = true;
         Playlist.Override(song);
         Playlist.MoveForward();
+    }
+
+    public bool IsPlaying
+    {
+        get
+        {
+            return _playing;
+        }
     }
 }

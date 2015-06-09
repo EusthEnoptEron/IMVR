@@ -142,6 +142,18 @@ public class Playlist
         }
     }
 
+    public void ShuffleSongs()
+    {
+        var currentSong = Current;
+        Songs.Shuffle();
+        
+        RaiseChange();
+
+        // Keep song selected
+        if (currentSong != null)
+            Index = Songs.IndexOf(currentSong);
+    }
+
 
     #region Private Members
     private void RaiseChange()
