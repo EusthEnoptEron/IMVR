@@ -185,7 +185,7 @@ public abstract class Mode : MonoBehaviour
     /// <summary>
     /// Goes back a view.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The view that was hidden.</returns>
     public View GoBack()
     {
         var view = viewStack.Pop();
