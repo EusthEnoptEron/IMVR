@@ -8,9 +8,28 @@ Zum Schluss soll kurz ein Blick auf die Gegenwart, die Vergangenheit und die Zuk
 
 \section{Reflexion}
 
-Grundsätzlich ist das Ergebnis zufriedenstellend, doch gibt es trotzdem zahlreiche Punkte, welche hätten besser gelöst werden können.
+Grundsätzlich ist das Ergebnis zufriedenstellend ausgefallen. Es gibt allerdings zahlreiche Punkte, welche besser hätten gelöst werden können.
 
-Teilweise aufgrund der experimentellen Natur des Projektes war die Planung nicht so ausgearbeitet und zuverlässig, wie sie es in einem herkömmlichen Projekt wäre. Durch das mehrfache Verändern von Funktionalität, dem wiederholten Refactoring, und der geänderten Zielsetzung entstand viel Komplexität und ``Code-Smell'' \cite{wiki:codesmell}. 
+Aufgrund der experimentellen Natur des Projektes war die Planung teilweise nicht so ausgearbeitet und zuverlässig, wie sie es in einem herkömmlichen Projekt wäre. Durch das Verändern von Funktionalität, dem wiederholten Refactoring, und der geänderten Zielsetzung entstand zum Teil zusätzliche Komplexität und zu einem gewissen Masse auch ``Code-Smell'' \cite{wiki:codesmell}.
+
+Eine Lektion, die ebenfalls gelernt wurde, ist, dass Computergrafik unberechenbar sein kann und viele Tücken bereithält. Mehrmals vergingen Stunden, bis die Ursache eines Bugs oder einer fehlerhaften Funktion herausgefunden werden konnten, gefolgt von zahlreichen Stunden, die zur Behebung aufgewendet werden mussten.
+
+Im Nachhinein kann auch gesagt werden, dass Unity nicht die ideale Wahl für die Umsetzung der Projektidee war. Die Umgebung ist zu sehr um Assets und die Idee von geschlossenen Spielen aufgebaut, und eignet sich nicht sehr gut für dynamische Inhalte. Eventuell hätte die Unreal Engine 4 \cite{ue4} in dieser Hinsicht bessere Resultate geliefert. Es muss allerdings auch gesagt werden, dass eine Einarbeit in die Unreal Engine in Hinsicht auf das Vorprojekt keinen Sinn gemacht hätte und somit keine grosse Wahl bestand.
+
+Nichtsdestotrotz bzw. eben aufgrund der zahlreichen Hürden erlaubte die Entwicklung von IMVR einen Einblick in viele Features und Eigenheiten von Unity und fiel somit sehr informativ und lehrreich aus. Meshes wurden generiert, ein eigenes Input Modul wurde geschrieben, das UI wurde erforscht und die Grenzen und Asset-Gebundenheit wurde erkannt.
+
+Eine nicht ganz so offensichtliche Kompetenz, die ebenfalls im Verlaufe des Projektes angeeignet und verbessert werden konnte, ist der Umgang von grossen Projekten mit Git bzw. GitHub. Die Ordnerstruktur war zwar von Beginn an geplant,  wurde jedoch während des Projekts erweitert und optimiert. Die Verwendung eines \gls{vcs} erwies sich allgemein als nützlich, wenn kurz etwas getestet werden sollte oder bei Vergleichen mit älteren Revisionen, wenn ein Feature nicht mehr funktionierte.
+
+Ich kann also abschliessend sagen, dass ich mir dank des Projektes eine solide Basis an Fachwissen in Unity und Computergrafik aneignen konnte, und das Projekt somit als Erfolg betrachte.
 
 \section{Ausblick}
 
+Die Grundfunktionalität von IMVR ist zwar implementiert, es bleibt jedoch noch viel Raum für Verbesserungen und Erweiterungen. Es gibt mehrere Richtungen, in die sich das Tool weiterentwickeln könnte.
+
+Eine Möglichkeit wäre die simple Erweiterung der Funktionalität in die Breite. Damit ist gemeint, dass weitere Ansichten auf die Daten implementiert werden könnten. Momentan ist es nur möglich, alle Künstler auf dem lokalen System in einer Zylinderstruktur darzustellen, aber nichts spräche dagegen, dasselbe für die Alben oder Lieder zu machen. Ebenfalls möglich wären Sortier- und Gruppierfunktionen, wie anfangs geplant war.
+
+Anders gesehen, könnte man die Applikation auch noch weiter in die Tiefe entwickeln. Seit Frühjahr 2015 bietet Oculus Rift ein Audio SDK an, welches 3D-Sound mit Stereokopfhörer simulieren kann. Erste eigene Tests führten zum Schluss, dass die Implementierung viel umfangreicher und robuster ist, als Unitys eingebauter 3D-Sound. Es gäbe sicher ein paar interessante Einsatzgebiete für dieses Feature.
+
+Weiterhin könnte man auch noch weitere Metadaten hinzuziehen oder die vorhandenen besser auswerten. Verschiedene Web-Services bieten verschiedene Arten von Daten an, die miteinander kombiniert werden könnten, um neue Schlüsse zu ziehen. Während des Projektes kam beispielsweise die Idee auf, Selektionen von Metadatenbereichen als selbst definierbare ``Presets'' abzuspeichern, damit eine leichtere  und aussagekräftigere Suche möglich wäre.
+
+Auch der Weg zur vollumfangreichen Mediacenter-Lösung stände offen. Würde man die Bilderbibliothek wieder hinzunehmen, wäre bereits der erste Schritt getan. Die Einbindung von Videodaten würde aufgrund der Limitierungen von Unity jedoch problematisch werden. Jedoch wäre auch dieses Problem keineswegs undurchführbar - zumal es im Asset Store bereits passende Plugins gibt.
