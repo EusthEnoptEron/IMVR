@@ -3,6 +3,16 @@
 \newcommand\fnurl[2]{%
 	\href{#2}{#1}\footnote{\url{#2}}%
 }
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+
+\newcommand{\good}{\colorbox{lightgreen}{\textcolor{darkgreen}{\cmark}}}
+\newcommand{\bad}{\colorbox{lightred}{\textcolor{darkred}{\xmark}}}
+\newcommand{\meh}{\colorbox{lightyellow}{\textcolor{darkyellow}{\ding{81}}}}
+
+
 \definecolor{light-gray}{gray}{0.95}
 \lstset{language=[Sharp]C,
 	showspaces=false,

@@ -1,3 +1,60 @@
 \chapter{Projektmanagement}
-\section{Soll-Ist}
-\section{Zeitplan}
+
+Dieses Kapitel soll dienen, um einen organisatorischen Rückblick auf das Projekt zu machen und die Ist-Situation mit der Soll-Situation zu vergleichen.
+
+\section{Soll-Ist Gegenüberstellung}
+
+In der folgenden Tabelle wird eine Gegenüberstellung des Soll-Zustands zum Ist-Zustand gemacht. Die Elemente, die sich mit der Bilderbibliothek befassten, wurden aufgrund der Änderung in der Aufgabenstellung durchstrichen und entziehen sich einer Bewertung.
+
+\begin{longtable}{l p{0.03\textwidth} p{0.43\textwidth} p{0.43\textwidth}} \toprule %{p{0.13\textwidth} p{0.75\textwidth}} \toprule
+	& \textbf{Nr.} & \textbf{Soll} & \textbf{Ist} \\ \midrule
+	\endhead
+	\multicolumn{4}{l}{\textbf{1. Elementares}} \\ \midrule
+	\good &1.1 & Die Applikation nutzt die Oculus Rift im direkten Modus für die Ausgabe. &  Die Applikation nutzt die Oculus Rift im direkten Modus für die Ausgabe. \\
+	\good &1.2 & Die Applikation ist vollständig mit den Händen bedienbar. & Die Applikation ist vollständig mit den Händen bedienbar, verwendet jedoch den Blick also weitere Eingabemöglichkeit. \\
+	\good &1.3 & Die Applikation erlaubt den Zugriff auf alle gefundenen, validen Dateien. & Die Applikation erlaubt den Zugriff auf alle gefundenen, validen Dateien. \\
+	\good &1.4 & Bilder können angeschaut werden, Musik kann angehört werden. & Musik kann angehört werden und relevante Bilder können angeschaut werden. \\
+	\good &1.5 & Die Applikation kann jederzeit beendet werden. & Die Applikation kann per Blick auf die entsprechende Fussplatte jederzeit beendet werden. \\
+	\meh &1.6 & Die Applikation erreicht eine stetige Framerate von mindestens 60fps auf dem Referenzsystem\footnote{Intel(R) Xeon CPU E5-1650 v3 @ 2.50Ghz mit 32GB RAM und einer NVIDIA GeForce GTX 980 Grafikkarte.}. & Es gibt noch Einbrüche in der Framerate bei Szenenwechsel. \\
+	\meh &1.7 & Die Applikation kann min. 100'000 Dateien verarbeiten. & Das Anzeigen in der Übersicht wird aufgrund von Vertices-Beschränkungen problematisch. Hinzufügen von 100\,000 Elementen zur Playlist ist jedoch möglich.\\
+	\good &1.8 & Hände werden abstrakt dargestellt. & Hände werden abstrakt mithilfe von Partikeln dargestellt. \\
+	\good &1.9 & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. & Die Hintergrundmusik kann von der Musikbibliothek ausgewählt werden. \\
+	\multicolumn{4}{l}{\textbf{\sout{2. Übersicht (Bilder)}}} \\ \nopagebreak \midrule
+	\multicolumn{4}{l}{\textbf{\sout{3. Detailansicht (Bilder)}}} \\ \nopagebreak \midrule
+	\multicolumn{4}{l}{\textbf{4. Übersicht (Musik)}} \\ \nopagebreak \midrule
+	\good &4.1 & Unterstützt mit ID3-Tags versehene MP3. & Unterstützt mit ID3-Tags versehene MP3. \\
+	\good &4.2 & Dateien werden alphabetisch gruppiert nach Artisten dargestellt. & Dateien werden im Browse-Modus alphabetisch gruppiert nach Artisten dargestellt. \\
+	\bad &4.3 & Dateien können nach Album, Genre und Jahr gruppiert werden & Eine Gruppierfunktion wird momentan nicht unterstützt. \\
+	\meh &4.4 & Alben können anhand ihres Covers wie Bilder dargestellt werden. & Alben werden in der Detailansicht mit einem Cover dargestellt. \\
+	\good &4.5 & Unterstützt weitere Musikformate (Ogg Vorbis, FLAC, M4A, APE, TAK, etc.) & Alle von CSCore \cite{cscore} unterstützten Formate sind abspielbar\footnote{MP3, WAVE, FLAC, AAC, AC-3, WMA, Ogg Vorbis}. \\
+	\meh &4.6 & Dateien können ungruppiert dargestellt werden. & Im Listen-Modus werden Songs unabhängig des Künstlers oder des Albums betrachtet.\\
+	\multicolumn{4}{l}{\textbf{5. Detailansicht (Musik)}} \\ \midrule
+	\good &5.1 & Album mit einer Liste von Liedern wird dargestellt. & Album mit einer Liste von Liedern wird dargestellt. \\
+	\good &5.2 & Eine Datei kann zur Wiedergabe ausgewählt werden. & Eine Datei kann zur Wiedergabe ausgewählt werden. \\
+	\good &5.3 & Die Wiedergabe wird visuell untermalt (Spektrogramm). & Es gibt diverse visuelle Effekte zur Untermalung der Musik. \\
+	\meh &5.4 & Informationen zum Artisten werden dargestellt (Ort, Beschreibung, Gründungsjahr) & Die Daten sind vorhanden, aber es werden noch nicht alle dargestellt. \\
+	\multicolumn{4}{l}{\textbf{6. Indexierung}} \\ \nopagebreak \midrule
+	\good &6.1 & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. & Der Benutzer kann einen oder mehrere Ordner angeben, die nach Bilder und Musik gescannt werden. \\
+	\good &6.2 & Die gefundenen Dateien werden mit diversen Kennwerten indexiert. & Die gefundenen Dateien werden mit diversen Kennwerten indexiert. \\
+	\good &6.3 & Dateien, die nicht mehr in einem der Medienordner liegen, werden aus dem Index gelöscht. & Dateien, die nicht mehr in einem der Medienordner liegen, werden aus dem Index gelöscht. \\
+	\bad &6.4 & Die indexierten Ordner können innerhalb der Applikation angegeben werden & Die Indexierung ist vollständig getrennt von IMVR.\\
+	\bad &6.5 & Die Indexierung kann innerhalb der Applikation durchgeführt werden. & Die Indexierung wird vorher und für sich durchgeführt.\\
+	\multicolumn{4}{l}{\textbf{7. Sonstige Funktionen}} \\ \midrule
+	\meh & 7.1 & Es können Filter über die Musik gelegt werden (Low-Pass, High-Pass, Compressor, etc.) & Momentan werden keine Filter unterstützt, die Musik ist jedoch in einem Mixer eingebunden und für Filtereffekte vorbereitet.\\
+	&\sout{7.2} & \sout{Bildergruppen können als ``Diashow'' angeschaut werden.} & \\
+	\bad & 7.3 & Es ist eine Netzwerkfunktion vorhanden, die es erlaubt, die Fotosammlung zu zweit anzuschauen. & Es werden keine Netzwerkfunktionen angeboten. \\
+	\meh &7.4 & Gesamtstatistiken können angezeigt werden (Bildalter / Anzahl, Auflösung / Anzahl, Auflösung / Anzahl, Kartenchart mit Anzahl Fotos) & Es sind ein paar Statistiken zu Metadaten im System vorhanden. \\
+	\bad &7.5 & Online-Services können als Datenquelle angegeben werden (Flickr, Spotify, etc.) & Es werden keine dynamischen Online-Services unterstützt.\\
+	\caption{Eine Gegenüberstellung der Soll-Kriterien mit dem Ist-Zustand}
+	\label{tab:pflichten}
+\end{longtable}
+
+\begin{landscape}
+	\section{Zeitplan}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[trim=10mm 55mm 10mm 20mm, clip=true, width=1.1\linewidth]{../Zeitplan/Zeitplan}
+		\caption{Der Zeitplan mit Sprints und Prioritäten.}
+	\end{figure}
+	
+\end{landscape}
