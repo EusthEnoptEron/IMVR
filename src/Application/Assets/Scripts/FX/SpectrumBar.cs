@@ -24,8 +24,8 @@ public class SpectrumBar : MonoBehaviour {
         for(int i = m_startIndex; i < m_endIndex; i++) {
             rms += Mathf.Pow(VisualizationHelper.Instance.spectrum[m_startIndex], 2);
         }
-
         rms = Mathf.Sqrt( rms / (m_endIndex - m_startIndex) );
+
         var vol = Mathf.Clamp01((20 * Mathf.Log10(rms / 0.1f) + 60) / 60);
  
         transform.localScale = Vector3.Lerp(

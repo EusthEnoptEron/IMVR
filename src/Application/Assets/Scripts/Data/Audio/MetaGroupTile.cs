@@ -4,7 +4,7 @@ using IMVR.Commons;
 using System.Collections.Generic;
 using System.Linq;
 
-public class MetaGroupTile : MonoBehaviour {
+public class SongStack : MonoBehaviour {
     private static GameObject pref_Plate = Resources.Load<GameObject>("Prefabs/Objects/pref_Plate");
 
     public IEnumerable<Song> items;

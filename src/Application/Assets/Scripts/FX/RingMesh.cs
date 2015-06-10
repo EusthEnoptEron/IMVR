@@ -46,7 +46,6 @@ public class RingMesh : MonoBehaviour {
 	
 	// Update is called once per frame
 	private void UpdateMesh () {
-
         var mesh = new Mesh();
 
         var vertices = new Vector3[Segments * 2 + 2];
@@ -88,7 +87,6 @@ public class RingMesh : MonoBehaviour {
         mesh.SetIndices(quads, MeshTopology.Quads, 0);
         //mesh.SetTriangles(mesh.GetTriangles(0), 0);
         mesh.colors = Enumerable.Repeat(Color, vertices.Length).ToArray();
-        
 
         DestroyImmediate(meshFilter.sharedMesh);
         meshFilter.sharedMesh = mesh;

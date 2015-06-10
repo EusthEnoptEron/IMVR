@@ -22,7 +22,7 @@ public abstract class Theme
         set
         {
             _current = value;
-
+                
             Change(_current, new System.EventArgs());
         }
     }

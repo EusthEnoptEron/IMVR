@@ -40,6 +40,8 @@
 		[HideInInspector] _SrcBlend ("__src", Float) = 1.0
 		[HideInInspector] _DstBlend ("__dst", Float) = 0.0
 		[HideInInspector] _ZWrite ("__zw", Float) = 1.0
+		
+		_IntensityVC("Vertex Color Intensity", Float) = 1.0
 	}
 
 	CGINCLUDE
@@ -75,7 +77,8 @@
 			#pragma shader_feature _METALLICGLOSSMAP 
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
-			
+			#pragma shader_feature _VERTEXCOLOR
+
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fog
 				
@@ -83,7 +86,7 @@
 			#pragma fragment fragForwardBase_VC
 
 			#include "UnityStandardCore.cginc"
-            #include "UnityVC.cginc"
+			#include "UnityVC.cginc"
 
 			ENDCG
 		}
@@ -169,6 +172,7 @@
 			#pragma shader_feature _METALLICGLOSSMAP
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature _PARALLAXMAP
+			#pragma shader_feature _VERTEXCOLOR
 
 			#pragma multi_compile ___ UNITY_HDR_ON
 			#pragma multi_compile LIGHTMAP_OFF LIGHTMAP_ON
@@ -179,7 +183,7 @@
 			#pragma fragment fragDeferred_VC
 
 			#include "UnityStandardCore.cginc"
-            #include "UnityVC.cginc"
+			#include "UnityVC.cginc"
 
 			ENDCG
 		}
@@ -241,7 +245,7 @@
 			#pragma fragment fragForwardBase_VC
 
 			#include "UnityStandardCore.cginc"
-            #include "UnityVC.cginc"
+			#include "UnityVC.cginc"
 
 			ENDCG
 		}
@@ -323,5 +327,5 @@
 	}
 
 	FallBack "Standard"
-    CustomEditor "StandardShaderGUI"
+    CustomEditor "StandardShaderVCGUI"
 }

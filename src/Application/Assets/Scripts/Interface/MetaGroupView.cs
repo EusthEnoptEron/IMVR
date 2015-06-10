@@ -89,7 +89,7 @@ public class MetaGroupView : FlatGroupView {
                     go
                 };
 
-            var tile = go.AddComponent<MetaGroupTile>();
+            var tile = go.AddComponent<SongStack>();
             tile.items = groupedItems.ContainsKey(i) ? groupedItems[i].AsEnumerable() : new Song[0];
             tile.totalCount = total;
         }

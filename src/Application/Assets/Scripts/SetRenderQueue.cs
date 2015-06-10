@@ -3,7 +3,7 @@ using System.Collections;
 
 [AddComponentMenu("Effects/SetRenderQueue")]
 [RequireComponent(typeof(Renderer))]
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class SetRenderQueue : MonoBehaviour
 {
     public int queue = 1;

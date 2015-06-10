@@ -1,10 +1,14 @@
 ﻿#ifndef UNITY_VC_INCLUDED
 #define UNITY_VC_INCLUDED
 
+float _IntensityVC;
+
 struct VertexInput_VC
 {
 	float4 vertex	: POSITION;
-    fixed4 color    : COLOR;
+#ifdef _VERTEXCOLOR
+	fixed4 color    : COLOR;
+#endif
 	half3 normal	: NORMAL;
 	float2 uv0		: TEXCOORD0;
 	float2 uv1		: TEXCOORD1;
@@ -35,7 +39,9 @@ struct VertexOutputForwardBase_VC
 	SHADOW_COORDS(6)
 	UNITY_FOG_COORDS(7)
 
-    fixed4 color                        : COLOR;
+        #ifdef _VERTEXCOLOR
+	       fixed4 color                        : COLOR;
+	#endif
 	// next ones would not fit into SM2.0 limits, but they are always for SM3.0+
 	#if UNITY_SPECCUBE_BOX_PROJECTION
 		float3 posWorld					: TEXCOORD8;
@@ -104,9 +110,9 @@ VertexOutputForwardBase_VC vertForwardBase_VC (VertexInput_VC v)
 		o.tangentToWorldAndParallax[1].w = viewDirForParallax.y;
 		o.tangentToWorldAndParallax[2].w = viewDirForParallax.z;
 	#endif
-
-    o.color = v.color;
-
+	#ifdef _VERTEXCOLOR
+	       o.color = v.color * _IntensityVC;
+ 	#endif
 	UNITY_TRANSFER_FOG(o,o.pos);
 	return o;
 }
@@ -122,9 +128,10 @@ half4 fragForwardBase_VC (VertexOutputForwardBase_VC i) : SV_Target
 		s.posWorld, occlusion, i.ambientOrLightmapUV, atten, s.oneMinusRoughness, s.normalWorld, s.eyeVec, mainLight);
 
 	half4 c = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
-
-    c *= i.color;
-
+	#ifdef _VERTEXCOLOR
+    	       c *= i.color;
+    	       s.alpha *= i.color.a;
+	#endif
 	c.rgb += UNITY_BRDF_GI (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, occlusion, gi);
 	c.rgb += Emission(i.tex.xy);
 
@@ -136,7 +143,9 @@ half4 fragForwardBase_VC (VertexOutputForwardBase_VC i) : SV_Target
 struct VertexOutputDeferred_VC
 {
 	float4 pos							: SV_POSITION;
-    fixed4 color                        : COLOR;
+	#ifdef _VERTEXCOLOR
+	       fixed4 color                        : COLOR;
+	#endif
 	float4 tex							: TEXCOORD0;
 	half3 eyeVec 						: TEXCOORD1;
 	half4 tangentToWorldAndParallax[3]	: TEXCOORD2;	// [3x3:tangentToWorld | 1x3:viewDirForParallax]
@@ -195,8 +204,9 @@ VertexOutputDeferred_VC vertDeferred_VC (VertexInput_VC v)
 		o.tangentToWorldAndParallax[1].w = viewDirForParallax.y;
 		o.tangentToWorldAndParallax[2].w = viewDirForParallax.z;
 	#endif
-    o.color = v.color;
-
+	#ifdef _VERTEXCOLOR
+	       o.color = v.color * _IntensityVC;
+        #endif
 	return o;
 }
 
@@ -228,7 +238,9 @@ void fragDeferred_VC (
 		s.posWorld, occlusion, i.ambientOrLightmapUV, atten, s.oneMinusRoughness, s.normalWorld, s.eyeVec, dummyLight);
 
 	half3 color = UNITY_BRDF_PBS (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect).rgb;
-    color *= i.color;
+	#ifdef _VERTEXCOLOR
+	       color *= i.color;
+	#endif
 	color += UNITY_BRDF_GI (s.diffColor, s.specColor, s.oneMinusReflectivity, s.oneMinusRoughness, s.normalWorld, -s.eyeVec, occlusion, gi);
 
 	#ifdef _EMISSION
