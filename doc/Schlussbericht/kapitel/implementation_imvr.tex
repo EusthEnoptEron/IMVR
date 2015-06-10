@@ -423,6 +423,41 @@ Nach diesem Prozedere kann der Clip wie ein herkömmlicher Audio-Clip einer \code
 \subsection{Performance}
 \label{subsec:performance}
 
+Ein mühsames Problem, das wohl in jedem visuell fordernden Projekt früher oder später auftritt, war die Performance der Applikation. Ein Ziel war es, eine konstante Framerate von 60Fps zu erreichen. Leider konnte dies nicht ganz erreicht werden, aber es wurden diverse Techniken angewendet, um die Performance zu verbessern.
+
+Was bereits früh im Projekt auffiel, war das blockierende Laden von Bildern auf die Grafikkarte. Lädt man eine Textur auf die Grafikkarte - was bei der dynamischen Erstellung von Texturen basierend auf Bilder auf dem System häufig passiert - wird das Programm für diese Zeit eingefroren. Bei kleineren Grafiken (128x128) fällt dies nicht sehr ins Gewicht, aber sobald die Texturen grösser werden (1024x1024) wird der Lag schnell bemerkbar.
+
+Um dieses Problem zu beheben gab es 3 Möglichkeiten:
+
+\begin{enumerate}
+	\item Benutzen der Low-level Native Plugin API von Unity
+	\item Verwenden von kleinen Texturen
+	\item Pre-Loaden der Texturen
+\end{enumerate}
+
+Die erste Möglichkeit, die auf einer tiefschichtigen API von Unity basiert \cite{unity_lowlevel}, hätte eventuell zu einer Lösung geführt, doch die Unsicherheit einer Lösung und die ungenügende Dokumentation des Features hat schliesslich zu einem Gegenentscheid geführt.
+
+Das Benutzen von kleinen Texturen bringt wiederum andere Probleme mit sich. Zum einen ist es dann nicht mehr möglich qualitativ hochwertige Bilder anzuzeigen, andererseits müsste auf Atlasse verzichten werden, was zu \textit{vielen} Draw-Calls führen würde. Performance-technisch wäre dies also keine Lösung.
+
+Schliesslich fiel der Entscheid auf die letzte Variante - das Pre-Loading. Dafür wurde ein Ladebildschirm implementiert, der mithilfe von \code{AtlasHelper.Progress} (siehe Abbildung \ref{uml:IMVR.Data}), prüft, wie viel geladen wurde, und wann er sich wieder verstecken kann.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/loadingscreen}
+	\caption{Aufbau des Ladebildschirms}
+	\label{fig:loadingscreen}
+\end{figure}
+
+Implementiert ist das mit einem zweiten Set von Kameras, die \textit{über} die vorhandene Szene rendern, und jederzeit bei aufwendigen Operationen aktiviert werden können. Um das Umzusetzen, benötigt es ein paar spezielle Einstellungen in der Kamera (vgl. mit Abbildung \ref{fig:loadingscreen}):
+
+\begin{enumerate}
+	\item Das vorherig gerenderte muss mit der Farbe Schwarz überschrieben werden und die Culling-Maske so eingestellt werden, dass nur die \textit{Overlay}-Ebene gerendert wird.
+	\item Die Tiefe der Kameras muss höher eingestellt werden, als die eigentlichen Kameras. Das ist notwendig, damit der Ladebildschirm \textit{nach} dem Rest gerendert wird.
+\end{enumerate}
+
+Der Ladebalken selbst wird mithilfe der \code{Fill}-Property von Bildelementen gefüllt. Das Feature ist tief im UI-System von Unity verbaut und eignet sich perfekt für diese Anwendung.
+
+
 %TODO: Performance der Playlist, Ladebildschirm
 
 
