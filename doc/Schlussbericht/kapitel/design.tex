@@ -4,11 +4,30 @@ Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Tei
 
 \section{Systemübersicht}
 \label{sec:sysoverview}
-Um die Applikation zu bedienen, setzt der Anwender die Oculus Rift auf und bewegt sich im von der mitgelieferten Kamera erkennbaren Bereich.
 
-Die Leap Motion wird prinzipiell so verwendet, wie von der Herstellerfirma vorgesehen. Das heisst, diese wird mit dem offiziellen Aufsatz \cite{leap} an der Oculus Rift befestigt, und deckt so den frontalen Sichtbereich des Anwenders ab. Dies lässt sich gut auf Abbildung \ref{fig:systemuebersicht} erkennen.
+Das Zusammenspiel der Oculus Rift und der Leap Motion ist auf den ersten Blick vielleicht nicht so offensichtlich. Erstere wird aufgesetzt und verdeckt die Sicht, letztere wird auf den Tisch gestellt und erkennt Hände über sich.
 
-Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbunden sind und Daten an die jeweiligen Services schicken. Diese Services werden durch die in Unity verwendeten Plugins angesteuert, und die ausgewerteten Daten in IMVR verwendet.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/TIME_Oculus_ChrisPhilpot}
+	\caption{Funktionsweise der Oculus Rift}
+	\source{http://www.chrisphilpot.com/}
+	\label{fig:rift_example}
+\end{figure}
+
+Zusammen mit der Oculus Rift kann die Leap Motion jedoch auch anders angewandt werden. Die Herstellerfirma selbst hat einen Aufsatz entwickelt (Abbildung \ref{fig:leap_motion_aufsatz}), der an das HMD \textit{aufgeklebt} werden kann, und somit den Bereich vor dem Anwender erfasst.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/image8}
+	\caption{Aufsatz für die Leap Motion}
+	\source{https://www.leapmotion.com/product/vr}
+	\label{fig:leap_motion_aufsatz}
+\end{figure}
+
+Der Vorteil bei dieser Verlinkung ist, dass beide Geräte den gleichen Ursprungspunkt und die gleiche Ausrichtung haben. Es ist deshalb ohne Weiteres möglich, die zwei Koordinatensystem aufeinander abzugleichen.
+
+Abbildung \ref{fig:systemuebersicht} verdeutlicht, wie die Geräte schliesslich an das System angebunden werden. Ebenfalls erkennbar ist, dass beide per USB mit dem Host-Computer verbunden sind und Daten an entsprechende Services schicken, die auf dem Computer installiert und aktiv sind. Diese Services werden durch die in der Applikation verwendeten Plugins angesteuert, und schliesslich zur Darstellung und Steuern in IMVR verwendet.
 
 \afterpage {
 	\begin{figure}[t!]
@@ -35,9 +54,13 @@ Ebenfalls erkennbar ist, dass beide Geräte per USB mit dem Host-Computer verbund
 
 \section{Systemarchitektur}
 
-\subsection{Grober Ablauf}
-Zunächst ist es wichtig, zu verstehen, wie die Applikation grob aufgebaut ist. In Abbildung \ref{fig:flow} wird dies in zwei Schritten illustriert.
+Die Komponenten sind erklärt und es sollte nun klar sein, wie die Hardware miteinander verknüpft ist. Das Kernproblem bzw. die Aufgabe dreht sich jedoch um die \textit{Software} dazu. Diese soll ab jetzt in den Vordergrund treten.
 
+\subsection{Grober Ablauf}
+
+Wie in der Aufgabenstellung erwähnt, besteht das Projekt aus zwei Teilen: einem Teil zur Indexierung und einem interaktiven Teil. Diese Gliederung zieht sich durch das ganze Design der Applikation durch. So wird beispielsweise die Indexierung in einem komplett abgespaltenen Projekt durchgeführt, und gilt somit als eigenes Programm.
+
+In Abbildung \ref{fig:flow} lässt sich diese Unterteilung gut erkennen. Der Anwender startet zwei verschiedene Applikationen, die über eine zentrale Datenbank miteinander kommunizieren. Um jedoch nicht zu weit vorzugreifen, folgt zuerst eine Erklärung der einzelnen Schritte.
 
 \begin{figure}[H]
 \centering
