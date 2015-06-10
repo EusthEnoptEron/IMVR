@@ -69,11 +69,11 @@ In Abbildung \ref{fig:flow} lässt sich diese Unterteilung gut erkennen. Der Anwe
 \label{fig:flow}
 \end{figure}
 
-Man erkennt wie der Benutzer zuerst ausserhalb der Unity-Applikation den Indexer startet und durchlaufen lässt. Dieser durchläuft alle Ordner, die er in einer \textit{folders.txt} findet und schreibt diese in die Datenbank. Im nächsten Schritt werden aus diversen Quellen weitere Daten abgerufen.
+Man erkennt wie der Benutzer zuerst ausserhalb der Unity-Applikation den Indexer startet und durchlaufen lässt. Dieser durchläuft alle Ordner, die er in der Datei \textit{folders.txt} findet und schreibt diese in die Datenbank. Im nächsten Schritt werden aus diversen Quellen weitere Metadaten zusammengetragen.
 
 Was ebenfalls auf der Grafik zu sehen ist, sind die Atlasse. Um Ressourcen zu sparen (siehe Kapitel \ref{subsec:resources}), werden alle Bilder in sogenannten Atlassen, sprich Bildersammlungen, gespeichert. Die Bilder, von denen hier die Rede ist, sind Fotos der Artisten und das Artwork der indexierten Alben. 
 
-Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er beschreiten will und je nach Wahl entsprechende weitere Optionen.
+Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er benutzen will und je nach Wahl entsprechende weitere Optionen.
 
 \subsection{Ablauf von IMVR}
 
@@ -89,21 +89,23 @@ Abbildung \ref{fig:IMVR-Flow} liefert einen genaueren Einblick in den Programmfl
 
 \section{Systemdesign}
 
-Jetzt, wo das grobe Zusammenspiel der Elemente im System klar geworden ist, soll ein bisschen näher auf die Unterelemente eingegangen werden. Aufgrund der Brückenfunktion und deshalb der globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
+Da der Programmfluss nun klar geworden ist, bedarf es einer genaueren Erklärung der einzelnen Komponenten im System. Aufgrund der Brückenfunktion und deshalb der globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
 
 
-Zu beachten: Die meisten Klassen in den folgenden UML-Diagrammen sind Unity-Komponenten und erben somit von der Klasse  \code{MonoBehaviour}. Um die Diagramme lesbar zu halten, wurde diese Beziehung oft ignoriert. Weiterhin wurden manche C\#-Properties als "get\_Property" und "set\_Property" ausgeschrieben, wo zusätzliche Logik vorhanden ist.
+Zu beachten: Die meisten Klassen in den folgenden UML-Diagrammen sind Unity-Komponenten und erben somit von der Klasse  \code{MonoBehaviour}. Um die Diagramme lesbar zu halten, wurde diese Beziehung oft ignoriert. Weiterhin wurden C\#-Properties, wo zusätzliche Logik vorhanden ist, als ``get\_Property'' und ``set\_Property'' ausgeschrieben\footnote{Compiler-intern werden Properties als Methoden mit dieser Namensgebung dargestellt.}.
 
 \subsection{Commons (Datenbank)}
-
-Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch ein weiteres Projekt erstellt mit einer eigenen Datenstruktur, welche in Abbildung \ref{fig:Indexer-Commons-1} ersichtlich ist.
+\label{sec:design_commons}
+Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch eine weitere Komponente entwickelt, welche als Datenbank agiert und über eine entsprechende Datenstruktur verfügt. Diese ist in Abbildung \ref{uml:IMVR.Commons} ersichtlich.
 
 \afterpage {
+	
+	
 	\begin{figure}[t!]
 		\centering
 		\includegraphics[width=1\linewidth]{diagramme/IMVR.Commons-UML.pdf}
 		\caption{Klassendiagramm für die Klassen im IMVR.Commons Package}
-		\label{fig:Indexer-Commons-1}
+		\label{uml:IMVR.Commons}
 	\end{figure}
 	
 	\begin{table}[H]
@@ -111,12 +113,12 @@ Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch ein weit
 		\begin{tabularx}{\textwidth}{ l X }
 			\noalign{\smallskip} \hline \hline \noalign{\smallskip}
 			\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-			Artist & Klasse für einen einzelnen Artisten mit Biografie und ein paar Kennwerten sowie Koordinaten und Aktivitätsdaten. \\
-			Album & Jeder Artist hat ein oder mehrere Alben, an denen er beteiligt ist. Das Album selbst hat nur ein Name und ein Jahr und kann zu mehreren Künstlern gehören.\\
-			Song & Repräsentiert einen Song und gehört genau einem Künstler. Jeder Song hat einen Pfad und ist somit von einer reellen Datei gestützt. Ein Song erhält zusätzlich verschieden Kennwerte, die von Services heruntergeladen werden. \\
-			TermItem & Ein Begriff (z.B. Genre), der einem Künstler mit einem Gewicht und einer Frequenz zugeordnet wird. Könnte noch weiter normalisiert werden, wurde aber der Einfachheit halber so gelassen.\\
-			AtlasTicket & Repräsentiert eine Position bzw. ein Bild in einem Atlas. Mit der Position ist gemeint, an welcher Stelle das Bild im Atlas erscheint.\\
-			IMDB & Zentraler Zugangsknoten zu den Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
+			Artist & Klasse für einen einzelnen Artisten mit Biografie und ein paar Kennwerten sowie Koordinaten und Aktivitätsdaten. \\\hline
+			Album & Jeder Artist hat ein oder mehrere Alben, an denen er beteiligt ist. Das Album selbst hat nur ein Name und ein Jahr und kann zu mehreren Künstlern gehören.\\\hline
+			Song & Repräsentiert einen Song und gehört genau einem Künstler. Jeder Song hat einen Pfad und ist somit von einer reellen Datei gestützt. Ein Song erhält zusätzlich verschieden Metadaten, die von Services heruntergeladen werden. \\\hline
+			TermItem & Ein Begriff (z.B. Genre), der einem Künstler mit einem Gewicht und einer Frequenz zugeordnet wird. Könnte noch weiter normalisiert werden, wurde aber der Einfachheit halber so gelassen.\\\hline
+			AtlasIndex & Repräsentiert eine Position bzw. ein Bild in einem Atlas. Mit der Position ist gemeint, an welcher Stelle das Bild im Atlas erscheint.\\\hline
+			IMDB & Zentraler Zugangsknoten auf die Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
 			\noalign{\smallskip} \hline \noalign{\smallskip}
 		\end{tabularx}
 		\caption{Erklärung der wichtigsten allgemeinen Klassen}
@@ -136,6 +138,26 @@ Es handelt sich um ein bewusst sehr minimalistisch gehaltenes Schema, um eine Mu
 
 Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das liegt ausserhalb des Bereichs dieses Projektes.
 
+Die Metadaten, die in der Klasse \code{Song} erkennbar sind, stammen aus der The Echo Nest API und sind wie folgt zu verstehen:
+
+\begin{table}[H]
+	\centering
+	\begin{tabularx}{\textwidth}{ l l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{Name} & \textbf{Wertebereich} & \textbf{Bedeutung} \\ \midrule
+		Danceability & $0..1$ & Der Wert beschreibt, ``wie gut es sich zu dem Song tanzen lässt''. Technisch gesehen, wird das Tempo, die rhythmische Stabilität und die allgemeine Regularität in Betracht für den Wert gezogen.\\\hline
+		Energy & 0..1 & Beschreibt, wie energievoll ein Song ist bzw. wie schnell, laut und lärmig er sich anhört.\\\hline
+		Speechiness & 0..1 & Erkennt gesprochene Audiodateien wie z.B. Hörbücher. Dateien mit einem Wert von über $0.66$ sind mit grosser Wahrscheinlichkeit vollständig gesprochen, während Dateien mit einem Wert von über $0.33$ auch Musik enthalten.\\\hline
+		Liveness & $0..1$ & Erkennt, ob Zuhörer in einem Lied hörbar sind. Live-Aufnahmen machen sich mit einem Wert von über $0.8$ erkennbar.\\\hline
+		Acousticness & $0..1$ & Gibt an, wie hoch die Wahrscheinlichkeit ist, dass ein Song ausschliesslich mit akustischen Mitteln - also ohne Synthesizer, Verstärker und nachbearbeiteten Gesang - aufgenommen wurde.\\\hline
+		Valence & $0..1$ & Beschreibt die ungefähre Stimmung eines Liedes. Eine Audiodatei mit einem hohen Wert macht einen fröhlicheren Eindruck, als eine Datei mit einem tiefen Wert.\\\hline
+		Tempo & $\mathbb R_{\ge 0}$ & Beschreibt die \gls{bpm} eines Liedes.\\\hline
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Erläuterung der Metadaten}
+	\label{tab:metagroups}
+\end{table}
+
 
 \begin{landscape}
 	\subsection{Indexer}
@@ -147,9 +169,9 @@ Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das
 	\end{figure}
 \end{landscape}
 
-Der Indexer basiert auf Nodes. Das Konzept wird dabei mithilfe eines Producer-Consumer Patterns abgebildet.
+Der Indexer basiert auf \textit{Nodes}. Das Konzept wird dabei mithilfe eines Producer-Consumer Patterns abgebildet.
 
-Alle Nodes im System führen eine Aufgabe auf einem oder mehreren Threads durch. Wenn diese einen Input haben, implementieren sie \code{IConsumer} oder eine der abstrakten Implementationen davon, und wenn diese einen Output haben, implementieren sie \code{IProducer}, um die Daten an den nächsten Node weiterzugeben.
+Alle Nodes im System führen eine Aufgabe auf einem oder mehreren Threads durch. Wenn diese einen Input haben, implementieren sie das \code{IConsumer}-Interface oder eine der abstrakten Implementationen davon, und wenn diese einen Output haben, implementieren sie das \code{IProducer}-Interface, um die Daten an den nächsten Node weiterzugeben.
 
 \begin{table}[H]
 	\centering
@@ -256,7 +278,7 @@ In einem gewissen Stadium des Projekts wurde jedoch der Music Arm konzipiert und
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\linewidth]{diagramme/IMVR.Interface.RingPanel-UML}
+	\includegraphics[width=0.6\linewidth]{diagramme/IMVR.Interface.RingPanel-UML}
 	\caption{Klassendiagramm des Ring Panels, womit der Anwender Modi auswählt}
 	\label{uml:IMVR.Interface.RingPanel}
 \end{figure}
@@ -293,7 +315,7 @@ Der Namespace ist gegliedert in \textit{Data}, \textit{Data.Music} und \textit{D
 
 Ursprünglich war geplant, einen Modus nur für die Bilderbibliothek des Anwenders zu entwickeln, und die dabei verwendeten Klassen in den entsprechenden Namespace zu platzieren. Eine Grosszahl dieser Klassen wurde jedoch zusammen mit dem Modus selbst gestrichen. Übrig geblieben sind die Klassen, die noch Verwendung bei der Musik finden (z.B. für das Darstellen von Artwork).
 
-Die allgemeinen Klassen in IMVR.Data enthalten designmässig zum Teil ebenfalls Überbleibsel aus dem Entwicklungsstadium, wo ein separater Bildermodus geplant war. Hauptsächlich zeigt sich das beispielsweise beim \code{CylinderRaycaster}. Dessen Aufgabe war ursprünglich, die grosse Anzahl Bilder handhabbar zu machen, weil einzelnes Raycasting zu viel Zeit beanspruchen würde.
+Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die Klasse \code{CylinderRaycaster}. Dessen Aufgabe war ursprünglich, die grosse Anzahl Bilder handhabbar zu machen, weil einzelnes Raycasting zu viel Zeit beanspruchen würde. Da Performance immer ein Problem ist, erweist sich diese als nützlich.
 
 \begin{table}[h]
 	\centering

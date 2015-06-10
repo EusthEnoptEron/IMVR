@@ -1,6 +1,6 @@
 \chapter{Implementation des Indexers}
 
-Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des Benutzers durchläuft und - wie es der Name vermuten lässt - interessante Dateien indexiert. In diesem Kapitel soll auf den Aufbau und die Implementationsdetails eingegangen werden.
+Ein Teil der Arbeit war es, einen Indexer zu implementieren, der die Dateien des Benutzers durchläuft und - wie es der Name vermuten lässt - Audiodateien indexiert. In diesem Kapitel soll auf den Aufbau und die Implementationsdetails eingegangen werden.
 
 \section{Aufbau}
 
@@ -58,7 +58,7 @@ Im Falle von IMVR kommen die Daten grundsätzlich von drei verschiedenen Quellen:
   \item Last.fm
 \end{itemize}
 
-Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Seiten wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die in eine zentrale Position in IMVR haben.
+Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Seiten wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die eine zentrale Position in IMVR haben.
 
 \begin{figure}[h]
 \centering
@@ -69,7 +69,7 @@ Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren 
 
 In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Wenn möglich wird auch gleich geprüft, ob ein Album-Cover hinterlegt ist.
 
-In einem zweiten Schritt wird über eine .NET Bibliothek \cite{indexer:echonestcsharp}, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
+In einem zweiten Schritt wird über die .NET Bibliothek \textit{echonest-sharp} \cite{indexer:echonestcsharp}, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
 
 Was bei der Originalimplementation leider fehlt, sind neuere Features wie Genres und Ortsdaten, sowie ein intelligenter Bremsalgorithmus, der dafür sorgt, dass die Datenlimite eingehalten wird. Deshalb wurde ein Fork erstellt, der diese Daten und Funktionalitäten ergänzt\footnote{\url{https://github.com/EusthEnoptEron/echonest-sharp/tree/additional\_apis}}.
 
@@ -77,14 +77,7 @@ Was bei der Originalimplementation leider fehlt, sind neuere Features wie Genres
 
 Für die Abspeicherung der Daten wurde zuerst ein Ansatz gewählt, der auf einer SQLite Datenbank basierte. Diese wurde in einem Prototyp auch erfolgreich implementiert. Es stellte sich jedoch heraus, dass diese Abhängigkeit das Programm unnötig verkomplizieren würde und eine simple In-Memory Datenstruktur völlig ausreicht.
 
-Das finale Produkt verwendet also eine simple, objektorientiert Datenstruktur, die serialisiert und so zwischen den zwei Projekten (Indexer und IMVR) geteilt werden kann. Das Schema ist in Abbildung \ref{fig:Indexer-Commons} zu sehen. Damit beide Projekte Zugriff auf die genutzten Klassen haben, wurde das Schema in eine separate DLL ausgelagert, die ebenfalls als Abhängigkeit in beiden Projekten referenziert wird.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{bilder/Indexer-IMVR-Commons.pdf}
-	\caption{Klassendiagramm für die Klassen im IMVR.Commons Package.}
-	\label{fig:Indexer-Commons}
-\end{figure}
+Das finale Produkt verwendet also eine simple, objektorientiert Datenstruktur, die serialisiert und so zwischen den zwei Projekten (Indexer und IMVR) geteilt werden kann. Das Schema ist in Abbildung \ref{uml:IMVR.Commons} zu sehen. Damit beide Projekte Zugriff auf die genutzten Klassen haben, wurde das Schema in eine separate DLL ausgelagert, die ebenfalls als Abhängigkeit in beiden Projekten referenziert wird.
 
 Anzumerken ist, dass mehrere Einstiegspunkte auf die Daten existieren und so eine gewisse Redundanz geschaffen wird. Diese Redundanz ist hilfreich, weil in IMVR mehrere Modi eben diese Einstiegspunkte benötigen. Aufgrund der gewählten Serialisierungsmethode entsteht jedoch kein grosser Speicher-Overhead.
 
@@ -93,16 +86,14 @@ Die Serialisierung wird durch sogenannte Protocol Buffers \cite{wiki:protobufs} 
 \section{Herausforderungen}
 \label{sec:indexer:herausforderungen}
 
-Während der Entwicklung des Indexers kristallisierten sich diverse Schwierigkeiten, welche grundsätzlich in drei Kategorien einordnen lassen: organisatorische und datentechnische.
+Während der Entwicklung des Indexers kristallisierten sich diverse Schwierigkeiten heraus, welche grundsätzlich in drei Kategorien einordnen lassen: organisatorische und datentechnische.
 
 Die Organisation, oder Planung, war deshalb problematisch, weil einer der wichtigsten Faktoren für den Aufbau des Indexers die Vielfalt der Datentypen war. Da anfangs geplant war, Musik \textit{und} Bilder zu indexieren und darzustellen, machte eine parallele Verarbeitung der Daten Sinn und war auch notwendig.
 
-Es wurden parallel mehrere Bilder auf mehreren CPU-Kernen analysiert, und gleichzeitig wurde auch die Musikdatenbank erweitert. Mit dem Wegfall des Bilder-Parts wird die parallele Verarbeitung also um einiges unwichtiger. Dies gilt besonders, weil bei den Datenquellen der Musikindexierung jeweils nur ein Thread Sinn macht, da die APIs mit Limiten ausgestattet sind.
+Es wurden parallel mehrere Bilder auf mehreren CPU-Kernen analysiert, und gleichzeitig wurde auch die Musikdatenbank erweitert. Mit dem Wegfall des Bilder-Parts wird die parallele Verarbeitung also um einiges unwichtiger. Dies gilt besonders, weil bei den Metadatenquellen für die Musikindexierung jeweils nur ein Thread Sinn macht, da die APIs mit Limiten ausgestattet sind.
 
-Datentechnisch stellte es sich als problematisch heraus, geeignete Datenquellen zu wählen. Von Anfang an war klar, dass der Service von The Echo Nest verwendet würde, doch dieser alleine ist nicht ausreichend.
-
-Bevor schliesslich Last.fm als Quelle für Album-Covers gewählt wurde, wurden besonders zwei APIs untersucht: Amazon und Gracenote.
+Datentechnisch stellte es sich als problematisch heraus, geeignete Datenquellen zu wählen, welche die notwendigen Daten simpel und mit guten API-Limiten liefern konnten. Von Anfang an war klar, dass der Service von The Echo Nest verwendet würde, doch dieser alleine ist nicht ausreichend. Bevor schliesslich Last.fm als Quelle für Album-Covers gewählt wurde, wurden besonders zwei APIs untersucht: Amazon und Gracenote.
 
 Im Falle von Amazon führten zwei Probleme zum Ausschluss: das Fehlen einer guten C\#-Bibliothek und die schwerfällige Registrierung. Momentan sieht die Situation so aus, dass recht viel manuell gemacht werden muss, bzw. eine umfangreiche Service-Description importiert werden muss. \cite{indexer:amazon} In Sachen Registrierung wird erwartet, dass man eine Webseite registriert, Kontaktdaten angibt und dann geprüft wird.
 
-Bei Gracenote beläuft sich das Problem hauptsächlich auf die Daten-Limite. Diese ist nirgends öffentlich ersichtlich, und sobald diese überschritten wird, sind keine Requests mehr möglich für den ganzen Tag. In einer Applikation wie IMVR, wo in einem Schritt alles indexiert werden soll, ist die ein Killer-Kriterium.
+Bei Gracenote beläuft sich das Problem hauptsächlich auf die Daten-Limite. Diese ist nirgends öffentlich ersichtlich, und sobald diese überschritten wird, sind keine Requests mehr möglich für den ganzen Tag. In einer Applikation wie IMVR, wo in einem Schritt alles indexiert werden soll, ist dies ein Killer-Kriterium.

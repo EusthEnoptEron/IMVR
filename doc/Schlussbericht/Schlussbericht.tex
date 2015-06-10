@@ -54,8 +54,12 @@
 %\usepackage[style=verbose]{biblatex}
 \usepackage{array}
 \usepackage{algorithm}
+\usepackage{arydshln}
+%\usepackage{colortbl}
 \usepackage[noend]{algpseudocode}
 \usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{adjustbox}
 
 %\usepackage{rotating}
 \usepackage{pdflscape}
@@ -153,7 +157,9 @@
 %---------------------------------------------------------------------------
 \begin{document}                              	% Start Document
 \settocdepth{section}														% Set depth of toc
-\pagenumbering{roman}														
+\pagenumbering{roman}
+\renewcommand{\arraystretch}{1.5} % Increase table spacing
+													
 %---------------------------------------------------------------------------
 \input{vorspann/titel}					% Titel der Arbeit aus Datei titel.tex lesen
 \input{vorspann/version}				% Versionsnummer und -datum aus Datei version.tex lesen

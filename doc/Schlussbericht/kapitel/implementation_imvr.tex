@@ -1,7 +1,7 @@
 \chapter{Implementation von IMVR}
 \label{chap:implementation_imvr}
 
-Der Indexer ist implementiert und dokumentiert, also fehlt nur noch die eigentliche Applikation. Vieles hat sich im Laufe des Projekts verändert und entwickelt, und viele Probleme traten zum Vorschein, die an dieser Stelle genauer erläutert werden sollen.
+Dieses Kapitel dokumentiert die eigentliche Applikation \textit{IMVR}. Vieles hat sich im Laufe des Projekts verändert und entwickelt, und einige Probleme traten zum Vorschein, die an dieser Stelle genauer erläutert werden sollen.
 
 \section{Unity 5}
 
@@ -59,7 +59,7 @@ Unüberraschenderweise findet die Interaktion des Users mit IMVR fast ausschliess
 
 \subsection{Fussplatten}
 
-Beim Erstellen einer visuellen Applikation stellt sich die Frage, wie man am besten die Struktur verdeutlichen kann. Eine Technik, die dafür gewählt wurde, ist der Einsatz von "Fussplatten".
+Beim Erstellen einer visuellen Applikation stellt sich die Frage, wie man am besten die Struktur verdeutlichen kann. Eine Technik, die dafür gewählt wurde, ist der Einsatz von ``Fussplatten''.
 
 Hierbei befinden sich unter den Füssen des Anwenders ringförmige Platten, welche die zwei Modi der Applikation repräsentieren. Eine dritte, zentriert abgehobene Platte dient zur Beendigung der Applikation.
 
@@ -76,7 +76,7 @@ Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus
 
 Bei der Entwicklung von VR-Applikationen stösst man zwingenderweise auf Situationen, in denen herkömmliche Konzepte nicht mehr verwendet werden können. Die Platzierung und der Aufbau des Menüs ist so ein Punkt.
 
-Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als "lästig" herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
+Es ist nicht leicht ein Menü korrekt zu platzieren. Eine statische Platzierung als Overlay hält das Interface zwar im sichtbaren Bereich, kann sich jedoch als störend herausstellen. Lässt man es verzögert mitschweben, gerät das Menü sofort ausser Kontrolle, und stellt man es irgendwo in die Szene und belässt es dabei, verliert man es sofort aus dem Blick.
 
 Im Falle von IMVR bieten sich jedoch die Hände als gut verwendbarer Ankerpunkt für das Menü an. Es gibt ein freies Projekt auf GitHub \cite{hoverVR}, welches die Finger der Hand für die Platzierung der Buttons in einer ringartigen Struktur verwendet. Leider befand sich das Projekt in einem zu instabilen Stadium für diese Arbeit, aber es lieferte die Idee für eine eigene, ähnliche Implementierung.
 
@@ -84,7 +84,7 @@ Für IMVR wurde ebenfalls ein Ringmenü entwickelt, doch dieses verfügt über keine
 
 \subsection{Music Arm}
 
-Da es in dieser Arbeit voll und ganz um das Eingreifen ins Geschehen mit den eigenen Händen geht, wäre es bedauerlich, wenn es nicht möglich wäre, die Musik mit den Händen zu steuern. Ein weiteres Konzept, welches genau dieses Problem löst, ist der sogenannte "Music Arm".
+Da es in dieser Arbeit voll und ganz um das Eingreifen ins Geschehen mit den eigenen Händen geht, wäre es bedauerlich, wenn es nicht möglich wäre, die Musik mit den Händen zu steuern. Ein weiteres Konzept, welches genau dieses Problem löst, ist der sogenannte ``Music Arm''.
 
 Beim Music Arm handelt es sich um das Interface, welches an Stelle des menschlichen Arms angezeigt wird. Dieser digitale Arm bietet die Möglichkeit, die Playlist zu verwalten, sowie die momentan abgespielte Musik anzuschauen bzw. vor- und zurückzuspulen.
 
@@ -110,7 +110,7 @@ Hierbei wird eine Technik verwendet, welche einen Unterschied zwischen der Vorde
 \end{figure}
 
 
-Dreht der Anwendet jedoch seinen Arm und schaut auf die Rückseite, wird er eine Liste erhalten, die er scrollen und  selektieren kann. Bei der Selektion wird das Element auf das Ringmenü "gesendet", wo der Anwender dann die Möglichkeit hat, das Lied abzuspielen, oder die Selektion aufzuheben. Würde man sofort bei der Selektion ein Lied abspielen, ergäbe sich das Problem, dass durch die mangelhafte Genauigkeit der Leap Motion und der Bedienung allgemein viele Fehlselektionen passieren würden und somit diverse Lieder zufällig abgespielt würden. Abbildung \ref{fig:musicarm_frontback} zeigt, wie dieses Interface aussieht.
+Dreht der Anwendet jedoch seinen Arm und schaut auf die Rückseite, wird er eine Liste erhalten, die er scrollen und  selektieren kann. Bei der Selektion wird das Element auf das Ringmenü ``gesendet'', wo der Anwender dann die Möglichkeit hat, das Lied abzuspielen, oder die Selektion aufzuheben. Würde man sofort bei der Selektion ein Lied abspielen, ergäbe sich das Problem, dass durch die mangelhafte Genauigkeit der Leap Motion und der Bedienung allgemein viele Fehlselektionen passieren würden und somit diverse Lieder zufällig abgespielt würden. Abbildung \ref{fig:musicarm_frontback} zeigt, wie dieses Interface aussieht.
 
 Der Entscheid, welche Seite angezeigt wird, geschieht über ein simples Skalarprodukt. Der Forward-Vektor der Kamera wird verglichen mit der Normale des Arms, welche in die gleiche Richtung zeigt, wie der Handrücken. Wenn der Wert tiefer als -0.5 ist, die Vektoren also entgegengerichtet sind, wird die Unterseite erkannt, und wenn der Wert höher als 0.5 ist, die Oberseite. Der Entscheid könnte auch bei 0 gefällt werden, aber dann würden auch Grenzfälle angezeigt werden, in denen besser gar kein Menü angezeigt wird.
 
@@ -167,7 +167,7 @@ Damit andere Teile der Applikation auf diese Wertänderungen reagieren können, wi
 
 \section{Visual Design}
 
-Viele Elemente in IMVR haben mit dem Visuellen zu tun. Sie sollen die Musik unterstützend begleiten, Verhältnisse darstellen und natürlich gefallen.
+Viele Elemente in IMVR haben mit dem Visuellen zu tun. Sie sollen die Musik unterstützend begleiten, Metadaten darstellen und natürlich gefallen.
 
 \subsection{Darstellung der Hände}
 \label{subsec:handfx}
@@ -188,7 +188,7 @@ Beim dritten Punkt ist mit \textit{Modus} der aktuelle Applikationsmodus gemeint
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.9\linewidth]{bilder/hand1}
+	\frame{\includegraphics[width=0.7\linewidth]{bilder/hand1}}
 	\caption{Die ursprüngliche Visualisierung der Hand}
 	\label{fig:hand1}
 \end{figure}
@@ -198,7 +198,7 @@ Für die erste Art der Visualisierung (Abbildung \ref{fig:hand1}) wurde eine leic
 Diese Darstellungsform wurde jedoch im Laufe des Projekts zugunsten einer partikelbasierten Implementation verworfen. In der ersten partikelbasierten Form, wurde versucht eine geriggte Hand mit Partikeln zu umrahmen statt das Mesh selbst zu rendern. Das war jedoch mit ein paar grossen Nachteilen verbunden:
 
 \begin{enumerate}[label=(\alph*)]
-	\item Die Bone-Weights werden auf der GPU appliziert, deshalb muss das Mesh in jedem Frame auf der CPU nachgebildet werden.
+	\item Die Bone-Weights werden auf der GPU angewendet, deshalb muss das Mesh in jedem Frame auf der CPU nachgebildet werden.
 	\item Durch die hohe Zahl der Vertices werden über 10\,000 Partikel pro Hand erstellt, was sich sehr schlecht auf die Performance auswirkt.
 	\item Da das Finden von Punkten innerhalb eines komplizierten Meshes nicht trivial ist, müssen alle Punkte auf der Hülle platziert werden.  
 \end{enumerate}
@@ -231,7 +231,7 @@ Alles in allem wurde damit eine ansprechende und intuitive Darstellung der Hände
 
 Wenn man von Datenvisualisierung redet, ist es ganz klar, dass auch Diagramme dargestellt werden wollen. Umso besser, wenn dies stereoskopisch geschehen kann: Dadurch lässt sich die dritte Dimension erheblich besser wahrnehmen.
 
-Im Rahmen dieses Projekts wurde ein Point-Chart entwickelt, der dazu dient, die Musik des Anwenders in ein dreidimensionales System einzuordnen und auf einen Blick darzustellen. Die Dimensionen sind 1:1 die Features, die während der Indexierung von The Echo Nest heruntergeladen wurden, also Merkmale wie \textit{Danceability}, \textit{Energy} und \textit{Tempo}.
+Im Rahmen dieses Projekts wurde ein Point-Chart entwickelt, der dazu dient, die Musik des Anwenders in ein dreidimensionales System einzuordnen und auf einen Blick darzustellen. Die Dimensionen sind 1:1 die Features, die während der Indexierung von The Echo Nest heruntergeladen wurden, also Merkmale wie \textit{Danceability}, \textit{Energy} und \textit{Tempo} (siehe Kapitel \ref{sec:design_commons}).
 
 \begin{figure}
 	\centering
@@ -240,7 +240,7 @@ Im Rahmen dieses Projekts wurde ein Point-Chart entwickelt, der dazu dient, die 
 	\label{fig:pointchart}
 \end{figure}
 
-Wie auf dem UML ersichtlich, wurde die Implementation des Point Charts in drei verschiedenen Klassen durchgeführt.
+Wie auf dem UML (Abbildung \ref{uml:IMVR.FX}) ersichtlich, wurde die Implementation des Point Charts in drei verschiedenen Klassen durchgeführt.
 
 \code{PointChart} ist eine relativ generisch gehaltene Implementation eines Point Charts, welche sich nur um die Darstellung kümmert.
 
@@ -420,6 +420,36 @@ Nach diesem Prozedere kann der Clip wie ein herkömmlicher Audio-Clip einer \code
 
 \subsection{Canvas-Elemente}
 
+Zur Darstellung der visuellen Elemente von IMVR wurde sehr stark auf das UI-System von Unity gesetzt, da dieses ideal für umfangreiche Interfaces geeignet ist und verschiedene Widgets bereitstellt. Zu Beginn waren jedoch ein paar interne Implementationsdetails nicht bekannt, welche schliesslich zu Problemen bei der Anwendung führte.
+
+Canvas-Elemente, welche jeweils an oberster Stelle eines uGUIs stehen, werden als ganze Meshes betrachtet, und seriell gerendert. Überschneidungen mit gewöhnlichen Meshes werden zwar korrekt gehandhabt, schneiden sich aber zwei Canvas-Elemente führt dies zu unerwünschten Ergebnissen (Abbildung \ref{fig:canvas_z}).
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{bilder/canvas_z}
+	\caption{Überschneidung zweier Canvas-Elemente}
+	\label{fig:canvas_z}
+\end{figure}
+
+Das Problem ist allerdings nicht gravierend und kann verkraftet werden, denn Canvas-Elemente haben eine grundlegende Z-Testing Funktionalität und werden die meiste Zeit korrekt gerendert. Ein anderes, ähnliches Problem stellte sich als viel verheerender heraus: die Verwendung von komplexen Canvas.
+
+Mit ``komplexen Canvas'' sind Canvas-Elemente gemeint, die tief reichend sind und deren Unterelemente eine Positionierung auf der Z-Achse (``in die Tiefe'') besitzen. Ein Canvas ist entweder hinter einem anderen Canvas oder davor. Wenn jedoch Unterobjekte mit unterschiedlichen Tiefen existieren, kommt es zu Fällen, wo manche Objekte hinter anderen Canvas liegen und andere weiter vorne. Abbildung \ref{fig:canvas_z_2} stellt dieses Verhalten bildlich dar.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.6\linewidth]{bilder/canvas_z_2}
+	\caption{Probleme mit dem Rendering von komplexen Canvas}
+	\label{fig:canvas_z_2}
+\end{figure}
+
+Ursprünglich wurden versucht, bei der Erstellung von UI-Elementen möglichst wenige Canvas zu benutzen, um einen Overhead zu vermeiden. Dieses Vorgehen stellte sich jedoch aufgrund des oben erwähnten Problemes als Fehler heraus, denn die Rendering-Reihenfolge war dadurch beinahe willkürlich.
+
+Als Lösung wurden deshalb alle Unterobjekte, welche eine andere Position auf der Z-Achse hatten, in eigene Canvas-Elemente ausgelagert.
+
+Eine Ausnahme dazu stellt das ``Dial''-Menü in der Künstlerübersicht dar. Dieses hätte stark überarbeitet werden müssen, was zeitlich nicht mehr reichte. Ausserdem wäre dadurch die Anzahl der benötigten Draw-Calls wieder drastisch gestiegen, da Unity Canvas-Elemente nicht \textit{batcht} (sprich, die Draw-Calls nicht zusammennimmt).
+
+%TODO: Alpha-Sorting, etc. Tile-Blanket
+
 \subsection{Performance}
 \label{subsec:performance}
 
@@ -455,10 +485,23 @@ Implementiert ist das mit einem zweiten Set von Kameras, die \textit{über} die v
 	\item Die Tiefe der Kameras muss höher eingestellt werden, als die eigentlichen Kameras. Das ist notwendig, damit der Ladebildschirm \textit{nach} dem Rest gerendert wird.
 \end{enumerate}
 
-Der Ladebalken selbst wird mithilfe der \code{Fill}-Property von Bildelementen gefüllt. Das Feature ist tief im UI-System von Unity verbaut und eignet sich perfekt für diese Anwendung.
+Der Ladebalken selbst wird mithilfe der \code{Fill}-Property von Bildelementen gefüllt. Das Feature ist tief im UI-System von Unity verbaut und eignet sich perfekt für diese Anwendung. Damit der Ladebildschirm an korrekter Stelle gerendert wird, wurde das Objekt der Kamera angehängt und bewegt sich daher mit.
 
+Im Verlauf der Entwicklung stellte sich ebenfalls heraus, dass die Generierung der \textit{Font}-Texturen relativ zeitaufwendig ist. Deshalb werden im Loader ebenfalls Fonts vorinitialisiert.
 
-%TODO: Performance der Playlist, Ladebildschirm
+Neben der Performance-Einbussen existierender Elemente, traten auch Probleme beim \textit{Initialisieren} von Objekten auf. Die Schwierigkeiten wurden sichtbar bei der Implementierung des Interfaces für die Playlist.
 
+Beim \textit{Listen}-Modus kommt es oft vor, dass eine sehr grosse Anzahl Lieder einem Kriterium gerecht werden. Da jede Zeile in einer Liste in uGUI ein eigenes GameObject ist, hat dies zur Folge, dass entsprechend viele GameObjects \textit{on-the-fly} generiert werden müssen. Selektiert der Anwender also 1000 Songs, werden 1000 GameObjects erstellt, was zu einem enormen Einfall der Framerate führt.
 
-% Alpha-Sorting, etc. Tile-Blanket
+Eine Lösung dafür bietet eine Komponente namens \textit{PooledList} \cite{pooled-list}, welche immer nur eine kleine Anzahl Objekte erstellt und lediglich den Inhalt mit den aktuell sichtbaren austauscht.
+
+Leider ist das Projekt nicht sehr gut dokumentiert und baut auf einem \code{GridLayout} auf. In IMVR wird jedoch ein \code{VerticalLayoutGroup} verwendet, welches nicht mit dem Plugin kompatibel ist. Ein Versuch, die Playlist in ein Grid-Layout zu konvertieren schlug fehl.
+
+Als Lösung wurde schliesslich selbst eine sehr simple, ähnliche Komponente entwickelt: die \code{LazyList}. Diese akzeptiert eine Liste von \code{LazyGameObjects} - eine selbst erstellte Klasse, die auf Anfrage mithilfe eines Callbacks, der im Konstruktor übergeben wird, jeweils ein GameObject erstellt - und nutzt diese, um das vertikale Layout zu füllen. Dabei werden zwei Tricks angewendet:
+
+\begin{enumerate}
+	\item Nur die aktuell sichtbaren Elemente werden angezeigt. Der Rest wird in einem deaktivierten GameObject zwischengelagert und vollständig ignoriert.
+	\item Alle Elemente werden nur auf Anfrage initialisiert. Das heisst, dass anfangs kein einziges Objekt existiert und diese Schritt für Schritt beim Scrollen geladen werden.
+\end{enumerate}
+
+Mit diesen zwei Verbesserungen ist es nun möglich, sofort eine beliebig grosse Liste zu erstellen. Der Nachteil ist, dass irgendwann der Speicher ausgehen wird, da momentan nicht mehr angezeigte Objekte nicht aufgeräumt werden. Ein ähnlicher Ansatz wie bei der \textit{PooledList} wäre ideal.

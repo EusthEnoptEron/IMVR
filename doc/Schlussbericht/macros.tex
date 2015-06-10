@@ -3,7 +3,7 @@
 \newcommand\fnurl[2]{%
 	\href{#2}{#1}\footnote{\url{#2}}%
 }
-
+\definecolor{light-gray}{gray}{0.95}
 \lstset{language=[Sharp]C,
 	showspaces=false,
 	showtabs=false,
@@ -15,8 +15,11 @@
 	commentstyle=\color{greencomments},
 	keywordstyle=\color{bluekeywords},
 	stringstyle=\color{redstrings},
-	basicstyle=\ttfamily,
+	basicstyle=\ttfamily\small,
 	captionpos=b,
+%	backgroundcolor=\color{light-gray},
+	xleftmargin=1cm,
+	frame=tb,
 	numbers={left}
 }
 
