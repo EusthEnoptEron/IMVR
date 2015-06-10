@@ -42,7 +42,7 @@ Eine Implikation, die dieses System in sich birgt, ist, dass es nicht mehr so ei
 Um dieses Problem zu umgehen, bieten sich Prefabs an. Der Prozess der Erstellung eines einzelnen UIs sieht folgendermassen aus:
 
 \begin{enumerate}
-	\item Designen der UI im Editor
+	\item Designen des UIs im Editor
 	\item Speichern als Prefab
 	\item Im Code: Laden und per \code{SetTransform()} an ein anderes Element anhängen
 	\item Iterieren bis fertiggestellt
@@ -65,12 +65,44 @@ Hierbei befinden sich unter den Füssen des Anwenders ringförmige Platten, welche
 
 Bei diesen Platten handelt es sich um das einzige Interaktionsmittel, welches bewusst keine Eingabe durch die Hände erfordert. In diesem Fall wird die Oculus Rift selbst als Eingabegerät verwendet, und zwar durch den Blickwinkel.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{bilder/screenshot_map}
+	\caption{Vogelperspektive auf die Szene}
+	\label{fig:screenshot_map}
+\end{figure}
+
 Die Idee ist, dass der Benutzer feststellen will, ``wo er steht'', herunterschaut, und durch gehaltenen Blickkontakt mit den Fussplatten diese aktivieren kann. Entsprechend den \textit{Best Practices} wird dabei ein Indikator gefüllt, der anzeigt, wie lange der Blick noch gehalten werden muss.
 
 Diese Art von Eingabe lässt sich oft bei bereits erschienen Demos für die Oculus Rift beobachten. Das Prinzip ist sehr leicht zu implementieren und daher auch verlockend, jedoch muss mit Vorsicht vorgegangen werden: Für den Benutzer ist es auf Dauer unangenehm, wenn von ihm ständige Kopfbewegungen gefordert werden. In IMVR wurde jedoch bewusst Gebrauch von dieser Methode gemacht, weil der Anwender nur selten nach unten schauen wird, und es relativ intuitiv ist.
 
-%TODO: note that ring mesh can be seen in \ref{subsec:waves}
+Implementiert wurden diese Fussplatten mit einem selbst erstellten Ring-Mesh (siehe Kapitel \ref{subsec:waves}), welches zur Laufzeit generiert werden kann und dynamisch genug ist, um animiert zu werden. Bei der Benutzung werden insgesamt 4 Klassen angewendet: zwei zur Darstellung und zwei für die Logik.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/ringmesh_collider}
+	\caption{Aufbau einer Fussplatte}
+	\label{fig:ringmesh_collider}
+\end{figure}
+
+In Abbildung \ref{fig:ringmesh_collider} sind diese nummeriert abgebildet. Die Rolle der Klassen sieht dabei folgendermassen aus:
+
+\begin{table}[H]
+	\centering
+	\label{tab:ringmesh_aufbau}
+	\begin{tabularx}{\textwidth}{ l l X }
+		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\textbf{\#} & \textbf{Komponente} & \textbf{Rolle} \\ \midrule
+		1 & Ring Mesh & Sorgt für die Darstellung eines Ring-Meshes, indem ein Mesh anhand der angegebenen Parameter generiert wird.\\
+		2 & Fillable Ring & Erweitert die Ring Mesh Komponente mit einem zweiten Kreissektor, der die gleichen Werte wie das Ring Mesh hat, bis auf den äusseren Radius. Dieser wird anhand des \code{Fill}-Wertes zwischen 0 und 1 verschoben.\\
+		3 & Mode Activator & Reagiert auf Blicke und steuert den \code{Fill}-Wert des Fillable Rings.\\
+		4 & Mode & Stellt den Modus dar, der vom Mode Activator aktiviert werden soll, sobald der Blick lange genug gehalten wurde.\\
+		\noalign{\smallskip} \hline \noalign{\smallskip}
+	\end{tabularx}
+	\caption{Beschreibung des Aufbaus der Fussplatten}
+\end{table}
+
+Um den Blick des Anwenders zu erkennen, wurde bei den Fussplatten jeweils an einer geeigneten Position ein Collider gesetzt (Nummer 5 auf Abbildung \ref{fig:ringmesh_collider}), der auf einer für die Fussplatten dedizierten Ebene liegt und per Raycasting geprüft wird.
 
 \subsection{Ringmenü}
 
