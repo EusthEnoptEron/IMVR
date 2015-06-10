@@ -1,17 +1,43 @@
 \chapter{Aufgabenstellung und Zielformulierung}
 
-Jedes Projekt startet mit einer Aufgabenstellung. Im Falle dieses Projektes, hat sich diese im Laufe des Projekts ein wenig geändert. Darauf soll ebenfalls eingegangen werden.
+\section{Ausgangslage}
+
+Wie bereits erwähnt, mangelt es momentan in der Medienwelt nicht an Begeisterung für Virtual Reality. In Foren wird darüber diskutiert, an Events wird es demonstriert und täglich finden neue Infos ihren Weg in die Öffentlichkeit.
+
+Ein wesentliches Problem ist allerdings die Eingabe. Glücklicherweise gibt es bereits zu einem erschwinglichen Preis eine Möglichkeit, die eigenen zwei Hände zu verwenden und zu erkennen: die Leap Motion.
+
+Sie ist zu einem Preis von \EUR{89.99} erhältlich und ermöglicht eine rein visuelle Handerkennung ohne Handschuhe oder ähnlichen Zusatz.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\linewidth]{bilder/leap_example}
+	\caption{Die Leap Motion im Einsatz}
+	\source{https://www.leapmotion.com/}
+	\label{fig:leap_example}
+\end{figure}
+
+Im Vorprojekt, das ebenfalls bereits erwähnt wurde, stellte sich aus, dass jedoch Vorsicht beim Einsatz der Leap Motion geboten ist. Die Erkennung ist nicht stabil und gewisse Positionen funktionieren besser als andere. Es stellten sich also ein paar Anforderungen an eine Einbindung:
+
+\begin{itemize}
+	\item Die Applikation darf nicht auf schnelle und genaue Eingabe des Benutzers basieren
+	\item Gesten müssen mit Bedacht des Sichtfeldes konzipiert werden
+\end{itemize}
+
+Besonders der erste Punkt schliesst eine Anwendung der Leap Motion in einem Spiel aus. Bei einem Spiel würden die Hände unausweichlich in den Vordergrund des Spielkonzeptes rücken und eine essenzielle Rolle übernehmen. Da allerdings die Handerkennung nicht zuverlässig ist, geschehen Fehler. Unbeabsichtigte Operationen passieren, der Spieler verliert, er ist frustriert und nach kurzer Zeit gibt er das Spiel auf.
+
+Der gewählte Ansatz ist jedoch ein anderer: Kein Spiel soll erstellt werden, sondern eine Applikation, die durch die Hände gesteuert werden kann und dadurch einen speziellen Charme erhält. Es folgt die Zielformulierung.
+
 
 \section{Ursprüngliche Zielformulierung}
 
-Es soll eine Applikation namens ``\gls{imvr}'' entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bilder- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines stereoskopischen \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
+Es soll eine Applikation namens ``\gls{imvr}'' entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bild- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche "Tiefe", die durch den Einsatz eines stereoskopischen \gls{hmd} entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
 
 Zusätzlich dazu soll die Leap Motion dazu verwendet werden, um vollständige Handfreiheit zu gewähren: Der Anwender soll komplett ohne Maus und Tastatur imstande sein, sich durch seine Bilder zu navigieren.
 
 Kurz zusammengefasst muss die Applikation:
 
 \begin{itemize}
-	\item Die Bild- und Musikbibliothek des Benutzers in stereoskopischem 3D darstellen.
+	\item Die Bilder- und Musikbibliothek des Benutzers in stereoskopischem 3D darstellen.
 	\item Diese freihändig durchsuchbar machen mit Sortier- und evtl. Gruppierfunktion.
 	\item Die Bilder betrachtbar und die Musik abspielbar machen.
 	\item Metainformationen darstellen (z.B. in Form von Diagrammen).
@@ -21,13 +47,21 @@ Zusätzlich zur Applikation selbst soll noch ein zusätzliches Tool entwickelt wer
 
 \section{Änderungen an der Zielformulierung}
 
-Aufgrund der begrenzten Zeit und eines vermehrten Interesse in die Darstellung von Musik, wurde die Zielformulierung während des Projekts leicht abgeändert. Neu wird die Bilderbibliothek des Anwenders komplett ignoriert, dafür das Augenmerk auf seine Musikbibliothek gelegt.
+Aufgrund der begrenzten Zeit und eines vermehrten Interesse in die Darstellung von Musik, wurde die Zielformulierung während des Projekts leicht abgeändert:
 
-Des Weiteren wurden auch Änderungen am Konzept der Applikation selbst vorgenommen. Dies ist auf die experimentelle Natur des Projekts zurückzuführen, da anfangs nicht klar ist, was funktioniert und was nicht. Konkret wurden zwei Modi eingeführt, und auf eine Sortier- und Gruppierfunktion verzichtet. Diese könnten allerdings in einem nächsten Schritt eingebaut werden.
+\begin{itemize}
+	\item Die Bilderbibliothek fällt weg
+	\item Die Sortier- und Gruppierfunktion fällt weg
+	\item Es wird mehr Gewicht auf die Darstellungsweise der Musik gelegt
+\end{itemize}
+
+Dazu ist zu sagen, dass auch weiterhin stark auf Bildervisualisierung gesetzt wird. Anstatt den Computer des Anwenders auf Bilder abzuscannen wird diese jedoch vollständig um die lokale Musik aufgebaut. Konkret bedeutet das, dass Artwork von Alben und Fotos von Artisten dargestellt wird.
+
+Die im zweiten Punkt erwähnte Sortier- und Gruppierfunktion könnte in einem weiteren Schritt nachgereicht werden, wurde aber im momentanen Stadium zugunsten von anderen Features vernachlässigt.
 
 \section{Hilfsmittel \& Hardware}
 
-Verschieden Hilfsmittel werden für die Durchführung des Projektes gebraucht. Seitens Software sind diese:
+Verschieden Hilfsmittel werden für die Durchführung des Projektes gebraucht. Seitens Software lauten diese:
 
 \begin{table}[H]
 	\caption{Übersicht der eingesetzten Software.}
@@ -62,4 +96,4 @@ Im Hardware-Departement wurde folgendes eingesetzt:
 	\end{tabular}
 \end{table}
 
-Für eine Erklärung der Oculus Rift und der Leap Motion sei an dieser Stelle auf das Pflichtenheft verwiesen.
+Für eine genaue Erklärung der Oculus Rift und der Leap Motion sei an dieser Stelle auf das Pflichtenheft und die Vorarbeit verwiesen, welche diese im Detail einführt.
