@@ -11,13 +11,13 @@ Der Indexer sowie die Datenstruktur und alle anderen Tools, die eine ergänzende 
 	\centering
 	\label{tab:auxiliarytools}
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Name} & \textbf{Beschreibung} \\ \midrule
 		IMVR.Commons & DLL-Projekt, welches die Klassen enthält, die zwischen Applikation und Indexer geteilt werden. \\
 		IMVR.Commons.Tests & Testprojekt mit Unit-Tests um die Integrität der Daten sicherzustellen. \\
 		IMVR.Indexer & Konsolenprojekt, welches die Musikdateien auf dem Host-System indexiert. \\
 		IMVR.SpeechServer & Konsolenprojekt, welches in der Vorarbeit verwendet wurde und in dieser Arbeit keine Verwendung fand. \\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 \end{table}
 
@@ -28,17 +28,16 @@ Ein weiterer Grund für die Parallelisierung ist, dass als mögliches Feature eine
 
 \section{Datenquellen}
 
-Da IMVR zum Ziel hat, die Musik des Benutzers in verschiedenen Formen und Farben darzustellen, werden Daten von diversen Quellen benötigt. Wir leben in einer wundervollen Zeit in Sachen Datenvielfalt: Es gib viele Online-Services, welche zu einem Grossteil gratis sind, von denen man diverse Daten erhalten kann.
+Da IMVR zum Ziel hat, die Musik des Benutzers in verschiedenen Formen und Farben darzustellen, werden Daten von diversen Quellen benötigt. Glücklicherweise existiert eine grosse Datenvielfalt im Internet: Es gibt zahlreiche Online-Services, deren Gebrauch oft kostenlos ist, von denen man diverse Daten erhalten kann.
 
-Es folgt eine kurze Zusammenstellung von untersuchten Datenquellen.
-
+Es folgt eine kurze Zusammenstellung der untersuchten Datenquellen.
 
 \begin{table}[H]
 \caption{Eine Übersicht von verfügbaren Online-Datenquellen.}
 \centering
 \label{t:datasources}
 \begin{tabular}{ l l l }
-	\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+	\toprule
 	\textbf{Name} & \textbf{Daten} & \textbf{API-Limite} \\ \midrule
 	Last.fm & Bilder, Meta-Daten & 5 Request / Sekunde \\
 	The Echo Nest & Bilder, Meta-Daten, Analyse-Daten & 120 Requests / Minute \\
@@ -46,11 +45,11 @@ Es folgt eine kurze Zusammenstellung von untersuchten Datenquellen.
 	Amazon & Bilder, Beschreibungen & 1 Request / Sekunde \\
 	Gracenote & Bilder, Fingerprinting, Meta-Daten & $\sim$1000 Requests / Tag \\
 	MusicBrainz & Bilder, Meta-Daten & $\sim$1 Request / Sekunde \\
-	\noalign{\smallskip} \hline \noalign{\smallskip}
+	\bottomrule
 \end{tabular}
 \end{table}
 
-Im Falle von IMVR kommen die Daten grundsätzlich von drei verschiedenen Quellen:
+Im Falle von IMVR kommen die Daten grundsätzlich aus drei verschiedenen Quellen:
 
 \begin{itemize}	
   \item ID3 Tags der Musik-Dateien
@@ -58,7 +57,7 @@ Im Falle von IMVR kommen die Daten grundsätzlich von drei verschiedenen Quellen:
   \item Last.fm
 \end{itemize}
 
-Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Seiten wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die eine zentrale Position in IMVR haben.
+Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren Daten. The Echo Nest aggregiert zudem die Daten von anderen Stellen wie Spotify und MusicBrainz, und enthält wertvolle Analyse-Daten, die eine zentrale Rolle in IMVR haben.
 
 \begin{figure}[h]
 \centering
@@ -67,11 +66,11 @@ Diese wurden gewählt aufgrund der durchsichtigen API-Limite und den verfügbaren 
 \label{fig:Indexer-DataFlow}
 \end{figure}
 
-In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Wenn möglich wird auch gleich geprüft, ob ein Album-Cover hinterlegt ist.
+In einem ersten Schritt werden grundlegende Daten wie der Titel des Liedes, der Name des Artisten, usw. aus der Datei selbst entnommen. Es wird auch geprüft, ob ein Album-Cover hinterlegt ist.
 
 In einem zweiten Schritt wird über die .NET Bibliothek \textit{echonest-sharp} \cite{indexer:echonestcsharp}, welche im Rahmen des Projektes geforkt und erweitert wurde, zur API von The Echo Nest verbunden und diverse Meta-Daten zur Musik heruntergeladen.
 
-Was bei der Originalimplementation leider fehlt, sind neuere Features wie Genres und Ortsdaten, sowie ein intelligenter Bremsalgorithmus, der dafür sorgt, dass die Datenlimite eingehalten wird. Deshalb wurde ein Fork erstellt, der diese Daten und Funktionalitäten ergänzt\footnote{\url{https://github.com/EusthEnoptEron/echonest-sharp/tree/additional\_apis}}.
+Was bei der Originalimplementation leider fehlt, sind neuere Features wie Genres und Ortsdaten, sowie ein intelligenter Bremsalgorithmus, der dafür sorgt, dass die Datenlimite eingehalten wird. Deshalb wurde ein \gls{Fork} erstellt, der diese Daten und Funktionalitäten ergänzt\footnote{\url{https://github.com/EusthEnoptEron/echonest-sharp/tree/additional\_apis}}.
 
 \section{Datenstruktur}
 
@@ -81,12 +80,12 @@ Das finale Produkt verwendet also eine simple, objektorientiert Datenstruktur, d
 
 Anzumerken ist, dass mehrere Einstiegspunkte auf die Daten existieren und so eine gewisse Redundanz geschaffen wird. Diese Redundanz ist hilfreich, weil in IMVR mehrere Modi eben diese Einstiegspunkte benötigen. Aufgrund der gewählten Serialisierungsmethode entsteht jedoch kein grosser Speicher-Overhead.
 
-Die Serialisierung wird durch sogenannte Protocol Buffers \cite{wiki:protobufs} realisiert, wofür eine Open-Source Bibliothek namens \textit{protobuf-net} \footnote{\url{https://code.google.com/p/protobuf-net/}} existiert. Protocol Buffers ist ein binäres Datenformat, welches von Google Inc. entwickelt wurde und bekannt ist für seine Kompaktheit und Simplizität. Gewählt wurde es, weil die herkömmliche Serialisierung mit .NETs \code{BinaryFormatter} zum Teil zu Problemen mit Unity führen kann.
+Die Serialisierung wird durch sogenannte Protocol Buffers \cite{wiki:protobufs} realisiert, wofür eine Open-Source Bibliothek namens \textit{protobuf-net} \footnote{\url{https://code.google.com/p/protobuf-net/}} existiert. Protocol Buffers ist ein binäres Datenformat, welches von Google Inc. entwickelt wurde und bekannt ist für seine Kompaktheit und Einfachheit. Gewählt wurde es, weil die herkömmliche Serialisierung mit .NETs \code{BinaryFormatter} zum Teil zu Problemen mit Unity führte.
 
 \section{Herausforderungen}
 \label{sec:indexer:herausforderungen}
 
-Während der Entwicklung des Indexers kristallisierten sich diverse Schwierigkeiten heraus, welche grundsätzlich in drei Kategorien einordnen lassen: organisatorische und datentechnische.
+Während der Entwicklung des Indexers kristallisierten sich diverse Schwierigkeiten heraus, welche sich grundsätzlich in drei Kategorien einordnen lassen: organisatorische und datentechnische.
 
 Die Organisation, oder Planung, war deshalb problematisch, weil einer der wichtigsten Faktoren für den Aufbau des Indexers die Vielfalt der Datentypen war. Da anfangs geplant war, Musik \textit{und} Bilder zu indexieren und darzustellen, machte eine parallele Verarbeitung der Daten Sinn und war auch notwendig.
 

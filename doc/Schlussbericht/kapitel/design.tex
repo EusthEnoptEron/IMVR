@@ -1,11 +1,11 @@
 \chapter{Design}
 
-Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits in einem Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden.
+Bei der Entwicklung wurden diverse Design-Entscheidungen gefällt, welche zum Teil bereits im Vorprojekt analysiert wurden. Diese sollen in diesem Kapitel aufgelistet und erläutert werden.
 
 \section{Systemübersicht}
 \label{sec:sysoverview}
 
-Das Zusammenspiel der Oculus Rift und der Leap Motion ist auf den ersten Blick vielleicht nicht so offensichtlich. Erstere wird aufgesetzt und verdeckt die Sicht, letztere wird auf den Tisch gestellt und erkennt Hände über sich.
+Das Zusammenspiel der Oculus Rift und der Leap Motion ist auf den ersten Blick nicht ganz offensichtlich. Erstere wird aufgesetzt und verdeckt die Sicht, letztere wird auf den Schreibtisch gestellt und erkennt Hände über sich.
 
 \begin{figure}[h]
 	\centering
@@ -15,7 +15,7 @@ Das Zusammenspiel der Oculus Rift und der Leap Motion ist auf den ersten Blick v
 	\label{fig:rift_example}
 \end{figure}
 
-Zusammen mit der Oculus Rift kann die Leap Motion jedoch auch anders angewandt werden. Die Herstellerfirma selbst hat einen Aufsatz entwickelt (Abbildung \ref{fig:leap_motion_aufsatz}), der an das HMD \textit{aufgeklebt} werden kann, und somit den Bereich vor dem Anwender erfasst.
+Zusammen mit der Oculus Rift kann die Leap Motion jedoch auch anders angewandt werden. Die Herstellerfirma selbst hat einen Aufsatz entwickelt (Abbildung \ref{fig:leap_motion_aufsatz}), der auf das HMD geklebt werden kann und somit den frontalen Bereich vor dem Anwender erfasst.
 
 \begin{figure}[h]
 	\centering
@@ -27,7 +27,7 @@ Zusammen mit der Oculus Rift kann die Leap Motion jedoch auch anders angewandt w
 
 Der Vorteil bei dieser Verlinkung ist, dass beide Geräte den gleichen Ursprungspunkt und die gleiche Ausrichtung haben. Es ist deshalb ohne Weiteres möglich, die zwei Koordinatensystem aufeinander abzugleichen.
 
-Abbildung \ref{fig:systemuebersicht} verdeutlicht, wie die Geräte schliesslich an das System angebunden werden. Ebenfalls erkennbar ist, dass beide per USB mit dem Host-Computer verbunden sind und Daten an entsprechende Services schicken, die auf dem Computer installiert und aktiv sind. Diese Services werden durch die in der Applikation verwendeten Plugins angesteuert, und schliesslich zur Darstellung und Steuern in IMVR verwendet.
+Abbildung \ref{fig:systemuebersicht} verdeutlicht, wie die Geräte schliesslich an das System angebunden werden. Ebenfalls erkennbar ist, dass beide per USB mit dem Host-Computer verbunden sind und Daten an entsprechende Services schicken, die auf dem Computer installiert und aktiv sind. Diese Services werden durch die in der Applikation verwendeten Plugins angesteuert, und schliesslich zur Darstellung und Steuerung in IMVR verwendet.
 
 \afterpage {
 	\begin{figure}[t!]
@@ -40,68 +40,86 @@ Abbildung \ref{fig:systemuebersicht} verdeutlicht, wie die Geräte schliesslich a
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{p{0.1\linewidth} p{0.3\linewidth} p{0.5\linewidth}}
+			\toprule
 			\textbf{Nr.} & \textbf{Komponente} & \textbf{Beschreibung} \\ \midrule
 			1. & Oculus Rift DK2 & \gls{hmd} für den grafischen Output. \\
 			2. & Leap Motion & Gerät, welches Hände erkennt und ihre Koordinaten an den Computer sendet. \\
 			3. & Oculus Rift Kamera & Kamera, welche seit dem DK2 für das örtliche Tracking zuständig ist. \\
 			4. & Computer & Host-System für IMVR. \\
 			5. & Benutzer & Benutzer, der die Oculus Rift trägt und mit seinen Händen das Programm steuert. \\
+			\bottomrule
 		\end{tabular}
 	\end{table}
 }
 
 \clearpage
+\pagebreak
 
 \section{Systemarchitektur}
 
-Die Komponenten sind erklärt und es sollte nun klar sein, wie die Hardware miteinander verknüpft ist. Das Kernproblem bzw. die Aufgabe dreht sich jedoch um die \textit{Software} dazu. Diese soll ab jetzt in den Vordergrund treten.
+Die Komponenten sind erklärt und es sollte nun klar sein, wie die Hardware miteinander verknüpft ist. Das Kernproblem bzw. die Aufgabe dreht sich jedoch um die \textit{Software} dazu. Diese soll an dieser Stelle in den Vordergrund treten.
 
-\subsection{Grober Ablauf}
-
-Wie in der Aufgabenstellung erwähnt, besteht das Projekt aus zwei Teilen: einem Teil zur Indexierung und einem interaktiven Teil. Diese Gliederung zieht sich durch das ganze Design der Applikation durch. So wird beispielsweise die Indexierung in einem komplett abgespaltenen Projekt durchgeführt, und gilt somit als eigenes Programm.
-
-In Abbildung \ref{fig:flow} lässt sich diese Unterteilung gut erkennen. Der Anwender startet zwei verschiedene Applikationen, die über eine zentrale Datenbank miteinander kommunizieren. Um jedoch nicht zu weit vorzugreifen, folgt zuerst eine Erklärung der einzelnen Schritte.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1\linewidth]{diagramme/flow}
-\caption{Grober Überblick des Programmablaufs}
-\label{fig:flow}
-\end{figure}
-
-Man erkennt wie der Benutzer zuerst ausserhalb der Unity-Applikation den Indexer startet und durchlaufen lässt. Dieser durchläuft alle Ordner, die er in der Datei \textit{folders.txt} findet und schreibt diese in die Datenbank. Im nächsten Schritt werden aus diversen Quellen weitere Metadaten zusammengetragen.
-
-Was ebenfalls auf der Grafik zu sehen ist, sind die Atlasse. Um Ressourcen zu sparen (siehe Kapitel \ref{subsec:resources}), werden alle Bilder in sogenannten Atlassen, sprich Bildersammlungen, gespeichert. Die Bilder, von denen hier die Rede ist, sind Fotos der Artisten und das Artwork der indexierten Alben. 
-
-Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er benutzen will und je nach Wahl entsprechende weitere Optionen.
-
-\subsection{Ablauf von IMVR}
-
-Abbildung \ref{fig:IMVR-Flow} liefert einen genaueren Einblick in den Programmfluss von IMVR. Im Zentrum steht ganz klar die Wahl des Modus, welche grundsätzlich zu jedem Zeitpunkt der Applikation getätigt werden kann. Auch beendet wird die Applikation bei dieser Verzweigung. 
+\subsection{Ablauf}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\linewidth]{diagramme/IMVR-Flow}
-	\caption{Linearer Ablauf von IMVR}
-	\label{fig:IMVR-Flow}
+	\includegraphics[width=0.8\linewidth]{diagramme/flow}
+	\caption{Überblick über den Programmablaufs}
+	\label{fig:flow}
 \end{figure}
+
+Wie in der Aufgabenstellung erwähnt, besteht das Projekt aus zwei Teilen: einem Teil zur Indexierung und einem interaktiven Teil. Diese Gliederung zieht sich durch das ganze Design der Applikation durch. So wird beispielsweise die Indexierung in einem komplett abgespaltenen Bereich durchgeführt, und gilt somit als eigenes Programm.
+
+In Abbildung \ref{fig:flow} lässt sich diese Unterteilung gut erkennen. Der Anwender startet zwei verschiedene Applikationen, die über eine zentrale Datenbank miteinander kommunizieren. Um jedoch nicht zu weit vorzugreifen, folgt zuerst eine Erklärung der einzelnen Schritte.
+
+Man erkennt wie der Benutzer zuerst ausserhalb der Unity-Applikation den Indexer startet und durchlaufen lässt. Dieser durchläuft alle Ordner, die er in der Datei \textit{library.conf} findet und schreibt diese in die Datenbank. Im nächsten Schritt werden aus diversen Quellen weitere Metadaten zusammengetragen.
+
+Was ebenfalls auf der Grafik zu sehen ist, sind die Atlasse. Um Ressourcen zu sparen (siehe Kapitel \ref{subsec:resources}), werden alle Bilder in sogenannten Atlassen, sprich Bildersammlungen, gespeichert. Damit sind Fotos der Artisten und das Artwork der indexierten Alben gemeint. 
+
+Sobald die Datenbank im ersten Schritt erstellt wurde, setzt der Anwender, wie in Kapitel \ref{sec:sysoverview} beschrieben, seine Oculus Rift mit dem Leap Motion Aufsatz auf und startet IMVR. Er erhält dann die Auswahl, welchen Modus er benutzen will und je nach Wahl entsprechende weitere Optionen.
+
+\subsection{Ordnerstruktur}
+
+Um besser zu verstehen, wo die einzelnen Komponenten platziert sind, soll an dieser Stelle kurz die Ordnerstruktur erläutert werden.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/file_structure}
+	\caption{Ordnerstruktur auf einen Blick}
+	\label{fig:folder}
+\end{figure}
+
+Alle Quellcode-Dateien sind im Ordner \textit{src} abgelegt. Die Projektdateien für die Applikation (IMVR) und den Indexer sind jedoch voneinander getrennt und verfügen jeweils über ihre eigene Struktur.
+
+Der Unity-Teil trennt externe Scripts und Plugins explizit von eigens geschriebenen. 
+
+Der Indexer befindet sich im Ordner bzw. in der Solution \textit{AuxiliaryTools}, weil er eine unterstützende Funktion hat. Am gleichen Ort findet sich auch ein SpeechServer, der im Vorprojekt entwickelt wurde und in einem weiteren Schritt für die Implementierung einer ergänzenden Sprachfunktion in IMVR dienen könnte.
+
+\clearpage
+
+%\subsection{Ablauf von IMVR}
+%
+%Abbildung \ref{fig:IMVR-Flow} liefert einen genaueren Einblick in den Programmfluss von IMVR. Im Zentrum steht ganz klar die Wahl des Modus, welche grundsätzlich zu jedem Zeitpunkt der Applikation getätigt werden kann. Auch beendet wird die Applikation bei dieser Verzweigung. 
+%
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[width=0.8\linewidth]{diagramme/IMVR-Flow}
+%	\caption{Linearer Ablauf von IMVR}
+%	\label{fig:IMVR-Flow}
+%\end{figure}
 
 
 \section{Systemdesign}
 
-Da der Programmfluss nun klar geworden ist, bedarf es einer genaueren Erklärung der einzelnen Komponenten im System. Aufgrund der Brückenfunktion und deshalb der globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
-
+Da der Programmfluss nun klar geworden ist, bedarf es einer genaueren Erklärung der einzelnen Komponenten im System. Aufgrund der Brückenfunktion und der somit globalen Relevanz, wird zuerst ein Blick auf die Klassenstruktur der Datenbank geworfen. Danach wird der Aufbau des Indexers untersucht, und zuletzt schliesslich die eigentliche Applikation.
 
 Zu beachten: Die meisten Klassen in den folgenden UML-Diagrammen sind Unity-Komponenten und erben somit von der Klasse  \code{MonoBehaviour}. Um die Diagramme lesbar zu halten, wurde diese Beziehung oft ignoriert. Weiterhin wurden C\#-Properties, wo zusätzliche Logik vorhanden ist, als ``get\_Property'' und ``set\_Property'' ausgeschrieben\footnote{Compiler-intern werden Properties als Methoden mit dieser Namensgebung dargestellt.}.
 
-\subsection{Commons (Datenbank)}
-\label{sec:design_commons}
-Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch eine weitere Komponente entwickelt, welche als Datenbank agiert und über eine entsprechende Datenstruktur verfügt. Diese ist in Abbildung \ref{uml:IMVR.Commons} ersichtlich.
-
 \afterpage {
+	\subsection{Commons (Datenbank)}
+	\label{sec:design_commons}
 	
-	
-	\begin{figure}[t!]
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=1\linewidth]{diagramme/IMVR.Commons-UML.pdf}
 		\caption{Klassendiagramm für die Klassen im IMVR.Commons Package}
@@ -111,15 +129,15 @@ Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch eine wei
 	\begin{table}[H]
 		\centering
 		\begin{tabularx}{\textwidth}{ l X }
-			\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+			\toprule
 			\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
 			Artist & Klasse für einen einzelnen Artisten mit Biografie und ein paar Kennwerten sowie Koordinaten und Aktivitätsdaten. \\\hline
 			Album & Jeder Artist hat ein oder mehrere Alben, an denen er beteiligt ist. Das Album selbst hat nur ein Name und ein Jahr und kann zu mehreren Künstlern gehören.\\\hline
 			Song & Repräsentiert einen Song und gehört genau einem Künstler. Jeder Song hat einen Pfad und ist somit von einer reellen Datei gestützt. Ein Song erhält zusätzlich verschieden Metadaten, die von Services heruntergeladen werden. \\\hline
 			TermItem & Ein Begriff (z.B. Genre), der einem Künstler mit einem Gewicht und einer Frequenz zugeordnet wird. Könnte noch weiter normalisiert werden, wurde aber der Einfachheit halber so gelassen.\\\hline
 			AtlasIndex & Repräsentiert eine Position bzw. ein Bild in einem Atlas. Mit der Position ist gemeint, an welcher Stelle das Bild im Atlas erscheint.\\\hline
-			IMDB\footnote{Es besteht keinerlei Verbindungen mit der Internet Movie Database.} & Zentraler Zugangsknoten auf die Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
-			\noalign{\smallskip} \hline \noalign{\smallskip}
+			IMDB\footnote{Es besteht keinerlei Verbindung zur Internet Movie Database.} & Zentraler Zugangsknoten auf die Daten. Hält Referenzen auf die Artisten, Songs und Atlasse. \\
+			\bottomrule
 		\end{tabularx}
 		\caption{Erklärung der wichtigsten allgemeinen Klassen}
 		\label{tab:commons}
@@ -127,6 +145,8 @@ Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch eine wei
 }
 
 \clearpage
+
+Um Daten zwischen den zwei Programmteilen zu transportieren, wurde noch eine weitere Komponente entwickelt, welche als Datenbank agiert und über eine entsprechende Datenstruktur verfügt. Diese ist in Abbildung \ref{uml:IMVR.Commons} ersichtlich.
 
 Es handelt sich um ein bewusst sehr minimalistisch gehaltenes Schema, um eine Musiksammlung darzustellen. Zu den Problemen, die nicht abgedeckt werden gehören zum Beispiel:
 
@@ -136,14 +156,14 @@ Es handelt sich um ein bewusst sehr minimalistisch gehaltenes Schema, um eine Mu
 	\item Mehrere Aktivitätsperioden eines Künstlers können nicht abgebildet werden
 \end{itemize}
 
-Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, und das liegt ausserhalb des Bereichs dieses Projektes.
+Es gäbe keine Grenzen, wenn man eine perfekte Struktur erreichen wollte, aber das liegt ausserhalb der angestrebten Funktionalität dieses Projektes.
 
 Die Metadaten, die in der Klasse \code{Song} erkennbar sind, stammen aus der The Echo Nest API und sind wie folgt zu verstehen:
 
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Name} & \textbf{Wertebereich} & \textbf{Bedeutung} \\ \midrule
 		Danceability & $0..1$ & Der Wert beschreibt, ``wie gut es sich zu dem Song tanzen lässt''. Technisch gesehen, wird das Tempo, die rhythmische Stabilität und die allgemeine Regularität in Betracht für den Wert gezogen.\\\hline
 		Energy & 0..1 & Beschreibt, wie energievoll ein Song ist bzw. wie schnell, laut und lärmig er sich anhört.\\\hline
@@ -151,13 +171,12 @@ Die Metadaten, die in der Klasse \code{Song} erkennbar sind, stammen aus der The
 		Liveness & $0..1$ & Erkennt, ob Zuhörer in einem Lied hörbar sind. Live-Aufnahmen machen sich mit einem Wert von über $0.8$ erkennbar.\\\hline
 		Acousticness & $0..1$ & Gibt an, wie hoch die Wahrscheinlichkeit ist, dass ein Song ausschliesslich mit akustischen Mitteln - also ohne Synthesizer, Verstärker und nachbearbeiteten Gesang - aufgenommen wurde.\\\hline
 		Valence & $0..1$ & Beschreibt die ungefähre Stimmung eines Liedes. Eine Audiodatei mit einem hohen Wert macht einen fröhlicheren Eindruck, als eine Datei mit einem tiefen Wert.\\\hline
-		Tempo & $\mathbb R_{\ge 0}$ & Beschreibt die \gls{bpm} eines Liedes.\\\hline
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		Tempo & $\mathbb R_{\ge 0}$ & Beschreibt die \gls{bpm} eines Liedes.\\
+		\bottomrule
 	\end{tabularx}
 	\caption{Erläuterung der Metadaten}
 	\label{tab:metagroups}
 \end{table}
-
 
 \begin{landscape}
 	\subsection{Indexer}
@@ -176,39 +195,32 @@ Alle Nodes im System führen eine Aufgabe auf einem oder mehreren Threads durch. 
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		Options & Singleton-Klasse, welche mit den Command-Args gebildet wird und die Konfigurationen beinhält.\\
-		IProducer & Ein Produzent von Daten ($\rightarrow$ Output-Knoten)\\
-		IConsumer & Ein Konsument von Daten ($\rightarrow$ Input-Knoten)\\
-		AbstractWorker & Jede Node erbt von dieser Klasse. Sie sorgt dafür, dass die Nodes auf eine einheitliche Weise initialisiert, durchgeführt und aufgeräumt werden können.\\
-		ConsumerNode & Hilfsklasse, welche IConsumer implementiert und mithilfe einer Methode \code{ProcessItem} den Einsatz erleichtert.\\
-		DualNode & Hat die gleiche Funktion wie eine \code{ConsumerNode}, aber implementiert zusätzlich \code{IProducer} und bietet mit \code{Publish} ebenfalls eine Hilfsmethode an.\\
-		EchoNestNode & Holt Daten aus der The Echo Nest API und schreibt diese in die Datenbank.\\
-		LastFmNode & Holt Daten aus der Last.fm API und schreibt diese in die Datenbank. \\
-		MusicIndexer & Konsumiert Files und extrahiert daraus Artisten, Alben und Songs. \\
+		Options & Singleton-Klasse, welche mit den Command-Args gebildet wird und die Konfigurationen beinhält.\\ \midrule
+		IProducer & Ein Produzent von Daten ($\rightarrow$ Output-Knoten)\\ \midrule
+		IConsumer & Ein Konsument von Daten ($\rightarrow$ Input-Knoten)\\ \midrule
+		AbstractWorker & Jede Node erbt von dieser Klasse. Sie sorgt dafür, dass die Nodes auf eine einheitliche Weise initialisiert, durchgeführt und aufgeräumt werden können.\\ \midrule
+		ConsumerNode & Hilfsklasse, welche IConsumer implementiert und mithilfe einer Methode \code{ProcessItem} den Einsatz erleichtert.\\ \midrule
+		DualNode & Hat die gleiche Funktion wie eine \code{ConsumerNode}, aber implementiert zusätzlich \code{IProducer} und bietet mit \code{Publish} ebenfalls eine Hilfsmethode an.\\ \midrule
+		EchoNestNode & Holt Daten aus der The Echo Nest API und schreibt diese in die Datenbank.\\ \midrule
+		LastFmNode & Holt Daten aus der Last.fm API und schreibt diese in die Datenbank. \\ \midrule
+		MusicIndexer & Konsumiert Files und extrahiert daraus Artisten, Alben und Songs. \\ \midrule
 		FileWalker & Durchläuft die Medienordner und findet Musik und Bilder. \\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Klassen des Indexers}
 	\label{tab:IMVR.Indexer}
 \end{table}
 
+\clearpage
 \subsection{IMVR}
 
-Nun, da das Design des Indexers festgelegt ist, bedarf auch die Hauptapplikation einer Erklärung. Um das Design besser verdaulich zu machen, wurde hierbei das Schema in verschiedene, logische Teilbereiche gegliedert, die auch den Namespaces des Projekts entsprechen.
+Die Hauptapplikation bedarf ebenfalls einer Erklärung. Um das Design besser verdaulich zu machen, wurde hierbei das Schema in verschiedene, logische Teilbereiche gegliedert, die auch den Namespaces des Projekts entsprechen.
 
-Es wird empfohlen, diese Schemas zusammen mit den Erklärungen in Kapitel \ref{chap:implementation_imvr} zu verwenden.
+Es wird empfohlen, diese Schemas zusammen mit den Erklärungen in Kapitel \ref{chap:implementation_imvr} zu verwenden, da diese eng miteinander verknüpft sind.
 
-\begin{landscape}
-	\subsubsection{Interface}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\linewidth]{diagramme/IMVR.Interface-UML}
-		\caption{Klassendiagramm des Interfaces der Applikation (View-Behavior)}
-		\label{uml:IMVR.Interface}
-	\end{figure}
-\end{landscape}
+\subsubsection{Interface}
 
 Das Interface von IMVR basiert auf sogenannten \textit{Views}. Zu jedem Zeitpunkt der Applikation ist irgendeine View aktiv, die verantwortlich für die momentane Darstellung der Szene ist.
 
@@ -216,22 +228,31 @@ Die Views gehören und werden kontrolliert vom momentan aktiven \textit{Mode}, wo
 
 Ein weiteres relevantes Detail ist das \textit{Theme}, welches den Modi zugeordnet wird. Dieses Theme enthält eine Anzahl von Farben, die später von anderen GUI-Elementen verwendet werden und für eine leichtere Unterscheidung des momentanen Modus sorgen sollen.
 
+\begin{landscape}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.75\linewidth]{diagramme/IMVR.Interface-UML}
+		\caption{Klassendiagramm des Interfaces der Applikation (View-Behavior)}
+		\label{uml:IMVR.Interface}
+	\end{figure}
+\end{landscape}
+
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		ModeController & Führt Buch über den momentan aktiven Modus.\\
-		Mode & Verfügt über einen eigenen Stack von Views, durch die der Anwender navigiert.\\
-		BrowseMode & Modus, in dem der Anwender gezielt durch seine Musiksammlung navigiert, indem ihm eine Übersicht aller Künstler angezeigt wird. Beginnt mit der View \code{ArtistOverView}.\\
-		ListenMode & Modus, in dem der Anwender nur die Art der Musik angibt, die er hören will. Die Applikation übernimmt den Rest. Beginnt mit der View \code{SelectorView}.\\
-		Theme & Eine Sammlung von Farben, die einem Modus zugeordnet wird.\\
-		View & Eine ``Ansicht'', die aktiviert und deaktiviert sowie nach vorne und nach hinten geschoben werden kann.\\
-		ArtistOverView & Stellt einen gruppierten Zylinder mit den Künstlern in der Musiksammlung dar. \\
-		ArtistView & Stellt einen einzelnen Artisten und seine Alben dar. \\
-		SelectorView & Stellt ein Auswahlwerkzeug dar, mit dem der Anwender eine Musikart selektieren kann.\\
+		ModeController & Führt Buch über den momentan aktiven Modus.\\ \midrule
+		Mode & Verfügt über einen eigenen Stack von Views, durch die der Anwender navigiert.\\ \midrule
+		BrowseMode & Modus, in dem der Anwender gezielt durch seine Musiksammlung navigiert, indem ihm eine Übersicht aller Künstler angezeigt wird. Beginnt mit der View \code{ArtistOverView}.\\ \midrule
+		ListenMode & Modus, in dem der Anwender nur die Art der Musik angibt, die er hören will. Die Applikation übernimmt den Rest. Beginnt mit der View \code{SelectorView}.\\ \midrule
+		Theme & Eine Sammlung von Farben, die einem Modus zugeordnet wird.\\ \midrule
+		View & Eine ``Ansicht'', die aktiviert und deaktiviert sowie nach vorne und nach hinten geschoben werden kann.\\ \midrule
+		ArtistOverView & Stellt einen gruppierten Zylinder mit den Künstlern in der Musiksammlung dar. \\ \midrule
+		ArtistView & Stellt einen einzelnen Artisten und seine Alben dar. \\ \midrule
+		SelectorView & Stellt ein Auswahlwerkzeug dar, mit dem der Anwender eine Musikart selektieren kann.\\ \midrule
 		ListenView & Verwaltet die visuellen Effekte beim Hören von Musik im Listen-Mode.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Interface-Klassen}
 	\label{tab:IMVR.Interface}
@@ -256,18 +277,18 @@ In einem gewissen Stadium des Projekts wurde jedoch der Music Arm konzipiert und
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		RingMenu & Die zentrale Klasse des Music Arms und gleichzeitig auch die Root-Ebene des Menüs. Existiert nur einmal, verwaltet, welche Stufe momentan angezeigt wird, und sorgt für das Anzeigen und Verstecken des Menüs.\\
-		RingMenuItem & Ein einzelner Menüeintrag im Menü. Platziert sich m den entsprechenden Finger wenn sichtbar und hat einen Event-Handler für Click-Events (in diesem Fall Auswahl des Menüs).\\
-		IRingMenu & Interface für Menüs mit Einträgen.\\
-		RingSubMenu & Implementiert \code{IRingMenu} und funktioniert wie RingMenu, nur ist es selbst auch ein Eintrag in einem anderen \code{IRingMenu}.\\
-		RingMenuBuilder & Hilft beim dynamischen Erstellen von neuen Menüeinträgen.\\
-		ArmWear & Beschreibt eine Komponente, die am Arm ``getragen'' werden kann.\\
-		JukeboxView & Zeigt das momentane Lied in der Jukebox an und wird auf der Frontseite des Arms getragen.\\
-		PlaylistView & Zeigt die momentan Playlist an und befindet sich auf der Rückseite des Arms.\\
+		RingMenu & Die zentrale Klasse des Music Arms und gleichzeitig auch die Root-Ebene des Menüs. Existiert nur einmal, verwaltet, welche Stufe momentan angezeigt wird, und sorgt für das Anzeigen und Verstecken des Menüs.\\ \midrule
+		RingMenuItem & Ein einzelner Menüeintrag im Menü. Platziert sich m den entsprechenden Finger wenn sichtbar und hat einen Event-Handler für Click-Events (in diesem Fall Auswahl des Menüs).\\ \midrule
+		IRingMenu & Interface für Menüs mit Einträgen.\\ \midrule
+		RingSubMenu & Implementiert \code{IRingMenu} und funktioniert wie RingMenu, nur ist es selbst auch ein Eintrag in einem anderen \code{IRingMenu}.\\ \midrule
+		RingMenuBuilder & Hilft beim dynamischen Erstellen von neuen Menüeinträgen.\\ \midrule
+		ArmWear & Beschreibt eine Komponente, die am Arm ``getragen'' werden kann.\\ \midrule
+		JukeboxView & Zeigt das momentane Lied in der Jukebox an und wird auf der Frontseite des Arms getragen.\\ \midrule
+		PlaylistView & Zeigt die momentan Playlist an und befindet sich auf der Rückseite des Arms.\\ \midrule
 		Selector & Hilft Komponenten, die im Ring-Menü eine Songselektion machen wollen, dabei.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Music-Arm-Klassen}
 	\label{tab:IMVR.Interface.MusicArm}
@@ -288,12 +309,12 @@ Das Ring-Panel befindet sich unter den Füssen des Anwenders und wird mit dem Bli
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		RingActivator & Abstrakte Klasse, die visuell von einem sich füllenden Ring-Mesh dargestellt wird, und beim anhaltenden Blick aktiviert wird.\\
-		ModeActivator & Eine Unterklasse des \code{RingActivator}s, die nur dazu zuständig ist, einen Modus zu aktivieren (siehe \textit{IMVR.Interface}). \\
+		RingActivator & Abstrakte Klasse, die visuell von einem sich füllenden Ring-Mesh dargestellt wird, und beim anhaltenden Blick aktiviert wird.\\ \midrule
+		ModeActivator & Eine Unterklasse des \code{RingActivator}s, die nur dazu zuständig ist, einen Modus zu aktivieren (siehe \textit{IMVR.Interface}). \\ \midrule
 		ExitActivator & Ein weiterer Activator, der beim Aktivieren die Applikation beendet.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der Klassen des Ring-Panels}
 	\label{tab:IMVR.Interface.RingPanel}
@@ -320,16 +341,16 @@ Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die 
 \begin{table}[h]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		CylinderLayout & Komponente für die allgemeine Darstellung von GameObjects in einem Zylinder-Layout. Kann per \code{CylinderInteractor} rotiert werden und verfügt über einen optimierten Raycaster.\\
-		GroupedCylinderLayout & Ein spezielles \code{CylinderLayout}, welches die Elemente gruppiert mit jeweils einem Label darstellt.\\
-		SimpleGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf normale GameObjects spezialisiert ist.\\
-		ListGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf Listen von Canvas-GameObjects spezialisiert ist.\\
-		CylinderInteractor & Kümmert sich um die User-Interaktion mit dem Layout. Hilft beim Rotieren und vertikalen Scrollen. \\
-		CylinderRaycaster & Sorgt für ein effizientes Raycasting der Elemente im Layout. Wird wichtig, wenn über 100 interaktive Elemente im Zylinder verteilt sind.\\
+		CylinderLayout & Komponente für die allgemeine Darstellung von GameObjects in einem Zylinder-Layout. Kann per \code{CylinderInteractor} rotiert werden und verfügt über einen optimierten Raycaster.\\ \midrule
+		GroupedCylinderLayout & Ein spezielles \code{CylinderLayout}, welches die Elemente gruppiert mit jeweils einem Label darstellt.\\ \midrule
+		SimpleGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf normale GameObjects spezialisiert ist.\\ \midrule
+		ListGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf Listen von Canvas-GameObjects spezialisiert ist.\\ \midrule
+		CylinderInteractor & Kümmert sich um die User-Interaktion mit dem Layout. Hilft beim Rotieren und vertikalen Scrollen. \\ \midrule
+		CylinderRaycaster & Sorgt für ein effizientes Raycasting der Elemente im Layout. Wird wichtig, wenn über 100 interaktive Elemente im Zylinder verteilt sind.\\ \midrule
 		LazyList & Hilft bei der effizienten Darstellung der Playlist (siehe Kapitel \ref{subsec:performance}).\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Klassen von IMVR.Data}
 	\label{tab:IMVR.Interface.Data}
@@ -342,17 +363,17 @@ Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die 
 	\label{uml:IMVR.Data.Image}
 \end{figure}
 
-Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Klasse, die auf einer hohen Ebene für das einfache Laden von Atlassen aus IMVR.Commons sorgt, eine intelligente Klasse zum Laden von Bildern und eine tiefe Klasse, welche direkt mit den Daten der Atlasse arbeitet.
+Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Klasse, die auf einer hohen Schicht für das einfache Laden von Atlassen aus IMVR.Commons sorgt, eine intelligente Klasse zum Laden von Bildern und eine tiefe Klasse, welche direkt mit den Daten der Atlasse arbeitet.
 
 \begin{table}[h]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		AtlasHelper & Hilft beim Laden von Atlassen aus der Datenbank, indem er logische Methoden fürs Laden liefert. Gibt zudem Auskunft über die aktiven Ladevorgänge.\\
-		DeferredLoader & Lädt und verwaltet Atlasse vom Filesystem, und liefert Texturen und Sprites für den Zugriff darauf.\\
+		AtlasHelper & Hilft beim Laden von Atlassen aus der Datenbank, indem er logische Methoden fürs Laden liefert. Gibt zudem Auskunft über die aktiven Ladevorgänge.\\ \midrule
+		DeferredLoader & Lädt und verwaltet Atlasse vom Filesystem, und liefert Texturen und Sprites für den Zugriff darauf.\\ \midrule
 		TextureAtlas & Ein einzelner Texturenatlas auf dem Filesystem mit einer bestimmten Kachelgrösse.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der Klassen von IMVR.Data.Image}
 	\label{tab:IMVR.Interface.Data.Image}
@@ -365,20 +386,20 @@ Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Kl
 	\label{uml:IMVR.Data.Audio}
 \end{figure}
 
-Im Namespace für die Musik gibt es zwei Arten von Klassen: die Jukebox und die Klassen zur Darstellung von Musikdaten.
+Im Namespace für die Musik gibt es zwei Arten von Klassen: die Klassen, welche um die Jukebox herum gebaut sind, und die Klassen, welche zur Darstellung von Musikdaten dienen.
 
 \begin{table}[h]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		Jukebox & Kontrolliert die momentane Wiedergabe und reagiert auf Events der Playlist.\\
-		Playlist & Eine Liste von Songs, die für die Wiedergabe vorgesehen sind. Hat eine momentane Selektion, die geändert werden kann. Sender Events beim Ändern der Liste bzw. der momentanen Selektion.\\
-		SongItem & Zeigt ein Lied an. \\
-		PlaylistSongItem & Zeigt ein Lied an, optimiert für die Anzeige in \code{PlaylistView}.\\
-		SongMetaChart & Steuert die FX-Klasse \code{PointChart} um damit Songmetriken dreidimensional darzustellen (siehe Kapitel \ref{subsec:pointchart}) \\
+		Jukebox & Kontrolliert die momentane Wiedergabe und reagiert auf Events der Playlist.\\ \midrule
+		Playlist & Eine Liste von Songs, die für die Wiedergabe vorgesehen sind. Hat eine momentane Selektion, die geändert werden kann. Sender Events beim Ändern der Liste bzw. der momentanen Selektion.\\ \midrule
+		SongItem & Zeigt ein Lied an. \\ \midrule
+		PlaylistSongItem & Zeigt ein Lied an, optimiert für die Anzeige in \code{PlaylistView}.\\ \midrule
+		SongMetaChart & Steuert die FX-Klasse \code{PointChart} um damit Songmetriken dreidimensional darzustellen (siehe Kapitel \ref{subsec:pointchart}) \\ \midrule
 		SongSelection & Enthält eine Ansicht auf die Musikdaten, die durch Auswahlbereiche in verschiedenen MetaGroups eingeschränkt ist. Jede MetaGroup ist ein Kriterium mit einem Wert im Bereich $[0..1]$.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Klassen von IMVR.Data.Music}
 	\label{tab:IMVR.Interface.Data.Music}
@@ -400,16 +421,16 @@ Auch in diesem Namespace gibt es Klassen in leicht unterschiedlichen Anwendungss
 \begin{table}[H]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		VisualizationHelper & Steht im Mittelpunkt der Musik-Visualisierung. Verwaltet die Sample- und Spektrumdaten, die in Echtzeit aus der Musik gewonnen werden.\\
-		SpectrumBar & Ein Mesh, welches je nach Stärke des Signals in einem bestimmten Frequenzbereich, höher steigt bzw. tiefer sinkt.\\
-		RingVisualizer & Eine kreisförmige, kontinuierliche Linie, welche die Lautstärke eines Kanals (links oder rechts) darstellt.\\
-		BeatDetector & Klasse zur Erkennung von Beats in der wiedergegebenen Musik.\\
-		Pulsator & Komponente, welche ein Objekt im Takt der Musik pulsieren lässt.\\
-		WaveEmitter & Sendet im Takt der Musik Wellen in entsprechender Stärke aus (siehe Kapitel \ref{subsec:waves})\\
+		VisualizationHelper & Steht im Mittelpunkt der Musik-Visualisierung. Verwaltet die Sample- und Spektrumdaten, die in Echtzeit aus der Musik gewonnen werden.\\ \midrule
+		SpectrumBar & Ein Mesh, welches je nach Stärke des Signals in einem bestimmten Frequenzbereich, höher steigt bzw. tiefer sinkt.\\ \midrule
+		RingVisualizer & Eine kreisförmige, kontinuierliche Linie, welche die Lautstärke eines Kanals (links oder rechts) darstellt.\\ \midrule
+		BeatDetector & Klasse zur Erkennung von Beats in der wiedergegebenen Musik.\\ \midrule
+		Pulsator & Komponente, welche ein Objekt im Takt der Musik pulsieren lässt.\\ \midrule
+		WaveEmitter & Sendet im Takt der Musik Wellen in entsprechender Stärke aus (siehe Kapitel \ref{subsec:waves})\\ \midrule
 		ParticleSpitter & Wirft im Takt der Musik Partikel in die Szene.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der FX-Klassen, die sich mit der Musik-Visualisierung befassen}
 	\label{tab:IMVR.FX-Music}
@@ -424,17 +445,19 @@ Neben diesen Visualisierungsklassen gibt es auch Komponenten, die sich mit Effek
 	\label{uml:IMVR.FX}
 \end{figure}
 
+Diese haben eine allgemeine Funktion und dienen z.B. zur Visualisierung von Daten (Point-Chart) oder der Generierung von dynamischen Meshes.
+
 \begin{table}[h]
 	\centering
 	\begin{tabularx}{\textwidth}{ l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Klasse} & \textbf{Beschreibung} \\ \midrule
-		RingMesh & Ein zweidimensionales Mesh, welches einen beliebigen Kreisring darstellen kann (siehe Kapitel \ref{subsec:waves}).\\
-		FillableRing & Erweitert ein Ring-Mesh mit einer Füllung, die mit der Property \code{Fill} auf einen Wert im Bereich $[0..1]$ eingestellt werden kann.\\
-		PointChart & Stellt ein dreidimensionales Point-Chart dar, welches auf Partikel aufbaut (siehe Kapitel \ref{subsec:pointchart}).\\
-		HandParticleController & Kontrolliert die Positionen und Bewegungen der Partikel einer Handseite (siehe Kapitel \ref{subsec:handfx}). \\
+		RingMesh & Ein zweidimensionales Mesh, welches einen beliebigen Kreisring darstellen kann (siehe Kapitel \ref{subsec:waves}).\\ \midrule
+		FillableRing & Erweitert ein Ring-Mesh mit einer Füllung, die mit der Property \code{Fill} auf einen Wert im Bereich $[0..1]$ eingestellt werden kann.\\ \midrule
+		PointChart & Stellt ein dreidimensionales Point-Chart dar, welches auf Partikel aufbaut (siehe Kapitel \ref{subsec:pointchart}).\\ \midrule
+		HandParticleController & Kontrolliert die Positionen und Bewegungen der Partikel einer Handseite (siehe Kapitel \ref{subsec:handfx}). \\ \midrule
 		ParticleMapping & Mappt einen Partikel auf eine Kombination aus zwei Vertices.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Erklärung der allgemeinen FX-Klassen}
 	\label{tab:IMVR.FX-General}

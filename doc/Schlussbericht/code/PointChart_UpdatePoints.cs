@@ -1,7 +1,6 @@
 public void UpdatePoints()
 {
     float scale = transform.lossyScale.x;
-
     var particles = new ParticleSystem.Particle[points.Length];
     particleSystem.Emit(points.Length);
     particleSystem.GetParticles(particles);
@@ -12,7 +11,6 @@ public void UpdatePoints()
         particles[i].velocity = Vector3.zero;
         particles[i].position = (points[i] + pivotOffset) * scale;
         particles[i].color = new Color(points[i].x, points[i].y, points[i].z);
-        particles[i].angularVelocity = Random.RandomRange(-45f, 45f);
     }
     particleSystem.SetParticles(particles, particles.Length);
 }

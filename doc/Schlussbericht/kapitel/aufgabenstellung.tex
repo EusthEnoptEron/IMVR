@@ -2,11 +2,11 @@
 
 \section{Ausgangslage}
 
-Wie bereits erwÃ¤hnt, mangelt es in der Medienwelt nicht an Begeisterung fÃ¼r Virtual Reality. In Foren wird diskutiert, an Events wird demonstriert und tÃ¤glich finden neue Infos ihren Weg in die Ã–ffentlichkeit.
+Wie bereits erwähnt, mangelt es in der Medienwelt nicht an Begeisterung für Virtual Reality. In Foren wird diskutiert, an Events wird demonstriert und täglich finden neue Infos ihren Weg in die Öffentlichkeit.
 
-Ein wesentliches Problem ist allerdings die Benutzereingabe. GlÃ¼cklicherweise gibt es bereits zu einem erschwinglichen Preis eine MÃ¶glichkeit, die eigenen zwei HÃ¤nde zu verwenden und zu erkennen: die Leap Motion.
+Ein wesentliches Problem ist allerdings die Benutzereingabe. Glücklicherweise gibt es bereits zu einem erschwinglichen Preis eine Möglichkeit, die eigenen zwei Hände zu verwenden und zu erkennen: die Leap Motion.
 
-Sie ist zu einem Preis von \EUR{89.99} erhÃ¤ltlich \cite{leap} und ermÃ¶glicht eine rein visuelle Handerkennung ohne Handschuhe oder Ã¤hnlichen Zusatz.
+Sie ist zu einem Preis von \EUR{89.99} erhältlich \cite{leap} und ermöglicht eine rein visuelle Handerkennung ohne Handschuhe oder ähnlichen Zusatz.
 
 \begin{figure}[h]
 	\centering
@@ -20,79 +20,80 @@ Im Vorprojekt, das ebenfalls bereits zur Sprache kam, stellte sich aus, dass jed
 
 \begin{itemize}
 	\item Die Applikation darf nicht auf schnelle und genaue Eingabe des Benutzers basieren
-	\item Gesten mÃ¼ssen mit Bedacht des Sichtfeldes konzipiert werden
+	\item Gesten müssen mit Bedacht des Sichtfeldes konzipiert werden
 \end{itemize}
 
-Besonders der erste Punkt schliesst eine Anwendung der Leap Motion in einem Spiel aus. Bei einem Spiel wÃ¼rden die HÃ¤nde unausweichlich in den Vordergrund des Spielkonzeptes rÃ¼cken und eine essenzielle Rolle Ã¼bernehmen. Da allerdings die Handerkennung nicht zuverlÃ¤ssig ist, geschehen Fehler. Unbeabsichtigte Operationen passieren, der Spieler verliert, er ist frustriert und nach kurzer Zeit gibt er das Spiel auf.
+Besonders der erste Punkt schliesst eine Anwendung der Leap Motion in einem Spiel aus. Bei einem Spiel würden die Hände unausweichlich in den Vordergrund des Spielkonzeptes rücken und eine essenzielle Rolle übernehmen. Da allerdings die Handerkennung nicht zuverlässig ist, geschehen Fehler. Unbeabsichtigte Operationen passieren, der Spieler verliert, er ist frustriert und nach kurzer Zeit gibt er das Spiel auf.
 
-Der gewÃ¤hlte Ansatz ist jedoch ein anderer: Kein Spiel soll erstellt werden, sondern eine Applikation, die durch die HÃ¤nde gesteuert werden kann und dadurch einen speziellen Charme erhÃ¤lt. Es folgt die Zielformulierung.
+Der gewählte Ansatz ist jedoch ein anderer: Kein Spiel soll erstellt werden, sondern eine Applikation, die durch die Hände gesteuert werden kann und dadurch einen speziellen Charme erhält. Es folgt die Zielformulierung.
 
-\section{UrsprÃ¼ngliche Zielformulierung}
+\section{Ursprüngliche Zielformulierung}
 
-Es soll eine Applikation namens ``\gls{imvr}'' (Images & Music in Virtual Reality) entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bild- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusÃ¤tzliche ``Tiefe'', die durch den Einsatz eines stereoskopischen \gls{hmd} (Head-Mounted Display) entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
+Es soll eine Applikation namens ``\gls{imvr}'' (Images \& Music in Virtual Reality) entwickelt werden, welche Gebrauch von der Oculus Rift macht, um die Bild- und Musiksammlung des Anwenders ansprechend darzustellen, z.B. in Form eines 3D-Karussels. Die zusätzliche ``Tiefe'', die durch den Einsatz eines stereoskopischen \gls{hmd} (Head-Mounted Display) entsteht, soll dem Anwender helfen, sich in seiner Medienbibliothek schneller zurechtzufinden.
 
-ZusÃ¤tzlich dazu soll die Leap Motion dazu verwendet werden, um vollstÃ¤ndige Handfreiheit zu gewÃ¤hren: Der Anwender soll komplett ohne Maus und Tastatur imstande sein, sich durch seine Bilder zu navigieren.
+Zusätzlich dazu soll die Leap Motion dazu verwendet werden, um vollständige Handfreiheit zu gewähren: Der Anwender soll komplett ohne Maus und Tastatur imstande sein, sich durch seine Bilder zu navigieren.
 
 Kurz zusammengefasst muss die Applikation:
 
 \begin{itemize}
 	\item Die Bilder- und Musikbibliothek des Benutzers in stereoskopischem 3D darstellen.
-	\item Diese freihÃ¤ndig durchsuchbar machen mit Sortier- und evtl. Gruppierfunktion.
+	\item Diese freihändig durchsuchbar machen mit Sortier- und evtl. Gruppierfunktion.
 	\item Die Bilder betrachtbar und die Musik abspielbar machen.
 	\item Metainformationen darstellen (z.B. in Form von Diagrammen).
 \end{itemize}
 
-ZusÃ¤tzlich zur Applikation selbst soll noch ein zusÃ¤tzliches Tool entwickelt werden, welches im Voraus die Dateien auf dem Host-System indexiert und fÃ¼r die visuelle Applikation bereitstellt.
+Zusätzlich zur Applikation selbst soll noch ein zusätzliches Tool entwickelt werden, welches im Voraus die Dateien auf dem Host-System indexiert und für die visuelle Applikation bereitstellt.
 
-\section{Ã„nderungen an der Zielformulierung}
+\section{Änderungen an der Zielformulierung}
 
-Aufgrund der begrenzten Zeit und eines stÃ¤rkeren Interesse in die Darstellung von Musik, wurde die Zielformulierung wÃ¤hrend des Projekts leicht abgeÃ¤ndert:
+Aufgrund der begrenzten Zeit und eines stärkeren Interesse in die Darstellung von Musik, wurde die Zielformulierung während des Projekts leicht abgeändert:
 
 \begin{itemize}
-	\item Die Bilderbibliothek fÃ¤llt weg
-	\item Die Sortier- und Gruppierfunktion fÃ¤llt weg
+	\item Die Bilderbibliothek fällt weg
+	\item Die Sortier- und Gruppierfunktion fällt weg
 	\item Es wird mehr Gewicht auf die Darstellungsweise der Musik gelegt
 \end{itemize}
 
-Dazu ist zu sagen, dass auch weiterhin stark auf die Bildervisualisierung gesetzt wird. Anstatt den Computer des Anwenders auf Bilder durchzuscannen wird diese jedoch vollstÃ¤ndig um die lokale Musik aufgebaut. Konkret bedeutet das, dass Artwork von Alben und Fotos von Artisten dargestellt wird.
+Dazu ist zu sagen, dass auch weiterhin stark auf die Bildervisualisierung gesetzt wird. Anstatt den Computer des Anwenders auf Bilder durchzuscannen wird diese jedoch vollständig um die lokale Musik aufgebaut. Konkret bedeutet das, dass Artwork von Alben und Fotos von Artisten dargestellt wird.
 
-Die im zweiten Punkt erwÃ¤hnte Sortier- und Gruppierfunktion kÃ¶nnte in einem weiteren Schritt nachgereicht werden, wurde aber im momentanen Stadium zugunsten von anderen Features vernachlÃ¤ssigt. Eine Gruppierung ist jedoch immer noch vorhanden in der KÃ¼nstlerÃ¼bersicht.
+Die im zweiten Punkt erwähnte Sortier- und Gruppierfunktion könnte in einem weiteren Schritt nachgereicht werden, wurde aber im momentanen Stadium zugunsten von anderen Features vernachlässigt. Eine Gruppierung ist jedoch immer noch vorhanden in der Künstlerübersicht.
 
 \section{Hilfsmittel \& Hardware}
 
-Verschieden Hilfsmittel werden fÃ¼r die DurchfÃ¼hrung des Projektes gebraucht. Seitens Software lauten diese:
+Verschieden Hilfsmittel werden für die Durchführung des Projektes gebraucht. Seitens Software lauten diese:
 
 \begin{table}[H]
-	\caption{Ãœbersicht der eingesetzten Software}
+	
 	\centering
 	\label{tab:software}
 	\begin{tabular}{ l l l }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Name} & \textbf{Beschreibung} \\ \midrule
 		Unity3D & Spielengine und Entwicklungsumgebung \\
 		Visual Studio 2012 \& 2013 & Entwicklungsumgebung von Microsoft \\
 		Blender & Open-Source 3D Modelling-Tool \\
 		Krita & Open-Source Grafikbearbeitungs-Tool \\
 		GIMP & Open-Source Grafikbearbeitungs-Tool \\
-		LaTeX & Hilfsmittel fÃ¼r die Erstellung wissenschaftlicher Dokumente \\
+		LaTeX & Hilfsmittel für die Erstellung wissenschaftlicher Dokumente \\
 		Microsoft Visio & Tool zur Erstellung von Diagrammen \\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabular}
+	\caption{Übersicht der eingesetzten Software}
 \end{table}
 
 Im Hardware-Departement wurde folgendes eingesetzt:
 
 \begin{table}[H]
-	\caption{Ãœbersicht der eingesetzten Hardware}
 	\centering
 	\label{tab:hardware}
 	\begin{tabular}{ l l l }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{Name} & \textbf{Beschreibung} \\ \midrule
 		Oculus Rift & \gls{hmd} von Oculus VR \\
-		Leap Motion & Hand- und FingererkennungsgerÃ¤t von Leap Motion, Inc. \\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		Leap Motion & Hand- und Fingererkennungsgerät von Leap Motion, Inc. \\
+		\bottomrule
 	\end{tabular}
+	\caption{Übersicht der eingesetzten Software}
 \end{table}
 
-FÃ¼r eine genaue ErklÃ¤rung der Oculus Rift und der Leap Motion sei an dieser Stelle auf das Pflichtenheft und die Vorarbeit verwiesen, welche diese im Detail einfÃ¼hrt.
+Für eine genaue Erklärung der Oculus Rift und der Leap Motion sei an dieser Stelle auf das Pflichtenheft und die Vorarbeit verwiesen, welche diese im Detail einführt.

@@ -15,6 +15,13 @@ Um Unity in groben Zügen zu erklären, sollen zwei Ansichtspunkte beschrieben wer
 
 Ein  Projekt  in  Unity  ist  in  sogenannte  \textit{Scenes}  (Szenen)  gegliedert,  welche  aus  Objekten (\textit{GameObject})  bestehen  –  das  Grundprinzip  der  Scene-Graphs  wird  also  angewandt. Speziell  ist,  dass  die  Interaktion  und  Spiellogik  grundsätzlich  nur  innerhalb  von \textit{Components}  geschieht.  Jedes  Script  und  jede  \textit{Eigenschaft}  wird  als  Component  einem GameObject  zugeordnet.  So  hat  zum  Beispiel  ein  Licht  ein  \textit{Light}-Component  oder  die Kamera ein \textit{Camera}-Component. Selbst die Position jedes GameObjects ist nur ein Wert im  \textit{Transform}-Component.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/unity}
+	\caption{Screenshot der Entwicklungsumgebung}
+	\label{fig:unity}
+\end{figure}
+
 Ein  anderer  Aspekt  von  Unity  ist  die  Ressourcenverwaltung.  Im  Grunde  genommen  ist  es 
 dem  Programmierer  überlassen,  wie  er  seine  Ressourcen  verwaltet.  Das  einzige,  was 
 beachtet  werden  muss,  ist,  dass  alle  Ressourcen  im  \textit{Assets}-Folder  abgelegt  werden 
@@ -28,8 +35,6 @@ danach wiederverwerten kann.
 \subsection{Unity im Kontext von IMVR}
 
 Was sofort auffällt bei der Betrachtung der Ressourcenverwaltung, ist, dass diese starke Kopplung von Assets zu Projekten sich mit der grundlegenden Aufgabe dieses Projektes beisst. Unity sieht vor, dass der Programmierer während der Entwicklung alle seine Assets in den dafür vorgesehenen Ordner platziert, das Projekt am Schluss kompiliert, und dann höchstens im Nachhinein neue Assets als \textit{Asset Bundles} an seine Anwender verteilt. In diesem Projekt ist es jedoch zwingend nötig, dynamisch Bilder und Musik anhand der Dateien auf dem Anwender-PC zu laden. Auf die Folgen und Lösungen zu diesem Problem wird in den Kapiteln \ref{subsec:resources} und  \ref{subsec:musicformats} näher eingegangen.
-
-\subsection{UI}
 
 Ein Feature, von dem die Applikation starken Gebrauch macht, ist das UI-System von Unity. Vor Version 4.6 des Editors wurde das GUI grösstenteils im Programmcode selbst erstellt mithilfe des alten System \textit{nGUI}.
 
@@ -71,6 +76,7 @@ Die Struktur sieht so aus, dass an oberster Stufe vier Knotenpunkte existieren:
 
 Die Welt selbst besteht aus mehreren Kameras, Visualisierungen, und den Elementen, die für den Music Arm benötigt werden. Zusätzliche GameObjects werden jeweils generiert, wenn neue Views geladen werden.
 
+Von den Ressourcen her sieht der Aufbau so aus, dass alle visuellen bzw. akustischen Assets im ``Resources''-Ordner abgelegt werden. Unity erlaubt das Laden von Assets im Code nur, wenn diese in diesem Ordner zu finden sind. Der Nachteil ist, dass beim Kompilieren \textit{alle} Dateien innerhalb von \textit{Resources} für den Release gepackt werden - unabhängig davon, ob sie wirklich eingesetzt werden.
 
 \section{Interaktionskonzept}
 
@@ -110,13 +116,13 @@ In Abbildung \ref{fig:ringmesh_collider} sind diese nummeriert abgebildet. Die R
 	\centering
 	\label{tab:ringmesh_aufbau}
 	\begin{tabularx}{\textwidth}{ l l X }
-		\noalign{\smallskip} \hline \hline \noalign{\smallskip}
+		\toprule
 		\textbf{\#} & \textbf{Komponente} & \textbf{Rolle} \\ \midrule
 		1 & Ring Mesh & Sorgt für die Darstellung eines Ring-Meshes, indem ein Mesh anhand der angegebenen Parameter generiert wird.\\
 		2 & Fillable Ring & Erweitert die Ring Mesh Komponente mit einem zweiten Kreissektor, der die gleichen Werte wie das Ring Mesh hat, bis auf den äusseren Radius. Dieser wird anhand des \code{Fill}-Wertes zwischen 0 und 1 verschoben.\\
 		3 & Mode Activator & Reagiert auf Blicke und steuert den \code{Fill}-Wert des Fillable Rings.\\
 		4 & Mode & Stellt den Modus dar, der vom Mode Activator aktiviert werden soll, sobald der Blick lange genug gehalten wurde.\\
-		\noalign{\smallskip} \hline \noalign{\smallskip}
+		\bottomrule
 	\end{tabularx}
 	\caption{Beschreibung des Aufbaus der Fussplatten}
 \end{table}
@@ -396,9 +402,8 @@ In einem ersten Schritt wurde mithilfe von NAudio \cite{naudio} versucht, selbst
 
 Es stellte sich dann heraus, dass Unity mit \code{GetOutputData} und \code{GetSpectrumData} selbst über eine Analysefunktion für Musik verfügt\footnote{Dokumentation: http://docs.unity3d.com/ScriptReference/AudioSource.GetSpectrumData.html}, und das sogar mit verschiedenen Analysefenstern.
 
-Um die gewonnenen Daten zentral zu verwalten, wurde nun eine Klasse namens \code{VisualizationHelper} erstellt. Diese hilft ausserdem dabei, die momentane Lautstärke der Stereo-Kanäle zu bestimmen, indem sie ein RMS-Wert über alle Samples erstellt \cite{outputData}.
+Um die gewonnenen Daten zentral zu verwalten, wurde nun eine Klasse namens \code{VisualizationHelper} erstellt. Diese hilft ausserdem dabei, die momentane Lautstärke der Stereo-Kanäle zu bestimmen, indem sie ein \gls{rms}-Wert über alle Samples erstellt \cite{outputData}.
 
-%TODO: Glossary
 Es gibt drei verschiedene Arten, wie die Musik momentan visualisiert wird:
 
 \begin{enumerate}
@@ -419,7 +424,7 @@ Jedem Punkt im Line-Renderer wird ein sich verschiebender Volume-Wert zugewiesen
 Etwas interessanter ist jedoch die Berechnung der Lautstärke in einem bestimmten Frequenzbereich.
 
 \lstinputlisting[caption={Berechnung des RMS-Wertes über einen Frequenzbereich}, 
-label={lst:ringvisualizer}]{code/SpectrumBar_Update.cs}
+label={lst:spectrumbar}]{code/SpectrumBar_Update.cs}
 
 Diese Berechnung wird in der Klasse \code{SpectrumBar} durchgeführt. Wie auf dem UML (Abbildung \ref{uml:IMVR.FX}) zu sehen ist, verfügt jede Instanz über eine Start- und eine Endfrequenz, der den Frequenzbereich festlegt. Dieser Bereich sollte mit höheren Frequenzen unbedingt logarithmisch anwachsen, da sonst die Kurve ungleichmässig verteilt ist.
 
@@ -443,6 +448,7 @@ Da die Hände und der Kopf nicht benötigt werden, wurden diese kurzerhand mithilf
 	\label{fig:avatar}
 \end{figure}
 
+\clearpage
 \section{Herausforderungen}
 
 Während der Entwicklung kristallisierten sich zahlreiche Probleme, die gelöst werden mussten. Teilweise reichte die Zeit allerdings nicht ganz, um die Fehler zu beheben.
@@ -476,7 +482,7 @@ Der Parameter \code{texture} referenziert hierbei die Textur, und \code{rect} be
 
 Ein Problem von Unity ist wie gesagt die enge Anbindung eines Projektes an sein Assets-Ordner. Eine Auswirkung dieses Design-Entscheids ist, dass Unity zur Laufzeit nur unkomprimierte WAVE-Streams und Ogg Vorbis enkodierte Streams lesen kann. Diese Limitation wurde anfangs mithilfe der Bibliothek NAudio umgangen, aber da der Einsatz von NAudio, wie in Kapitel \ref{subsec:visualization} erläutert, die Benutzung von \code{GetOutputData} und \code{GetSpectrumData} verhindert, wurde dieser Ansatz verworfen.
 
-Stattdessen wurde auf eine andere C\#-Bibliothek ausgewichen: CSCore \ref{cscore}. Im Gegenzug zu einer schlechteren Portabilität als NAudio (läuft nur auf Windows) bietet CSCore Klassen zur einfachen Konversion von codierten Audio-Streams zu simplen PCM-Streams an.
+Stattdessen wurde auf eine andere C\#-Bibliothek ausgewichen: CSCore \cite{cscore}. Im Gegenzug zu einer schlechteren Portabilität als NAudio (läuft nur auf Windows) bietet CSCore Klassen zur einfachen Konversion von codierten Audio-Streams zu simplen PCM-Streams an.
 
 In Unity dreht sich die Audiowiedergabe um die Klassen \code{AudioListener}, \code{AudioSource} und \code{AudioClip}. Die Rolle dieser Klasse ist grösstenteils selbsterklärend: Ein \code{AudioListener} (die Kamera) hört eine Anzahl von \code{AudioSources}, welche jeweils einen \code{AudioClip} abspielen.
 
