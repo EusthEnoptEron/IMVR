@@ -22,6 +22,14 @@ namespace IMVR.Indexer
         static void Main(string[] args)
         {
             var startTime = DateTime.Now;
+            if (!System.IO.File.Exists("library.conf"))
+            {
+                Console.Error.WriteLine("Couldn't find library.conf!");
+                return;
+            }
+
+            var folders = System.IO.File.ReadAllLines("library.conf").Select(line => line.Trim()).Where(line => line.Length > 0);
+
             //var client = new GracenoteClient("13232384-4CA925FFEF026C96B030F81372DB39CA");
             //var albumSearcher = new AlbumSearcher(client);
             //var searchResult  = albumSearcher.Search(new SearchCriteria
@@ -32,7 +40,7 @@ namespace IMVR.Indexer
             //});
 
             //Console.WriteLine(searchResult.Count);
-            args = new string[] { "-v", "-d", Path.Combine("D:/Dev/IMVR/src/Application/Assets", "Database.bin") };
+            //args = new string[] { "-v", "-d", Path.Combine("D:/Dev/IMVR/src/Application/Assets", "Database.bin") };
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
@@ -41,10 +49,13 @@ namespace IMVR.Indexer
 
                 // -----DEBUG--------
                 db.Folders.Clear();
+                db.Folders.AddRange(
+                    folders
+                );
                 //db.Folders.Add(@"C:\Users\Simon\Pictures");
                 //db.Folders.Add(@"C:\Users\Simon\Music");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\August Burns Red");
-                db.Folders.Add(@"D:\Music");
+                //db.Folders.Add(@"D:\Music");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Comeback Kid");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Cyua");
                 //db.Folders.Add(@"C:\Users\meers1\Music\Music\Dantalian");

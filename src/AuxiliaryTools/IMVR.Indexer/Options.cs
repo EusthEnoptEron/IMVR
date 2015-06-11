@@ -14,7 +14,7 @@ namespace IMVR.Indexer
         private static Options _instance;
         private Options() { }
 
-        [Option("d", Required=true, HelpText="Path to the SQLite DB")]
+        [Option("d", Required=true, HelpText="Path to the SQLite DB", DefaultValue="IMVR_Data\\StreamingAssets\\IMDB.bin")]
         public string DBPath { get; set; }
 
         [Option("c", Required=false, DefaultValue=null, HelpText="Path to the cache directory")]
