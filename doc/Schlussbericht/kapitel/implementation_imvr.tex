@@ -216,6 +216,21 @@ Damit andere Teile der Applikation auf diese Wertänderungen reagieren können, wi
 %\end{algorithm}
 
 
+\subsection{Zylinderinteraktion}
+
+Eine zentrale Funktion von IMVR ist die Darstellung von Artisten in einer Art Karussell bzw. einem Zylinder. Die Interaktion geschieht dabei vollständig mit den Händen.
+
+Um dieses Feature zu implementieren, fiel der Entscheid ebenfalls auf das UI-System von Unity, da dieses die nötigen Elemente (Text, Bilder, Widgets) liefert. Um die Interaktion zu ermöglichen, wurde ein selbst geschriebenes Input-Modul verwendet, welches die Selektierung, Aktivierung und Deaktivierung von UI-Elementen übernimmt. Wie Input-Module funktionieren, wird in der Vorarbeit genauer erläutert. Wichtig zu wissen ist, dass es diese auch für die Maus- und Tastatursteuerung sowie für Touchpads gibt. Input-Module eignen sich also für diese Funktionalität.
+
+Ein Problem, das diese Module in diesem Kontext mit sich bringen, ist ihre enge Kopplung mit 2D-Interfaces. Die Event-Behälter, die intern verwendet werden, benutzen fast ausschliesslich 2D-Vektoren, um Klickpositionen und ähnliches festzuhalten. Ebenfalls problematisch ist, dass, anders als bei der Maus oder beim Touchpad, die Entscheidung über einen Klick im 3D-Raum gemacht werden muss. Wird der Finger zwischen zwei Schaltflächen gehalten, muss trotzdem die richtige aktiviert werden, auch wenn diese z.B. verdeckt ist. Ausserdem erfordert der Raycaster, der bei der UI verwendet wird, ebenfalls 2D-Koordinaten.
+
+Diese Problematik wurde gelöst, indem die Position des Fingers in 2D-Koordinaten umgewandelt wird. Der Prozess läuft folgendermassen ab:
+
+\begin{enumerate}
+	\item 
+\end{enumerate}
+
+
 \section{Visual Design}
 
 Viele Elemente in IMVR haben mit dem Visuellen zu tun. Sie sollen die Musik unterstützend begleiten, Metadaten darstellen und natürlich gefallen.
