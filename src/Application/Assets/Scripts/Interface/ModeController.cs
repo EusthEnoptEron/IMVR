@@ -116,7 +116,7 @@ public class ModeController : Singleton<ModeController> {
     {
         get
         {
-            return Mathf.Abs(Vector3.Dot(Vector3.down, Camera.main.transform.forward)) > (isMenuMode ? downThresholdStay : downThresholdEnter);
+            return Vector3.Dot(Vector3.down, Camera.main.transform.forward) > (isMenuMode ? downThresholdStay : downThresholdEnter);
         }
     }
 
