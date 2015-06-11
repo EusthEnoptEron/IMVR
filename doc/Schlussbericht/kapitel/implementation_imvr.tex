@@ -521,6 +521,17 @@ Der Ladebalken selbst wird mithilfe der \code{Fill}-Property von Bildelementen g
 
 Im Verlauf der Entwicklung stellte sich ebenfalls heraus, dass die Generierung der \textit{Font}-Texturen relativ zeitaufwendig ist. Deshalb werden im Loader ebenfalls Fonts vorinitialisiert.
 
+Was sich allerdings mit Abstand als am Performance-lastigsten herausstellte, war das generieren von Canvas-Meshes. Dies ist eine grundlegende Limitierung von Canvas-Elementen und wird eventuell in zukünftigen Versionen verbessert. Das Problem ist, dass Canvas-Elemente zu einzelnen Meshes zusammengefasst werden und dieser Vorgang sehr aufwendig ist. Das geschieht bei jeder noch so kleiner Änderung in der Canvas-Hierarchie - selbst bei einer Änderung der Position \cite{buildbatch}. Wenn der Anwender also die Zylinderansicht rotierte, führte dies zu einem enormen Performance-Loch.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{bilder/buildbatch}
+	\caption{Performance-Einbussen bei \code{BuildBatch()}}
+	\label{fig:buildbatch}
+\end{figure}
+
+Als Workaround um dieses Problem wurde beim Rotieren des Zylinders nicht der Zylinder rotiert, sondern die Welt. Das hat zur Folge, dass der Zylinder selbst unberührt bleibt und kein \code{BuildMesh()}-Call ausgelöst wird. Leider hat diese Lösung sehr grosse Einschränkungen: Physik wird nicht mehr funktionieren, weil sich die Welt immer wieder bewegt, auch äussere Zylinderschichten müssen sich mitdrehen, da sonst das gleiche Problem auftritt und alle Elemente müssen umständlich in einem Transform, der alle Welt-Objekte beinhält, organisiert werden.
+
 Neben der Performance-Einbussen existierender Elemente, traten auch Probleme beim \textit{Initialisieren} von Objekten auf. Die Schwierigkeiten wurden sichtbar bei der Implementierung des Interfaces für die Playlist.
 
 Beim \textit{Listen}-Modus kommt es oft vor, dass eine sehr grosse Anzahl Lieder einem Kriterium gerecht werden. Da jede Zeile in einer Liste in uGUI ein eigenes GameObject ist, hat dies zur Folge, dass entsprechend viele GameObjects \textit{on-the-fly} generiert werden müssen. Selektiert der Anwender also 1000 Songs, werden 1000 GameObjects erstellt, was zu einem enormen Einfall der Framerate führt.
@@ -537,3 +548,4 @@ Als Lösung wurde schliesslich selbst eine sehr simple, ähnliche Komponente entwi
 \end{enumerate}
 
 Mit diesen zwei Verbesserungen ist es nun möglich, sofort eine beliebig grosse Liste zu erstellen. Der Nachteil ist, dass irgendwann der Speicher ausgehen wird, da momentan nicht mehr angezeigte Objekte nicht aufgeräumt werden. Ein ähnlicher Ansatz wie bei der \textit{PooledList} wäre ideal.
+
