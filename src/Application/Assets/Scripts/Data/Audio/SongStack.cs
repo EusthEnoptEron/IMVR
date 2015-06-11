@@ -2,133 +2,43 @@
 using System.Collections;
 using IMVR.Commons;
 using System.Collections.Generic;
-using System;
 using System.Linq;
-using Kender.uGUI;
 
-[RequireComponent(typeof(PointChart))]
-public class SongMetaChart : MonoBehaviour {
-    private PointChart pointChart;
-    private IEnumerable<Song> data;
+public class SongStack : MonoBehaviour {
+    private static GameObject pref_Plate = Resources.Load<GameObject>("Prefabs/Objects/pref_Plate");
 
-    public MetaGroup xAxis = MetaGroup.Energy;
-    public MetaGroup yAxis = MetaGroup.Danceability;
-    public MetaGroup zAxis = MetaGroup.Speechiness;
-    public bool debug = false;
-    public Canvas canvas;
-    public GameObject comboboxPrefab;
+    public IEnumerable<Song> items;
+    public int totalCount;
+    public float maxHeight = 10;
+    public float margin = 0.05f;
 
-    private ComboBox[] comboboxes = new ComboBox[3];
-    private bool initialized = false;
-    private bool update = false;
+    // Use this for initialization
+	void Start () {
+        float itemCount = items.Count();
+        float rate = itemCount / totalCount;
 
-    public event EventHandler AxisChanged = delegate { };
+        //Debug.LogFormat("{0}: {1} / {2}", name, itemCount, totalCount);
+        // Create blocks!
+        float reachedHeight = 0;
+        Color low = Color.red;
+        Color high = Color.green;
 
-	// Use this for initialization
-	void Awake () {
-        pointChart = GetComponent<PointChart>();
-
-        CreateCombobox(0);
-        CreateCombobox(1);
-        CreateCombobox(2);
-	}
-
-    IEnumerator Start()
-    {
-        yield return null;
-
-        InitCombobox(0);
-        InitCombobox(1);
-        InitCombobox(2);
-
-        initialized = true;
-        // Debug
-        if(debug)
-            SetSongs(ResourceManager.DB.Songs);
-
-    }
-
-    private void CreateCombobox(int axis)
-    {
-        comboboxes[axis] = GameObject.Instantiate<GameObject>(comboboxPrefab).GetComponent<ComboBox>();
-        comboboxes[axis].transform.SetParent(canvas.transform, false);
-    }
-
-    private void InitCombobox(int axis)
-    {
-        var combobox = comboboxes[axis];
-        switch (axis)
+        while (reachedHeight < rate * maxHeight)
         {
-            case 0: combobox.transform.localPosition = (pointChart.pivotOffset + Vector3.right) * 1200; break;
-            case 1: combobox.transform.localPosition = (pointChart.pivotOffset + Vector3.up) * 1200; break;
-            case 2: combobox.transform.localPosition = (pointChart.pivotOffset) * 1200; break;
-            default: Debug.LogError("Invalid axis"); break;
+            var plate = GameObject.Instantiate<GameObject>(pref_Plate);
+            float height = plate.transform.localScale.y;
+            plate.transform.SetParent(transform, false);
+
+            plate.transform.localScale *= Tile.PIXELS_PER_UNIT;
+            plate.transform.localPosition = Vector3.up * reachedHeight * Tile.PIXELS_PER_UNIT + Vector3.down *  Tile.PIXELS_PER_UNIT / 2;
+            plate.GetComponent<MeshRenderer>().material.color = Color.Lerp(low, high, reachedHeight / (maxHeight));
+            reachedHeight += height + margin;
         }
-
-        combobox.transform.localScale = Vector3.one * 4;
-
-        combobox.ClearItems();
-        combobox.AddItems(new string[]{ "Select axis" }.Concat(Enum.GetNames(typeof(MetaGroup))).ToArray());
-
-        combobox.SelectedIndex = (int)(axis == 0 ? xAxis : (axis == 1 ? yAxis : zAxis)) + 1;
-
-        combobox.OnSelectionChanged += delegate(int item)
-        {
-            ChangeAxis(axis, combobox.Items[item].Caption);
-        };
-
-    }
-
+	}
 
 	
 	// Update is called once per frame
 	void Update () {
-        if (initialized && update)
-        {
-            Refresh();
-            update = false;
-        }
+	
 	}
-
-    public void ChangeAxis(int axis, string value)
-    {
-        switch (axis)
-        {
-            case 0:
-                xAxis = (MetaGroup)Enum.Parse(typeof(MetaGroup), value, false);
-                break;
-            case 1:
-                yAxis = (MetaGroup)Enum.Parse(typeof(MetaGroup), value, false);
-                break;
-            case 2:
-                zAxis = (MetaGroup)Enum.Parse(typeof(MetaGroup), value, false);
-                break;
-            default:
-                Debug.LogError("Invalid axis");
-                break;
-        }
-
-        Refresh();
-
-        AxisChanged(this, new EventArgs());
-    }
-
-    private void Refresh()
-    {
-        // Set points
-        pointChart.points = data.Select(song => new Vector3(
-            xAxis.HasValue(song) ? xAxis.GetValue(song).Value : 0f,
-            yAxis.HasValue(song) ? yAxis.GetValue(song).Value : 0f,
-            zAxis.HasValue(song) ? zAxis.GetValue(song).Value : 0f
-        )).ToArray();
-
-        pointChart.UpdatePoints();
-    }
-
-    public void SetSongs(IEnumerable<Song> songs)
-    {
-        data = songs;
-
-        update = true;
-    }
 }
