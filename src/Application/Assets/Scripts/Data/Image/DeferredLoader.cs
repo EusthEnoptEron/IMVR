@@ -133,7 +133,6 @@ namespace VirtualHands.Data.Image
                     yield return www;
                     www.LoadImageIntoTexture(job.Texture);
                     job.Done();
-                    
 
                     //// Found a job to take care of
                     //if (!System.IO.File.Exists(job.File)) continue;

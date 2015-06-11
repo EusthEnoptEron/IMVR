@@ -407,6 +407,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textNode: {fileID: 11463862}
   titleNode: {fileID: 11452460}
+  speed: .200000003
+  lifetime: 5
 --- !u!222 &22201994
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -593,7 +595,7 @@ RectTransform:
   m_GameObject: {fileID: 184390}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: .00100000005, y: .00100000005, z: .00100000005}
   m_Children:
   - {fileID: 22400832}
   m_Father: {fileID: 0}

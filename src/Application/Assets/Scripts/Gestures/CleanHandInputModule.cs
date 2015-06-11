@@ -210,8 +210,6 @@ namespace Gestures
                         currentDistance = distance;
                         currentDistanceAbs = distanceAbs;
                         closestGameObject = raycast;
-               
-
 
                         if (Mathf.Abs(distance) < nearZone)
                         {
@@ -256,7 +254,7 @@ namespace Gestures
                     if (pressedObject &&  
                         Vector3.Distance(pressedObject.transform.position, worldPosition) < nearZone*2)
                     {
-                        Debug.LogFormat("CHANGE TO PRESSED {0} " + data.dragging, pressedObject);
+                        //Debug.LogFormat("CHANGE TO PRESSED {0} " + data.dragging, pressedObject);
                         data.pointerCurrentRaycast = new RaycastResult() {
                             gameObject = pressedObject
                         };

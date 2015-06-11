@@ -190,7 +190,7 @@ public abstract class Mode : MonoBehaviour
     public View GoBack()
     {
         var view = viewStack.Pop();
-        view.Disable();
+        view.Disable(true);
 
         PullStack();
         OnViewChanged();

@@ -43,8 +43,8 @@ public class SongMetaChart : MonoBehaviour {
 
         initialized = true;
         // Debug
-        if(debug)
-            SetSongs(ResourceManager.DB.Songs);
+        //if(debug)
+        //    SetSongs(ResourceManager.DB.Songs);
 
     }
 

@@ -28,9 +28,15 @@ public class ModeController : Singleton<ModeController> {
             if (_controller != null) _controller.enabled = false;
 
             _controller = value;
-            Theme.Current = _controller.Theme;
 
-            _controller.enabled = true;
+            if (_controller != null)
+            {
+                Theme.Current = _controller.Theme;
+                _controller.enabled = true;
+
+            }
+            else Theme.Current = new BaseTheme();
+
         }
     }
 

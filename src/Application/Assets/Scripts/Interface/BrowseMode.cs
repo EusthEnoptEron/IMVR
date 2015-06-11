@@ -3,6 +3,7 @@ using System.Collections;
 
 public class BrowseMode : Mode {
 
+    private ArtistOverView _overview;
     protected override void Awake()
     {
         base.Awake();

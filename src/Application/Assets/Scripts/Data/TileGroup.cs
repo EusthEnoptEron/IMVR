@@ -11,6 +11,8 @@ public class TileGroup : Tile {
 
     protected virtual void Awake()
     {
+        GetComponent<Canvas>().pixelPerfect = false;
+
         text = new GameObject().AddComponent<Text>();
         text.font = ResourceManager.Roboto;
         text.alignment = TextAnchor.MiddleCenter;

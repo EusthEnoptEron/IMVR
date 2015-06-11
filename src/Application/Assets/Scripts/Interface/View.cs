@@ -14,6 +14,8 @@ public enum InteractionMode
 
 public abstract class View : MonoBehaviour {
     private int level = 0;
+    private CanvasGroup[] _canvasGroups;
+
     public InteractionMode Interaction
     {
         get;
@@ -48,11 +50,10 @@ public abstract class View : MonoBehaviour {
 
     protected void FinishInitialization()
     {
-  
-            foreach (var group in GetCanvasGroups())
-            {
-                group.alpha = 0;
-            }
+        foreach (var group in GetCanvasGroups())
+        {
+            group.alpha = 0;
+        }
 
     }
 
@@ -67,12 +68,16 @@ public abstract class View : MonoBehaviour {
 
     }
 
-    public void Disable()
+    public void Disable(bool destroy = false)
     {
         StartCoroutine(InvokeInNextFrame(delegate
         {
             SetInteraction(InteractionMode.Disabled);
             OnViewDisable();
+
+            // Destroy after 5 seconds if not used anymore
+            if (destroy)
+                Destroy(gameObject, 5);
         }));
     }
 
@@ -117,7 +122,7 @@ public abstract class View : MonoBehaviour {
 
         if (level == 1)
         {
-            transform.SetParent(World.WorldNode.transform);
+            //transform.SetParent(World.WorldNode.transform);
             SetInteraction(InteractionMode.Disabled);
         }
 
