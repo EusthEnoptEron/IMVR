@@ -28,6 +28,7 @@ public class ListenView : View {
     // Back buffer
     private List<Status> _tweetsBuffer = new List<Status>();
     private bool _isFetching;
+    private Artist _currentArtist;
 
     private int _tweetCounter = 0;
 
@@ -112,7 +113,7 @@ public class ListenView : View {
     private IEnumerator FetchTweets(Song song)
     {
         Debug.Log("Fetch");
-        if (_isFetching) yield break;
+        if (_isFetching || _currentArtist == song.Artist) yield break;
         _isFetching = true;
 
         var task = Task.Run(delegate
@@ -147,6 +148,7 @@ public class ListenView : View {
 
         // Reset counter
         _tweetCounter = 0;
+        _currentArtist = song.Artist;
 
         _isFetching = false;
 
