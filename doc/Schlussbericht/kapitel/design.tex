@@ -300,7 +300,7 @@ Das Ring-Panel befindet sich unter den Füssen des Anwenders und wird mit dem Bli
 \end{table}
 
 
-\subsubsection{Daten}
+\subsubsection{Daten Handling}
 
 \begin{figure}[H]
 	\centering
@@ -313,9 +313,9 @@ Die Klassen, die sich mit den Daten aus der Datenbank bzw. der Darstellung diese
 
 Der Namespace ist gegliedert in \textit{Data}, \textit{Data.Music} und \textit{Data.Image}. Ersterer befasst sich mit der generellen Darstellung der Daten, der zweite kümmert sich um das Arbeiten mit Musik, und \textit{Data.Image} schliesslich um Aufgaben mit Bildern.
 
-Ursprünglich war geplant, einen Modus nur für die Bilderbibliothek des Anwenders zu entwickeln, und die dabei verwendeten Klassen in den entsprechenden Namespace zu platzieren. Eine Grosszahl dieser Klassen wurde jedoch zusammen mit dem Modus selbst gestrichen. Übrig geblieben sind die Klassen, die noch Verwendung bei der Musik finden (z.B. für das Darstellen von Artwork).
+Ursprünglich war geplant, einen Modus nur für die Bilderbibliothek des Anwenders zu entwickeln, und die dabei verwendeten Klassen in den entsprechenden Namespace zu platzieren. Ein grosser Teil dieser Klassen wurde jedoch zusammen mit dem Modus selbst gestrichen. Übrig geblieben sind die Klassen, die noch Verwendung bei der Musik finden (z.B. für das Darstellen von Artwork).
 
-Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die Klasse \code{CylinderRaycaster}. Dessen Aufgabe war ursprünglich, die grosse Anzahl Bilder handhabbar zu machen, weil einzelnes Raycasting zu viel Zeit beanspruchen würde. Da Performance immer ein Problem ist, erweist sich diese als nützlich.
+Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die Klasse \code{CylinderRaycaster}. Deren Aufgabe war ursprünglich, die hohe Anzahl Bilder handhabbar zu machen, weil einzelnes Raycasting zu viel Zeit beanspruchen würde. Da Performance immer ein Problem ist, erweist sich diese weiterhin als nützlich.
 
 \begin{table}[h]
 	\centering
@@ -328,12 +328,19 @@ Eine weitere Klasse, die weiterhin guten Dienst leistet, ist beispielsweise die 
 		ListGroupedCylinderLayout & Ein gruppiertes \code{CylinderLayout}, welches auf Listen von Canvas-GameObjects spezialisiert ist.\\
 		CylinderInteractor & Kümmert sich um die User-Interaktion mit dem Layout. Hilft beim Rotieren und vertikalen Scrollen. \\
 		CylinderRaycaster & Sorgt für ein effizientes Raycasting der Elemente im Layout. Wird wichtig, wenn über 100 interaktive Elemente im Zylinder verteilt sind.\\
-		BufferedList & Hilft bei der effizienten Darstellung der Playlist (siehe Kapitel \ref{subsec:performance}).\\
+		LazyList & Hilft bei der effizienten Darstellung der Playlist (siehe Kapitel \ref{subsec:performance}).\\
 		\noalign{\smallskip} \hline \noalign{\smallskip}
 	\end{tabularx}
 	\caption{Erklärung der wichtigsten Klassen von IMVR.Data}
 	\label{tab:IMVR.Interface.Data}
 \end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{diagramme/IMVR.Data.Image-UML}
+	\caption{Klassendiagramm des Bilddaten-Handlings}
+	\label{uml:IMVR.Data.Image}
+\end{figure}
 
 Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Klasse, die auf einer hohen Ebene für das einfache Laden von Atlassen aus IMVR.Commons sorgt, eine intelligente Klasse zum Laden von Bildern und eine tiefe Klasse, welche direkt mit den Daten der Atlasse arbeitet.
 
@@ -351,7 +358,14 @@ Der Teil, der für die Bilder zuständig ist, enthält drei Klassen: eine Helper-Kl
 	\label{tab:IMVR.Interface.Data.Image}
 \end{table}
 
-Im Namespace für die Musik gibt es grob gesagt zwei Arten von Klassen: die Jukebox und die Klassen zur Darstellung von Musikdaten.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{diagramme/IMVR.Data.Audio-UML}
+	\caption{Klassendiagramm des Musikdaten-Handlings}
+	\label{uml:IMVR.Data.Audio}
+\end{figure}
+
+Im Namespace für die Musik gibt es zwei Arten von Klassen: die Jukebox und die Klassen zur Darstellung von Musikdaten.
 
 \begin{table}[h]
 	\centering
