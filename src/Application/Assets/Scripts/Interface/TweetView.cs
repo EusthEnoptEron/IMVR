@@ -26,7 +26,7 @@ public class TweetView : MonoBehaviour {
         if (tweet != null)
         {
             textNode.text = tweet.Text;
-            titleNode.text = tweet.User.UserID;
+            titleNode.text = "@" + tweet.User.Identifier.ScreenName;
 
             StartCoroutine(TweetLifecycle());
         }
