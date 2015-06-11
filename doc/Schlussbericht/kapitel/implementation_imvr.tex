@@ -227,8 +227,15 @@ Ein Problem, das diese Module in diesem Kontext mit sich bringen, ist ihre enge 
 Diese Problematik wurde gelöst, indem die Position des Fingers in 2D-Koordinaten umgewandelt wird. Der Prozess läuft folgendermassen ab:
 
 \begin{enumerate}
-	\item 
+	\item Der Punkt $P_\textit{3D}$, wo sich die Fingerspitze befindet, wird durch die Event-Kamera (linkes Auge) in einen 2D Punkt $P_\textit{2D}$ umgewandelt.
+	\item Ein Strahl wird durch $P_\textit{2D}$ in die Szene geworfen und gibt eine Liste von Schnittpunkten $S$ zurück.
+	\item Die Schnittpunkte $S$ werden nach dem Element durchsucht, welches die niedrigste, rechtwinklige Distanz $d$ zu $P_\textit{3D}$ aufweist und wo gilt $d < T$, wobei $T$ ein Schwellwert ist.
+	\item Das gefundene Element wird in die Input-Pipeline gesendet und weiterverarbeitet.
 \end{enumerate}
+
+Es geschehen noch weitere Optimierungen, um z.B. den Fall abzudecken, wenn der Finger bei der Betätigung einer Schaltfläche nicht mehr genau darüber liegt.
+
+Als Hilfe, damit besser erkannt wird, wann ein Klick geschehen kann, dient ein Fadenkreuz, welches kleiner wird, je näher der Finger der Schaltfläche kommt. Die Idee stammt aus der Leap Motion Demo \textit{Soundscape VR}\footnote{https://apps.leapmotion.com/apps/soundscape-vr/windows}, welche Fadenkreuze für die weit entfernten Objekte verwendet.
 
 
 \section{Visual Design}
