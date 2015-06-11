@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using IMVR.Commons;
-using Mono.Data.Sqlite;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

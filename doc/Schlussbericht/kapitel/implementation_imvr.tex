@@ -63,10 +63,10 @@ In gewöhnlichen Projekten wird häufig eine ``Szene'' pro Spielbildschirm verwend
 Die Struktur sieht so aus, dass an oberster Stufe vier Knotenpunkte existieren:
 
 \begin{enumerate}
-	\item einer für das Event-System von Unity
-	\item einer für die gesamte Welt (näher erläutert in Kapitel \ref{subsec:performance})
-	\item einer für die korreke Positionierung der Kamera (ebenfalls erläutert in Kapitel \ref{subsec:performance})
-	\item einer für die Handhabung der Partikel der Hände
+	\item das Event-System von Unity (wird für den User-Input verwendet)
+	\item die gesamte Welt (näher erläutert in Kapitel \ref{subsec:performance})
+	\item die korreke Positionierung der Kamera (ebenfalls erläutert in Kapitel \ref{subsec:performance})
+	\item die Handhabung der Partikel der Hände
 \end{enumerate}
 
 Die Welt selbst besteht aus mehreren Kameras, Visualisierungen, und den Elementen, die für den Music Arm benötigt werden. Zusätzliche GameObjects werden jeweils generiert, wenn neue Views geladen werden.

@@ -82,6 +82,10 @@ namespace IMVR.Indexer {
             switch (file.Extension.ToLower())
             {
                 case ".mp3":
+                case ".flac":
+                case ".wma":
+                case ".ogg":
+                case ".wav":
                     return true;
                 default:
                     return false;

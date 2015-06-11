@@ -107,6 +107,7 @@ namespace IMVR.Indexer
                 AbstractWorker.Wait();
                 db.Save(Options.Instance.DBPath);
 
+                Console.WriteLine(Options.Instance.DBPath);
 
                 var albums = db.Artists.SelectMany(artist => artist.Albums);
                 Konsole.WriteLine("");
