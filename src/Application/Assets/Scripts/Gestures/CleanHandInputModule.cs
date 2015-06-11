@@ -149,7 +149,6 @@ namespace Gestures
             bool created = GetFingerData(finger, out data, true);
     
             var prevFingerState = state.GetFingerState(finger.Type);
-            var selection = prevFingerState.selection;
             float currentDistance = float.PositiveInfinity;
             float currentDistanceAbs = float.PositiveInfinity;
 
@@ -272,6 +271,13 @@ namespace Gestures
             if (pressed)
             {
                 data.pressPoint = currentPointWS;
+            }
+
+            prevFingerState.crosshair.Visible = closestGameObject.isValid;
+            if (prevFingerState.crosshair.Visible)
+            {
+                prevFingerState.crosshair.Value = Mathf.Clamp01(1 - (currentDistance / nearZone));
+                prevFingerState.crosshair.transform.position = CalculateHitPoint(screenPosition, closestGameObject.distance, false);
             }
 
 

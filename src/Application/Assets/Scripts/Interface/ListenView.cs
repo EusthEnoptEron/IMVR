@@ -19,6 +19,7 @@ public class ListenView : View {
 
     public SongSelection selection;
     public Vector3 placementRange = new Vector3(3f,2f,5f);
+    public float spawnInterval = 3;
 
     private TwitterContext _twitter;
     private GameObject _tweetPrefab;
@@ -31,6 +32,8 @@ public class ListenView : View {
     private Artist _currentArtist;
 
     private int _tweetCounter = 0;
+    private float _lastSpawnTime = 0;
+
 
     // Use this for initialization
     void Start()
@@ -84,7 +87,7 @@ public class ListenView : View {
     private void OnBeat(object sender, BeatEventArgs e)
     {
         // Spawn a twitter message!
-        if (_tweets.Count > 0)
+        if (_tweets.Count > 0 && Time.time - _lastSpawnTime > spawnInterval)
         {
             int id = _tweetCounter++ % _tweets.Count;
 
@@ -99,6 +102,8 @@ public class ListenView : View {
             tweet.transform.position = Camera.main.transform.position + 
                 position;
 
+
+            _lastSpawnTime = Time.time;
         }
     }
 
