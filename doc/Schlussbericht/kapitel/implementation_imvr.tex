@@ -51,7 +51,26 @@ Um dieses Problem zu umgehen, bieten sich Prefabs an. Der Prozess der Erstellung
 
 \section{Aufbau}
 
-%TODO: Unity-Struktur
+In gewöhnlichen Projekten wird häufig eine ``Szene'' pro Spielbildschirm verwendet. Da es in IMVR nur eine wirkliche Szene gibt bzw. ein laufender Übergang gemacht wird, benötigt es nur eine, welche sich um die gesamte Darstellung kümmert.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{bilder/aufbau}
+	\caption{Aufbau der Szene}
+	\label{fig:aufbau}
+\end{figure}
+
+Die Struktur sieht so aus, dass an oberster Stufe vier Knotenpunkte existieren:
+
+\begin{enumerate}
+	\item einer für das Event-System von Unity
+	\item einer für die gesamte Welt (näher erläutert in Kapitel \ref{subsec:performance})
+	\item einer für die korreke Positionierung der Kamera (ebenfalls erläutert in Kapitel \ref{subsec:performance})
+	\item einer für die Handhabung der Partikel der Hände
+\end{enumerate}
+
+Die Welt selbst besteht aus mehreren Kameras, Visualisierungen, und den Elementen, die für den Music Arm benötigt werden. Zusätzliche GameObjects werden jeweils generiert, wenn neue Views geladen werden.
+
 
 \section{Interaktionskonzept}
 
@@ -531,6 +550,8 @@ Was sich allerdings mit Abstand als am Performance-lastigsten herausstellte, war
 \end{figure}
 
 Als Workaround um dieses Problem wurde beim Rotieren des Zylinders nicht der Zylinder rotiert, sondern die Welt. Das hat zur Folge, dass der Zylinder selbst unberührt bleibt und kein \code{BuildMesh()}-Call ausgelöst wird. Leider hat diese Lösung sehr grosse Einschränkungen: Physik wird nicht mehr funktionieren, weil sich die Welt immer wieder bewegt, auch äussere Zylinderschichten müssen sich mitdrehen, da sonst das gleiche Problem auftritt und alle Elemente müssen umständlich in einem Transform, der alle Welt-Objekte beinhält, organisiert werden.
+
+Ein weiteres Problem bei diesem Workaround ist, dass sich die Skybox nicht mitdreht, wenn die Welt rotiert wird. Das hat umgekehrt zur Folge, dass es für den Anwender so aussieht, als würde er den Himmel rotieren, wenn er den Zylinder rotiert. Als Lösung dafür wurde eine weitere Kamera ausserhalb der Welt platziert, die nur für die Aufnahme des Hintergrunds zuständig ist. Die Kamera bleibt, wo sie ist, wenn die Welt gedreht wird, und entsprechend bleibt auch der Hintergrund still.
 
 Neben der Performance-Einbussen existierender Elemente, traten auch Probleme beim \textit{Initialisieren} von Objekten auf. Die Schwierigkeiten wurden sichtbar bei der Implementierung des Interfaces für die Playlist.
 
