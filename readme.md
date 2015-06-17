@@ -34,8 +34,8 @@ In order to have some data displayed, you'll need to index your music files firs
 
 The main application (made with Unity) is a bit trickier to build. Unity 5 must be installed (tested with 5.0.0f4).
 
-1. Download the (large files)[https://github.com/EusthEnoptEron/IMVR/releases/download/v1.0/Assets.zip]
-2. Extract them into `src\Application\Assets`
+1. Download the [large files](https://github.com/EusthEnoptEron/IMVR/releases/download/v1.0/Assets.zip)
+2. Extract contents into `src\Application\Assets`
 3. Launch Unity
 4. Open `src\Application`
 5. Load scene `Scenes\Galaxy.unity`
