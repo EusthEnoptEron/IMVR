@@ -36,7 +36,7 @@ public class LoadingScreen : Singleton<LoadingScreen> {
 
 	}
 
-    IEnumerator Start()
+    void Start()
     {
 
         // Precache fonts, taken from http://answers.unity3d.com/questions/733570/massive-lag-due-to-fontcachefontfortext-please-hel.html
@@ -53,7 +53,7 @@ public class LoadingScreen : Singleton<LoadingScreen> {
             }
         }
 
-        ModeController.Instance.Mode = GameObject.FindObjectOfType<BrowseMode>();
+        //ModeController.Instance.Mode = GameObject.FindObjectOfType<BrowseMode>();
 
 
         // Load artist imagery
@@ -68,9 +68,9 @@ public class LoadingScreen : Singleton<LoadingScreen> {
         });
 
 
-        yield return new WaitForSeconds(2);
-        Debug.Log("Disable");
-        ModeController.Instance.Mode = null;
+        //yield return new WaitForSeconds(2);
+        //Debug.Log("Disable");
+        //ModeController.Instance.Mode = null;
     }
 
 
