@@ -44,6 +44,15 @@ namespace IMVR.Indexer
 
             if (CommandLine.Parser.Default.ParseArguments(args, Options.Instance))
             {
+                if (!System.IO.File.Exists(Options.Instance.DBPath))
+                {
+                    var dir = new FileInfo(Options.Instance.DBPath).Directory;
+                    if (!dir.Exists)
+                    {
+                        dir.Create();
+                    }
+                    System.IO.File.Create(Options.Instance.DBPath).Dispose();
+                }
                 System.IO.File.Delete(Options.Instance.DBPath);
                 IMDB db = Options.Instance.DB;
 

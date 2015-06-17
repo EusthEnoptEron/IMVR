@@ -17,11 +17,13 @@ Before you start, clone the repository to your HDD.
 
 The AuxiliaryTools can be compiled without a problem on any modern computer that has .NET Framework 4 installed.
 
-1. Open `src\AuxiliaryTools.sln`
-2. Select `Build` configuration
-3. Build
+1. Open `src\AuxiliaryTools\AuxiliaryTools.sln`
+2. Select `Release` configuration
+3. Build Solution
 
 ### Indexing Media Library
+
+In order to have some data displayed, you'll need to index your music files first:
 
 1. Open / Create `dist\library.conf`
 2. Add absolute paths to your media folders
