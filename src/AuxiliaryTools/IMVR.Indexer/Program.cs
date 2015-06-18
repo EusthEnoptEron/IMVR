@@ -14,10 +14,6 @@ namespace IMVR.Indexer
         private const int COLLECTION_BOUND = 100;
         private const int IMAGE_ANALYZERS = 5;
         private const int MUSIC_ANALYZERS = 5;
-
-        private const string accessKeyId = "AKIAI6KMD7GWHAFA46ZA";
-        private const string secretKey = "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";
-
         
         static void Main(string[] args)
         {
